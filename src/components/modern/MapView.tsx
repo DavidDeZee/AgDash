@@ -25,7 +25,7 @@ export function MapView({ selectedCounty }: MapViewProps) {
 
   // Load GeoJSON data
   useEffect(() => {
-    fetch('/data/counties.geojson')
+    fetch('/data/tl_2023_us_county.json')
       .then((response) => response.json())
       .then((data) => {
         console.log('Counties GeoJSON loaded:', data);
