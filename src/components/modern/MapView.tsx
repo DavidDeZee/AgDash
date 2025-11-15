@@ -21,7 +21,6 @@ export function MapView({ selectedCounty }: MapViewProps) {
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
   const [hoveredCountyId, setHoveredCountyId] = useState<string | number | null>(null);
   const [countiesData, setCountiesData] = useState<any>(null);
-  const [statesData, setStatesData] = useState<any>(null);
 
   // Load GeoJSON data
   useEffect(() => {
@@ -35,15 +34,6 @@ export function MapView({ selectedCounty }: MapViewProps) {
         console.error('Error loading county boundaries:', err);
       });
 
-    fetch('/data/states.geojson')
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('States GeoJSON loaded:', data);
-        setStatesData(data);
-      })
-      .catch((err) => {
-        console.error('Error loading state boundaries:', err);
-      });
   }, []);
 
   // Handle hover
@@ -139,15 +129,6 @@ export function MapView({ selectedCounty }: MapViewProps) {
     },
   };
 
-  const stateOutlineLayer = {
-    id: 'states-outline',
-    type: 'line' as const,
-    paint: {
-      'line-color': '#9ca3af', // Lighter gray
-      'line-width': 2.5,
-      'line-opacity': 0.9,
-    },
-  };
 
   useEffect(() => {
     if (selectedCounty && mapRef.current) {
@@ -179,12 +160,7 @@ export function MapView({ selectedCounty }: MapViewProps) {
           </Source>
         )}
 
-        {/* States source and layer */}
-        {statesData && (
-          <Source id="states" type="geojson" data={statesData}>
-            <Layer {...stateOutlineLayer} />
-          </Source>
-        )}
+       
       </Map>
 
       {/* Hover tooltip */}
