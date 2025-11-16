@@ -5,6 +5,15 @@ import type {
   SortConfig,
   SortField,
 } from '../types/ag';
+import { getCountyRegion } from '../components/modern/MapView';
+
+// Reverse mapping from state name to FIPS code
+const STATE_TO_FIPS: Record<string, string> = {
+  'CALIFORNIA': '06',
+  'NEVADA': '32',
+  'OREGON': '41',
+  'WASHINGTON': '53',
+};
 
 /**
  * Filter counties based on provided criteria
@@ -28,6 +37,21 @@ export function filterCounties(
     // State filter
     if (filters.states.length > 0 && !filters.states.includes(county.stateName)) {
       return false;
+    }
+
+    // Location/Region filter
+    if (filters.locations.length > 0) {
+      const stateFips = STATE_TO_FIPS[county.stateName.toUpperCase()];
+      if (stateFips) {
+        const region = getCountyRegion(county.countyName, stateFips);
+
+        if (!region || !filters.locations.includes(region)) {
+          return false;
+        }
+      } else {
+        // If state not found in mapping, exclude this county
+        return false;
+      }
     }
 
     // Cropland acres filter

@@ -1,4 +1,4 @@
-import { Search, SlidersHorizontal, X, Info, Sparkles } from 'lucide-react';
+import { Search, SlidersHorizontal, X, Info, Sparkles, MapPin } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
@@ -12,10 +12,12 @@ interface FilterPanelProps {
 export function FilterPanel({ availableStates }: FilterPanelProps) {
   const {
     selectedStates,
+    selectedLocations,
     croplandRange,
     farmsRange,
     searchQuery,
     setSelectedStates,
+    setSelectedLocations,
     setCroplandRange,
     setFarmsRange,
     setSearchQuery,
@@ -54,8 +56,26 @@ export function FilterPanel({ availableStates }: FilterPanelProps) {
     }
   };
 
+  const toggleLocation = (location: string) => {
+    if (selectedLocations.includes(location)) {
+      setSelectedLocations(selectedLocations.filter((l) => l !== location));
+    } else {
+      setSelectedLocations([...selectedLocations, location]);
+    }
+  };
+
+  const availableLocations = [
+    { key: 'PUGET_SOUND', name: 'Puget Sound', color: 'hsl(270, 70%, 50%)' },
+    { key: 'INLAND_NW', name: 'Inland NW', color: 'hsl(217, 91%, 60%)' },
+    { key: 'NORTHERN_OREGON', name: 'Northern Oregon', color: 'hsl(48, 96%, 53%)' },
+    { key: 'SOUTHERN_OREGON', name: 'Southern Oregon', color: 'hsl(142, 76%, 36%)' },
+    { key: 'SUTTER_BUTTE', name: 'Sutter Butte', color: 'hsl(25, 95%, 53%)' },
+    { key: 'SACRAMENTO', name: 'Sacramento', color: 'hsl(195, 70%, 60%)' },
+  ];
+
   const hasActiveFilters =
     selectedStates.length > 0 ||
+    selectedLocations.length > 0 ||
     croplandRange[0] !== null ||
     croplandRange[1] !== null ||
     farmsRange[0] !== null ||
@@ -170,6 +190,38 @@ export function FilterPanel({ availableStates }: FilterPanelProps) {
                 }`}
               >
                 {state}
+              </button>
+            ))}
+          </div>
+        </div>
+      </Card>
+
+      {/* Locations/Regions */}
+      <Card className="p-4">
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <MapPin className="h-4 w-4" />
+            <h4 className="text-sm font-medium">Regions</h4>
+          </div>
+          <div className="flex flex-col gap-2">
+            {availableLocations.map((location) => (
+              <button
+                key={location.key}
+                onClick={() => toggleLocation(location.key)}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+                  selectedLocations.includes(location.key)
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                }`}
+              >
+                <div
+                  className="w-4 h-4 rounded border border-border/50 flex-shrink-0"
+                  style={{
+                    backgroundColor: location.color,
+                    opacity: 0.7,
+                  }}
+                />
+                <span>{location.name}</span>
               </button>
             ))}
           </div>

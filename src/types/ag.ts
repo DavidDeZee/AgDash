@@ -31,6 +31,7 @@ export interface EnhancedCountyData extends CountyData {
  */
 export interface FilterOptions {
   states: string[];
+  locations: string[];
   minCroplandAcres?: number;
   maxCroplandAcres?: number;
   minFarms?: number;

@@ -27,6 +27,40 @@ const FIPS_TO_STATE: Record<string, string> = {
   '53': 'WASHINGTON',
 };
 
+// Region definitions
+export const REGIONS = {
+  PUGET_SOUND: {
+    name: 'Puget Sound',
+    color: 'hsl(270, 70%, 50%)',
+    opacity: 0.4,
+  },
+  INLAND_NW: {
+    name: 'Inland NW',
+    color: 'hsl(217, 91%, 60%)',
+    opacity: 0.4,
+  },
+  NORTHERN_OREGON: {
+    name: 'Northern Oregon',
+    color: 'hsl(48, 96%, 53%)',
+    opacity: 0.4,
+  },
+  SOUTHERN_OREGON: {
+    name: 'Southern Oregon',
+    color: 'hsl(142, 76%, 36%)',
+    opacity: 0.4,
+  },
+  SUTTER_BUTTE: {
+    name: 'Sutter Butte',
+    color: 'hsl(25, 95%, 53%)',
+    opacity: 0.4,
+  },
+  SACRAMENTO: {
+    name: 'Sacramento',
+    color: 'hsl(195, 70%, 60%)',
+    opacity: 0.4,
+  },
+} as const;
+
 // County color mapping by region - using "CountyName|StateFIPS" format to handle duplicate county names
 const COUNTY_COLORS: Record<string, { color: string; opacity: number }> = {
   // Purple - Washington (53)
@@ -79,6 +113,8 @@ const COUNTY_COLORS: Record<string, { color: string; opacity: number }> = {
   'Clackamas|41': { color: 'hsl(48, 96%, 53%)', opacity: 0.4 },
   'Marion|41': { color: 'hsl(48, 96%, 53%)', opacity: 0.4 },
   'Polk|41': { color: 'hsl(48, 96%, 53%)', opacity: 0.4 },
+  'Columbia|41': { color: 'hsl(48, 96%, 53%)', opacity: 0.4 },
+
 
   // Green - Oregon (41) and California (06)
   'Lane|41': { color: 'hsl(142, 76%, 36%)', opacity: 0.4 },
@@ -97,6 +133,12 @@ const COUNTY_COLORS: Record<string, { color: string; opacity: number }> = {
   'Coos|41': { color: 'hsl(142, 76%, 36%)', opacity: 0.4 },
   'Siskiyou|06': { color: 'hsl(142, 76%, 36%)', opacity: 0.4 },
   'Modoc|06': { color: 'hsl(142, 76%, 36%)', opacity: 0.4 },
+  'Douglas|41': { color: 'hsl(142, 76%, 36%)', opacity: 0.4 },
+  'Jefferson|41': { color: 'hsl(142, 76%, 36%)', opacity: 0.4 },
+  'Lincoln|41': { color: 'hsl(142, 76%, 36%)', opacity: 0.4 },
+
+
+
 
   // Orange - California (06)
   'Del Norte|06': { color: 'hsl(25, 95%, 53%)', opacity: 0.4 },
@@ -138,6 +180,137 @@ const COUNTY_COLORS: Record<string, { color: string; opacity: number }> = {
   'Solano|06': { color: 'hsl(195, 70%, 60%)', opacity: 0.4 },
   'Contra Costa|06': { color: 'hsl(195, 70%, 60%)', opacity: 0.4 },
 };
+
+// Helper function to get region for a county (case-insensitive)
+export function getCountyRegion(countyName: string, stateFips: string): keyof typeof REGIONS | null {
+  // Try exact match first
+  const exactKey = `${countyName}|${stateFips}`;
+  if (COUNTY_TO_REGION_INTERNAL[exactKey]) {
+    return COUNTY_TO_REGION_INTERNAL[exactKey];
+  }
+
+  // Try with title case (capitalize first letter of each word)
+  const titleCaseName = countyName.split(' ').map(word =>
+    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  ).join(' ');
+  const titleCaseKey = `${titleCaseName}|${stateFips}`;
+
+  return COUNTY_TO_REGION_INTERNAL[titleCaseKey] || null;
+}
+
+// County to region mapping (internal - use getCountyRegion function for lookups)
+const COUNTY_TO_REGION_INTERNAL: Record<string, keyof typeof REGIONS> = {
+  // Puget Sound
+  'Whatcom|53': 'PUGET_SOUND',
+  'Skagit|53': 'PUGET_SOUND',
+  'San Juan|53': 'PUGET_SOUND',
+  'Clallam|53': 'PUGET_SOUND',
+  'Island|53': 'PUGET_SOUND',
+  'Jefferson|53': 'PUGET_SOUND',
+  'Snohomish|53': 'PUGET_SOUND',
+  'Kitsap|53': 'PUGET_SOUND',
+  'Skamania|53': 'PUGET_SOUND',
+  'Lewis|53': 'PUGET_SOUND',
+  'Pacific|53': 'PUGET_SOUND',
+  'Grays Harbor|53': 'PUGET_SOUND',
+  'Mason|53': 'PUGET_SOUND',
+  'King|53': 'PUGET_SOUND',
+  'Thurston|53': 'PUGET_SOUND',
+  'Pierce|53': 'PUGET_SOUND',
+  // Inland NW
+  'Okanogan|53': 'INLAND_NW',
+  'Chelan|53': 'INLAND_NW',
+  'Douglas|53': 'INLAND_NW',
+  'Grant|53': 'INLAND_NW',
+  'Kittitas|53': 'INLAND_NW',
+  'Yakima|53': 'INLAND_NW',
+  'Ferry|53': 'INLAND_NW',
+  'Stevens|53': 'INLAND_NW',
+  'Lincoln|53': 'INLAND_NW',
+  'Spokane|53': 'INLAND_NW',
+  'Pend Oreille|53': 'INLAND_NW',
+  'Whitman|53': 'INLAND_NW',
+  'Garfield|53': 'INLAND_NW',
+  'Asotin|53': 'INLAND_NW',
+  'Columbia|53': 'INLAND_NW',
+  'Walla Walla|53': 'INLAND_NW',
+  'Umatilla|41': 'INLAND_NW',
+  // Northern Oregon
+  'Clatsop|41': 'NORTHERN_OREGON',
+  'Tillamook|41': 'NORTHERN_OREGON',
+  'Multnomah|41': 'NORTHERN_OREGON',
+  'Wahkiakum|53': 'NORTHERN_OREGON',
+  'Cowlitz|53': 'NORTHERN_OREGON',
+  'Clark|53': 'NORTHERN_OREGON',
+  'Yamhill|41': 'NORTHERN_OREGON',
+  'Washington|41': 'NORTHERN_OREGON',
+  'Hood River|41': 'NORTHERN_OREGON',
+  'Clackamas|41': 'NORTHERN_OREGON',
+  'Marion|41': 'NORTHERN_OREGON',
+  'Polk|41': 'NORTHERN_OREGON',
+  'Columbia|41': 'NORTHERN_OREGON',
+  // Southern Oregon
+  'Lane|41': 'SOUTHERN_OREGON',
+  'Klamath|41': 'SOUTHERN_OREGON',
+  'Wasco|41': 'SOUTHERN_OREGON',
+  'Wheeler|41': 'SOUTHERN_OREGON',
+  'Crook|41': 'SOUTHERN_OREGON',
+  'Linn|41': 'SOUTHERN_OREGON',
+  'Deschutes|41': 'SOUTHERN_OREGON',
+  'Benton|41': 'SOUTHERN_OREGON',
+  'Lake|41': 'SOUTHERN_OREGON',
+  'Harney|41': 'SOUTHERN_OREGON',
+  'Jackson|41': 'SOUTHERN_OREGON',
+  'Josephine|41': 'SOUTHERN_OREGON',
+  'Curry|41': 'SOUTHERN_OREGON',
+  'Coos|41': 'SOUTHERN_OREGON',
+  'Siskiyou|06': 'SOUTHERN_OREGON',
+  'Modoc|06': 'SOUTHERN_OREGON',
+  'Douglas|41': 'SOUTHERN_OREGON',
+  'Jefferson|41': 'SOUTHERN_OREGON',
+  'Lincoln|41': 'SOUTHERN_OREGON',
+  // Sutter Butte
+  'Del Norte|06': 'SUTTER_BUTTE',
+  'Humboldt|06': 'SUTTER_BUTTE',
+  'Trinity|06': 'SUTTER_BUTTE',
+  'Shasta|06': 'SUTTER_BUTTE',
+  'Lassen|06': 'SUTTER_BUTTE',
+  'Tehama|06': 'SUTTER_BUTTE',
+  'Plumas|06': 'SUTTER_BUTTE',
+  'Glenn|06': 'SUTTER_BUTTE',
+  'Colusa|06': 'SUTTER_BUTTE',
+  'Butte|06': 'SUTTER_BUTTE',
+  'Sierra|06': 'SUTTER_BUTTE',
+  'Nevada|06': 'SUTTER_BUTTE',
+  'Yuba|06': 'SUTTER_BUTTE',
+  // Sacramento
+  'Washoe|32': 'SACRAMENTO',
+  'Pershing|32': 'SACRAMENTO',
+  'Churchill|32': 'SACRAMENTO',
+  'Lander|32': 'SACRAMENTO',
+  'Eureka|32': 'SACRAMENTO',
+  'Storey|32': 'SACRAMENTO',
+  'Lyon|32': 'SACRAMENTO',
+  'Carson City|32': 'SACRAMENTO',
+  'Douglas|32': 'SACRAMENTO',
+  'Humboldt|32': 'SACRAMENTO',
+  'Nye|32': 'SACRAMENTO',
+  'Mineral|32': 'SACRAMENTO',
+  'Esmeralda|32': 'SACRAMENTO',
+  'Mono|06': 'SACRAMENTO',
+  'Alpine|06': 'SACRAMENTO',
+  'Tuolumne|06': 'SACRAMENTO',
+  'El Dorado|06': 'SACRAMENTO',
+  'Placer|06': 'SACRAMENTO',
+  'Sutter|06': 'SACRAMENTO',
+  'Yolo|06': 'SACRAMENTO',
+  'Sacramento|06': 'SACRAMENTO',
+  'Solano|06': 'SACRAMENTO',
+  'Contra Costa|06': 'SACRAMENTO',
+};
+
+// Export the mapping for backward compatibility
+export const COUNTY_TO_REGION = COUNTY_TO_REGION_INTERNAL;
 
 // Build MapLibre expression for fill-color
 function buildColorExpression() {
@@ -235,6 +408,41 @@ function buildFilteredOpacityExpression(
   // Default: transparent for non-filtered counties
   cases.push(0);
   return ['case', ...cases];
+}
+
+// Map Legend Component
+function MapLegend() {
+  const regionOrder: (keyof typeof REGIONS)[] = [
+    'PUGET_SOUND',
+    'INLAND_NW',
+    'NORTHERN_OREGON',
+    'SOUTHERN_OREGON',
+    'SUTTER_BUTTE',
+    'SACRAMENTO',
+  ];
+
+  return (
+    <div className="absolute top-6 right-6 bg-card/95 backdrop-blur-sm border border-border rounded-lg p-4 shadow-lg z-10 min-w-[200px]">
+      <h3 className="text-sm font-semibold mb-3 text-foreground">Region Key</h3>
+      <div className="space-y-2">
+        {regionOrder.map((regionKey) => {
+          const region = REGIONS[regionKey];
+          return (
+            <div key={regionKey} className="flex items-center gap-3">
+              <div
+                className="w-5 h-5 rounded border border-border/50 flex-shrink-0"
+                style={{
+                  backgroundColor: region.color,
+                  opacity: region.opacity + 0.3,
+                }}
+              />
+              <span className="text-xs text-foreground/90">{region.name}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 export function MapView({ selectedCounty, counties = [], filteredCounties }: MapViewProps) {
@@ -409,6 +617,9 @@ export function MapView({ selectedCounty, counties = [], filteredCounties }: Map
 
 
       </Map>
+
+      {/* Map Legend */}
+      <MapLegend />
 
       {/* Hover tooltip */}
       {hoverInfo && (

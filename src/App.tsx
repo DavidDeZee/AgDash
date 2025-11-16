@@ -19,6 +19,7 @@ export default function App() {
     selectedCounty,
     comparisonCounties,
     selectedStates,
+    selectedLocations,
     croplandRange,
     farmsRange,
     sortField,
@@ -57,6 +58,7 @@ export default function App() {
     // Otherwise, use standard filtering
     const filters = {
       states: selectedStates,
+      locations: selectedLocations,
       minCroplandAcres: croplandRange[0] ?? undefined,
       maxCroplandAcres: croplandRange[1] ?? undefined,
       minFarms: farmsRange[0] ?? undefined,
@@ -66,7 +68,7 @@ export default function App() {
 
     const filtered = filterCounties(allCounties, filters);
     return sortCounties(filtered, { field: sortField, direction: sortDirection });
-  }, [allCounties, selectedStates, croplandRange, farmsRange, searchQuery, sortField, sortDirection, isNaturalLanguageQuery]);
+  }, [allCounties, selectedStates, selectedLocations, croplandRange, farmsRange, searchQuery, sortField, sortDirection, isNaturalLanguageQuery]);
 
   // Calculate KPIs
   const kpis = useMemo(() => {

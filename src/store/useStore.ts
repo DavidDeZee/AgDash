@@ -8,6 +8,7 @@ interface DashboardState {
 
   // Filters
   selectedStates: string[];
+  selectedLocations: string[];
   croplandRange: [number | null, number | null];
   farmsRange: [number | null, number | null];
 
@@ -25,6 +26,7 @@ interface DashboardState {
   clearComparison: () => void;
 
   setSelectedStates: (states: string[]) => void;
+  setSelectedLocations: (locations: string[]) => void;
   setCroplandRange: (range: [number | null, number | null]) => void;
   setFarmsRange: (range: [number | null, number | null]) => void;
 
@@ -41,6 +43,7 @@ export const useStore = create<DashboardState>((set) => ({
   selectedCounty: null,
   comparisonCounties: [],
   selectedStates: [],
+  selectedLocations: [],
   croplandRange: [null, null],
   farmsRange: [null, null],
   sortField: 'croplandAcres',
@@ -65,6 +68,7 @@ export const useStore = create<DashboardState>((set) => ({
   clearComparison: () => set({ comparisonCounties: [] }),
 
   setSelectedStates: (states) => set({ selectedStates: states }),
+  setSelectedLocations: (locations) => set({ selectedLocations: locations }),
   setCroplandRange: (range) => set({ croplandRange: range }),
   setFarmsRange: (range) => set({ farmsRange: range }),
 
@@ -76,6 +80,7 @@ export const useStore = create<DashboardState>((set) => ({
   resetFilters: () =>
     set({
       selectedStates: [],
+      selectedLocations: [],
       croplandRange: [null, null],
       farmsRange: [null, null],
       searchQuery: '',
