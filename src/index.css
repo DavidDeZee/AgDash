@@ -1,6 +1,9 @@
 /* MapLibre GL CSS - must be first */
 @import 'maplibre-gl/dist/maplibre-gl.css';
 
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -57,4 +60,10 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground));
+}
+
+/* Custom font for Agriculture & Turf heading */
+.agriculture-title {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
 }

@@ -1,17 +1,22 @@
 import { useMemo } from 'react';
 import { useAgData } from './hooks/useAgData';
+import { useMobileDetection } from './hooks/useMobileDetection';
 import { useStore } from './store/useStore';
 import { MapView } from './components/modern/MapView';
 import { KPICards } from './components/modern/KPICards';
 import { FilterPanel } from './components/modern/FilterPanel';
 import { CountyList } from './components/modern/CountyList';
 import { ComparisonDrawer } from './components/modern/ComparisonDrawer';
+import { MobileWarning } from './components/modern/MobileWarning';
 import { filterCounties, sortCounties, getUniqueStates } from './utils/dataUtils';
 import { parseQuery } from './utils/queryParser';
 import papeLogo from './assets/pape-logo.svg';
 // import { BarChart3 } from 'lucide-react';
 
 export default function App() {
+  // Mobile detection
+  const isMobile = useMobileDetection(1024);
+
   // Load data
   const { data: allCounties, loading, error } = useAgData();
 
@@ -113,71 +118,76 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden">
-      {/* Header */}
-      <header className="border-b border-border bg-card px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img src={papeLogo} alt="Company Logo" className="h-17 w-auto" />
-          <div>
-            <h1 className="text-2xl font-bold">Agriculture & Turf</h1>
-            <p className="text-sm text-muted-foreground">
-              {/* Pacific Northwest, California & Nevada - USDA County Data 2022 */}
-            </p>
+    <>
+      {/* Mobile Warning Overlay */}
+      {isMobile && <MobileWarning />}
+
+      <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden">
+        {/* Header */}
+        <header className="border-b border-border bg-card px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src={papeLogo} alt="Company Logo" className="h-12 w-auto" />
+            <div>
+              <h1 className="text-2xl font-bold agriculture-title">Agriculture & Turf</h1>
+              <p className="text-sm text-muted-foreground">
+                {/* Pacific Northwest, California & Nevada - USDA County Data 2022 */}
+              </p>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Sidebar - Filters */}
-        <aside className="w-80 border-r border-border bg-card overflow-y-auto">
-          <FilterPanel availableStates={availableStates} />
-        </aside>
+        {/* Main Content */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* Left Sidebar - Filters */}
+          <aside className="w-80 border-r border-border bg-card overflow-y-auto">
+            <FilterPanel availableStates={availableStates} />
+          </aside>
 
-        {/* Center - Map & KPIs */}
-        <main className="flex-1 flex flex-col overflow-hidden">
-          {/* KPI Cards */}
-          <div className="p-6 border-b border-border">
-            <KPICards
-              totalCounties={kpis.totalCounties}
-              totalFarms={kpis.totalFarms}
-              totalCropland={kpis.totalCropland}
-              totalIrrigated={kpis.totalIrrigated}
-            />
-          </div>
-
-          {/* Map */}
-          <div className="flex-1 relative">
-            <MapView
-              selectedCounty={selectedCounty}
-              counties={allCounties}
-              filteredCounties={filteredAndSortedCounties}
-            />
-          </div>
-        </main>
-
-        {/* Right Sidebar - County List / Comparison */}
-        <aside className="w-96 border-l border-border bg-card flex flex-col overflow-hidden">
-          {comparisonCounties.length > 0 ? (
-            <ComparisonDrawer
-              counties={comparisonCounties}
-              onRemove={removeFromComparison}
-              onClear={() => {
-                // Clear all comparison counties
-                comparisonCounties.forEach(c => removeFromComparison(c.id));
-              }}
-            />
-          ) : (
-            <div className="flex-1 overflow-y-auto p-6">
-              <CountyList
-                counties={filteredAndSortedCounties}
-                selectedCounty={selectedCounty}
-                onCountySelect={setSelectedCounty}
+          {/* Center - Map & KPIs */}
+          <main className="flex-1 flex flex-col overflow-hidden">
+            {/* KPI Cards */}
+            <div className="p-6 border-b border-border">
+              <KPICards
+                totalCounties={kpis.totalCounties}
+                totalFarms={kpis.totalFarms}
+                totalCropland={kpis.totalCropland}
+                totalIrrigated={kpis.totalIrrigated}
               />
             </div>
-          )}
-        </aside>
+
+            {/* Map */}
+            <div className="flex-1 relative">
+              <MapView
+                selectedCounty={selectedCounty}
+                counties={allCounties}
+                filteredCounties={filteredAndSortedCounties}
+              />
+            </div>
+          </main>
+
+          {/* Right Sidebar - County List / Comparison */}
+          <aside className="w-96 border-l border-border bg-card flex flex-col overflow-hidden">
+            {comparisonCounties.length > 0 ? (
+              <ComparisonDrawer
+                counties={comparisonCounties}
+                onRemove={removeFromComparison}
+                onClear={() => {
+                  // Clear all comparison counties
+                  comparisonCounties.forEach(c => removeFromComparison(c.id));
+                }}
+              />
+            ) : (
+              <div className="flex-1 overflow-y-auto p-6">
+                <CountyList
+                  counties={filteredAndSortedCounties}
+                  selectedCounty={selectedCounty}
+                  onCountySelect={setSelectedCounty}
+                />
+              </div>
+            )}
+          </aside>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
