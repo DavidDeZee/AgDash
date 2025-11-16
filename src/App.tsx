@@ -8,7 +8,7 @@ import { CountyList } from './components/modern/CountyList';
 import { ComparisonDrawer } from './components/modern/ComparisonDrawer';
 import { filterCounties, sortCounties, getUniqueStates } from './utils/dataUtils';
 import { parseQuery } from './utils/queryParser';
-import { BarChart3 } from 'lucide-react';
+// import { BarChart3 } from 'lucide-react';
 
 export default function App() {
   // Load data
