@@ -145,7 +145,11 @@ export default function App() {
 
           {/* Map */}
           <div className="flex-1 relative">
-            <MapView selectedCounty={selectedCounty} counties={allCounties} />
+            <MapView
+              selectedCounty={selectedCounty}
+              counties={allCounties}
+              filteredCounties={filteredAndSortedCounties}
+            />
           </div>
         </main>
 

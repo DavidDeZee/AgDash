@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import Map, { Source, Layer } from 'react-map-gl/maplibre';
 import type { MapRef, MapLayerMouseEvent } from 'react-map-gl/maplibre';
 import type { EnhancedCountyData } from '../../types/ag';
@@ -8,6 +8,7 @@ interface MapViewProps {
   selectedCounty: EnhancedCountyData | null;
   onCountyClick?: (county: EnhancedCountyData) => void;
   counties?: EnhancedCountyData[];
+  filteredCounties?: EnhancedCountyData[];
 }
 
 interface HoverInfo {
@@ -183,11 +184,112 @@ function buildOpacityExpression() {
   return ['case', ...cases];
 }
 
-export function MapView({ selectedCounty, counties = [] }: MapViewProps) {
+// Build expression that checks if a county is in the filtered set
+function buildFilteredColorExpression(
+  filteredSet: Set<string> | null,
+  fipsToState: Record<string, string>
+) {
+  if (!filteredSet) {
+    // No filter active - show all counties with their original colors
+    return buildColorExpression();
+  }
+
+  // Filter is active - highlight only filtered counties
+  const cases: any[] = [];
+
+  // Build a comprehensive condition for each county/state combination
+  Object.entries(COUNTY_COLORS).forEach(([county, { color }]) => {
+    // Check each state to see if this county+state combo is in the filtered set
+    const stateConditions: any[] = [];
+
+    Object.entries(fipsToState).forEach(([stateFips, stateName]) => {
+      const key = `${county.toUpperCase()}|${stateName.toUpperCase()}`;
+      if (filteredSet.has(key)) {
+        // Add condition: county name matches AND state FIPS matches
+        stateConditions.push([
+          'all',
+          ['==', ['get', 'NAME'], county],
+          ['==', ['get', 'STATEFP'], stateFips],
+        ]);
+      }
+    });
+
+    // If any state matches for this county, add to cases
+    if (stateConditions.length > 0) {
+      if (stateConditions.length === 1) {
+        cases.push(stateConditions[0], color);
+      } else {
+        // Multiple states have this county in the filter
+        cases.push(['any', ...stateConditions], color);
+      }
+    }
+  });
+
+  // Default: transparent for non-filtered counties
+  cases.push('rgba(0, 0, 0, 0)');
+  return ['case', ...cases];
+}
+
+// Build expression for opacity based on filter
+function buildFilteredOpacityExpression(
+  filteredSet: Set<string> | null,
+  fipsToState: Record<string, string>
+) {
+  if (!filteredSet) {
+    // No filter active - show all counties with their original opacity
+    return buildOpacityExpression();
+  }
+
+  // Filter is active - show only filtered counties
+  const cases: any[] = [];
+
+  Object.entries(COUNTY_COLORS).forEach(([county, { opacity }]) => {
+    const stateConditions: any[] = [];
+
+    Object.entries(fipsToState).forEach(([stateFips, stateName]) => {
+      const key = `${county.toUpperCase()}|${stateName.toUpperCase()}`;
+      if (filteredSet.has(key)) {
+        stateConditions.push([
+          'all',
+          ['==', ['get', 'NAME'], county],
+          ['==', ['get', 'STATEFP'], stateFips],
+        ]);
+      }
+    });
+
+    if (stateConditions.length > 0) {
+      if (stateConditions.length === 1) {
+        cases.push(stateConditions[0], opacity * 1.5); // Make filtered counties more prominent
+      } else {
+        cases.push(['any', ...stateConditions], opacity * 1.5);
+      }
+    }
+  });
+
+  // Default: transparent for non-filtered counties
+  cases.push(0);
+  return ['case', ...cases];
+}
+
+export function MapView({ selectedCounty, counties = [], filteredCounties }: MapViewProps) {
   const mapRef = useRef<MapRef>(null);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
   const [hoveredCountyId, setHoveredCountyId] = useState<string | number | null>(null);
   const [countiesData, setCountiesData] = useState<any>(null);
+
+  // Create a Set of filtered county names+states for quick lookup
+  const filteredCountySet = useMemo(() => {
+    if (!filteredCounties || filteredCounties.length === 0) {
+      return null; // Show all counties with their original colors if no filter
+    }
+    const set = new Set<string>();
+    filteredCounties.forEach((county) => {
+      // Create unique key: "COUNTYNAME|STATENAME" (both uppercase)
+      const key = `${county.countyName.toUpperCase()}|${county.stateName.toUpperCase()}`;
+      set.add(key);
+    });
+    return set;
+  }, [filteredCounties]);
 
   // Load GeoJSON data
   useEffect(() => {
@@ -277,8 +379,8 @@ export function MapView({ selectedCounty, counties = [] }: MapViewProps) {
     }
   };
 
-  // Layer styles
-  const countyFillLayer = {
+  // Layer styles - memoized to update when filter changes
+  const countyFillLayer = useMemo(() => ({
     id: 'counties-fill',
     type: 'fill' as const,
     paint: {
@@ -286,16 +388,16 @@ export function MapView({ selectedCounty, counties = [] }: MapViewProps) {
         'case',
         ['boolean', ['feature-state', 'hover'], false],
         'hsl(48, 100%, 50%)', // Yellow on hover
-        buildColorExpression(),
+        buildFilteredColorExpression(filteredCountySet, FIPS_TO_STATE),
       ] as any,
       'fill-opacity': [
         'case',
         ['boolean', ['feature-state', 'hover'], false],
         0.7, // More opaque on hover
-        buildOpacityExpression(),
+        buildFilteredOpacityExpression(filteredCountySet, FIPS_TO_STATE),
       ] as any,
     },
-  };
+  }), [filteredCountySet]);
 
   const countyOutlineLayer = {
     id: 'counties-outline',
