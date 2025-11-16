@@ -67,3 +67,10 @@
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.05em;
 }
+
+/* Desktop scaling to 80% */
+@media (min-width: 768px) {
+  html {
+    zoom: 0.87;
+  }
+}
