@@ -145,7 +145,7 @@ export default function App() {
 
           {/* Map */}
           <div className="flex-1 relative">
-            <MapView selectedCounty={selectedCounty} />
+            <MapView selectedCounty={selectedCounty} counties={allCounties} />
           </div>
         </main>
 

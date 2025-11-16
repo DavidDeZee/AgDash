@@ -7,6 +7,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 interface MapViewProps {
   selectedCounty: EnhancedCountyData | null;
   onCountyClick?: (county: EnhancedCountyData) => void;
+  counties?: EnhancedCountyData[];
 }
 
 interface HoverInfo {
@@ -14,7 +15,16 @@ interface HoverInfo {
   stateName: string;
   x: number;
   y: number;
+  countyData?: EnhancedCountyData;
 }
+
+// FIPS code to state name mapping
+const FIPS_TO_STATE: Record<string, string> = {
+  '06': 'CALIFORNIA',
+  '32': 'NEVADA',
+  '41': 'OREGON',
+  '53': 'WASHINGTON',
+};
 
 // County color mapping by region
 const COUNTY_COLORS: Record<string, { color: string; opacity: number }> = {
@@ -173,7 +183,7 @@ function buildOpacityExpression() {
   return ['case', ...cases];
 }
 
-export function MapView({ selectedCounty }: MapViewProps) {
+export function MapView({ selectedCounty, counties = [] }: MapViewProps) {
   const mapRef = useRef<MapRef>(null);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
   const [hoveredCountyId, setHoveredCountyId] = useState<string | number | null>(null);
@@ -215,11 +225,23 @@ export function MapView({ selectedCounty }: MapViewProps) {
         { hover: true }
       );
 
+      const countyName = feature.properties.NAME || feature.properties.name;
+      const stateFips = feature.properties.STATEFP;
+      const stateName = FIPS_TO_STATE[stateFips] || '';
+
+      // Look up county data from the counties array
+      // Convert to uppercase to match CSV data format
+      const countyData = counties.find(
+        (c) => c.countyName.toUpperCase() === countyName.toUpperCase() &&
+               c.stateName.toUpperCase() === stateName.toUpperCase()
+      );
+
       setHoverInfo({
-        countyName: feature.properties.NAME || feature.properties.name,
-        stateName: feature.properties.STATE_NAME || feature.properties.state,
+        countyName,
+        stateName: stateName ? stateName.charAt(0) + stateName.slice(1).toLowerCase() : '',
         x: event.point.x,
         y: event.point.y,
+        countyData,
       });
 
       // Change cursor
@@ -323,18 +345,49 @@ export function MapView({ selectedCounty }: MapViewProps) {
       {/* Hover tooltip */}
       {hoverInfo && (
         <div
-          className="absolute bg-card border border-border rounded-md px-3 py-2 shadow-lg pointer-events-none z-10"
+          className="absolute bg-card border border-border rounded-md px-3 py-2 shadow-lg pointer-events-none z-10 min-w-[220px]"
           style={{
             left: hoverInfo.x + 10,
             top: hoverInfo.y + 10,
           }}
         >
-          <div className="font-semibold text-sm">
+          <div className="font-semibold text-sm mb-1">
             {hoverInfo.countyName}
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-muted-foreground mb-2">
             {hoverInfo.stateName}
           </div>
+
+          {hoverInfo.countyData ? (
+            <div className="space-y-1 border-t border-border pt-2">
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">Farms:</span>
+                <span className="font-medium">{hoverInfo.countyData.farms.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">Cropland:</span>
+                <span className="font-medium">
+                  {(hoverInfo.countyData.croplandAcres / 1000).toFixed(1)}K ac
+                </span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">Irrigated:</span>
+                <span className="font-medium">
+                  {(hoverInfo.countyData.irrigatedAcres / 1000).toFixed(1)}K ac
+                </span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">Land in Farms:</span>
+                <span className="font-medium">
+                  {(hoverInfo.countyData.landInFarmsAcres / 1000).toFixed(1)}K ac
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="text-xs text-muted-foreground italic">
+              No data available
+            </div>
+          )}
         </div>
       )}
 
