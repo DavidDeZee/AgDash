@@ -14,6 +14,15 @@ export interface CountyData {
   harvestedCroplandAcres: number;
   irrigatedAcres: number;
   landInFarmsAcres: number;
+  marketValueTotalDollars: number;
+  cropsSalesDollars: number;
+  livestockSalesDollars: number;
+  govPaymentsDollars: number;
+  netCashIncomeDollars: number;
+  cattleHead: number;
+  milkCowsHead: number;
+  vegHarvestOps: number;
+  internetAccessPct: number;
 }
 
 /**

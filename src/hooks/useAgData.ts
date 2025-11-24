@@ -53,9 +53,10 @@ function parseCSV(csvText: string): CountyData[] {
     const values = line.split(',');
 
     // Helper to safely parse numbers, returning 0 for empty/invalid values
-    const parseNumber = (value: string): number => {
+    const parseNumber = (value: string | undefined): number => {
+      if (!value) return 0;
       const trimmed = value.trim();
-      if (!trimmed || trimmed === '') return 0;
+      if (trimmed === '') return 0;
       const parsed = parseFloat(trimmed);
       return isNaN(parsed) ? 0 : parsed;
     };
@@ -71,6 +72,15 @@ function parseCSV(csvText: string): CountyData[] {
       harvestedCroplandAcres: parseNumber(values[7]),
       irrigatedAcres: parseNumber(values[8]),
       landInFarmsAcres: parseNumber(values[9]),
+      marketValueTotalDollars: parseNumber(values[10]),
+      cropsSalesDollars: parseNumber(values[11]),
+      livestockSalesDollars: parseNumber(values[12]),
+      govPaymentsDollars: parseNumber(values[13]),
+      netCashIncomeDollars: parseNumber(values[14]),
+      cattleHead: parseNumber(values[15]),
+      milkCowsHead: parseNumber(values[16]),
+      vegHarvestOps: parseNumber(values[17]),
+      internetAccessPct: parseNumber(values[18]),
     };
   });
 }

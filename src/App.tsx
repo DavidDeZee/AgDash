@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useAgData } from './hooks/useAgData';
 import { useMobileDetection } from './hooks/useMobileDetection';
+import type { EnhancedCountyData } from './types/ag';
 import { useStore } from './store/useStore';
 import { MapView } from './components/modern/MapView';
 import { KPICards } from './components/modern/KPICards';
@@ -8,6 +9,7 @@ import { FilterPanel } from './components/modern/FilterPanel';
 import { CountyList } from './components/modern/CountyList';
 import { ComparisonDrawer } from './components/modern/ComparisonDrawer';
 import { MobileWarning } from './components/modern/MobileWarning';
+import { CountyDetailModal } from './components/modern/CountyDetailModal';
 import { filterCounties, sortCounties, getUniqueStates } from './utils/dataUtils';
 import { parseQuery } from './utils/queryParser';
 import papeLogo from './assets/pape-logo.svg';
@@ -85,8 +87,15 @@ export default function App() {
       totalFarms: counties.reduce((sum, c) => sum + c.farms, 0),
       totalCropland: counties.reduce((sum, c) => sum + c.croplandAcres, 0),
       totalIrrigated: counties.reduce((sum, c) => sum + c.irrigatedAcres, 0),
+      totalMarketValue: counties.reduce((sum, c) => sum + c.marketValueTotalDollars, 0),
+      totalCropsSales: counties.reduce((sum, c) => sum + c.cropsSalesDollars, 0),
+      totalLivestockSales: counties.reduce((sum, c) => sum + c.livestockSalesDollars, 0),
+      totalCattle: counties.reduce((sum, c) => sum + c.cattleHead, 0),
+      totalMilkCows: counties.reduce((sum, c) => sum + c.milkCowsHead, 0),
     };
   }, [filteredAndSortedCounties, allCounties]);
+
+  const [detailCounty, setDetailCounty] = useState<EnhancedCountyData | null>(null);
 
   // Loading state
   if (loading) {
@@ -122,6 +131,13 @@ export default function App() {
       {/* Mobile Warning Overlay */}
       {isMobile && <MobileWarning />}
 
+      {/* Detail Modal */}
+      <CountyDetailModal
+        county={detailCounty}
+        allCounties={allCounties}
+        onClose={() => setDetailCounty(null)}
+      />
+
       <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden">
         {/* Header */}
         <header className="border-b border-border bg-card px-6 py-4 flex items-center justify-between">
@@ -148,10 +164,9 @@ export default function App() {
             {/* KPI Cards */}
             <div className="p-6 border-b border-border">
               <KPICards
-                totalCounties={kpis.totalCounties}
                 totalFarms={kpis.totalFarms}
                 totalCropland={kpis.totalCropland}
-                totalIrrigated={kpis.totalIrrigated}
+                totalMarketValue={kpis.totalMarketValue}
               />
             </div>
 
@@ -161,6 +176,10 @@ export default function App() {
                 selectedCounty={selectedCounty}
                 counties={allCounties}
                 filteredCounties={filteredAndSortedCounties}
+                onCountyClick={(county) => {
+                  setSelectedCounty(county);
+                  setDetailCounty(county);
+                }}
               />
             </div>
           </main>
@@ -181,7 +200,10 @@ export default function App() {
                 <CountyList
                   counties={filteredAndSortedCounties}
                   selectedCounty={selectedCounty}
-                  onCountySelect={setSelectedCounty}
+                  onCountySelect={(county) => {
+                    setSelectedCounty(county);
+                    setDetailCounty(county);
+                  }}
                 />
               </div>
             )}

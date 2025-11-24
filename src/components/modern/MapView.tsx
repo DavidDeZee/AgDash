@@ -445,7 +445,7 @@ function MapLegend() {
   );
 }
 
-export function MapView({ selectedCounty, counties = [], filteredCounties }: MapViewProps) {
+export function MapView({ selectedCounty, counties = [], filteredCounties, onCountyClick }: MapViewProps) {
   const mapRef = useRef<MapRef>(null);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
   const [hoveredCountyId, setHoveredCountyId] = useState<string | number | null>(null);
@@ -509,7 +509,7 @@ export function MapView({ selectedCounty, counties = [], filteredCounties }: Map
       // Convert to uppercase to match CSV data format
       const countyData = counties.find(
         (c) => c.countyName.toUpperCase() === countyName.toUpperCase() &&
-               c.stateName.toUpperCase() === stateName.toUpperCase()
+          c.stateName.toUpperCase() === stateName.toUpperCase()
       );
 
       setHoverInfo({
@@ -546,10 +546,20 @@ export function MapView({ selectedCounty, counties = [], filteredCounties }: Map
 
   const onClick = (event: MapLayerMouseEvent) => {
     const feature = event.features?.[0];
-    if (feature && feature.properties) {
+    if (feature && feature.properties && onCountyClick) {
       const countyName = feature.properties.NAME || feature.properties.name;
-      const stateName = feature.properties.STATE_NAME || feature.properties.state;
-      console.log('Clicked county:', countyName, stateName);
+      const stateFips = feature.properties.STATEFP;
+      const stateName = FIPS_TO_STATE[stateFips] || '';
+
+      // Look up county data
+      const countyData = counties.find(
+        (c) => c.countyName.toUpperCase() === countyName.toUpperCase() &&
+          c.stateName.toUpperCase() === stateName.toUpperCase()
+      );
+
+      if (countyData) {
+        onCountyClick(countyData);
+      }
     }
   };
 
@@ -650,15 +660,9 @@ export function MapView({ selectedCounty, counties = [], filteredCounties }: Map
                 </span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">Irrigated:</span>
+                <span className="text-muted-foreground">Market Val:</span>
                 <span className="font-medium">
-                  {(hoverInfo.countyData.irrigatedAcres / 1000).toFixed(1)}K ac
-                </span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">Land in Farms:</span>
-                <span className="font-medium">
-                  {(hoverInfo.countyData.landInFarmsAcres / 1000).toFixed(1)}K ac
+                  ${(hoverInfo.countyData.marketValueTotalDollars / 1000000).toFixed(1)}M
                 </span>
               </div>
             </div>

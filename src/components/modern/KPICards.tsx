@@ -1,27 +1,20 @@
-import { TrendingUp, MapPin, Sprout, Droplets } from 'lucide-react';
+import { TrendingUp, Sprout, DollarSign } from 'lucide-react';
 import { Card } from '../ui/Card';
-import { formatNumber, formatAcres } from '../../lib/format';
+import { formatNumber, formatAcres, formatCurrency } from '../../lib/format';
 
 interface KPICardsProps {
-  totalCounties: number;
   totalFarms: number;
   totalCropland: number;
-  totalIrrigated: number;
+  totalMarketValue: number;
 }
 
 export function KPICards({
-  totalCounties,
   totalFarms,
   totalCropland,
-  totalIrrigated,
+  totalMarketValue,
 }: KPICardsProps) {
   const kpis = [
-    {
-      label: 'Counties',
-      value: formatNumber(totalCounties),
-      icon: MapPin,
-      color: 'text-blue-400',
-    },
+
     {
       label: 'Total Farms',
       value: formatNumber(totalFarms),
@@ -35,15 +28,15 @@ export function KPICards({
       color: 'text-emerald-400',
     },
     {
-      label: 'Irrigated',
-      value: formatAcres(totalIrrigated),
-      icon: Droplets,
-      color: 'text-cyan-400',
+      label: 'Total Market Value',
+      value: formatCurrency(totalMarketValue),
+      icon: DollarSign,
+      color: 'text-yellow-400',
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {kpis.map((kpi) => {
         const Icon = kpi.icon;
         return (
