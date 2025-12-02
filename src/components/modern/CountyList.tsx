@@ -3,6 +3,7 @@ import type { EnhancedCountyData } from '../../types/ag';
 import { formatNumber, formatAcres, formatCurrency } from '../../lib/format';
 import { MapPin, Filter } from 'lucide-react';
 import type { SortField } from '../../types/ag';
+import { useStore } from '../../store/useStore';
 
 interface CountyListProps {
   counties: EnhancedCountyData[];
@@ -12,6 +13,18 @@ interface CountyListProps {
   sortField: SortField;
 }
 
+const METRIC_LABELS: Record<string, string> = {
+  farms: 'Farms',
+  croplandAcres: 'Cropland',
+  irrigatedAcres: 'Irrigated',
+  landInFarmsAcres: 'Land in Farms',
+  harvestedCroplandAcres: 'Harvested',
+  marketValueTotalDollars: 'Total Sales',
+  cropsSalesDollars: 'Crop Sales',
+  livestockSalesDollars: 'Livestock Sales',
+  countyName: 'Name'
+};
+
 export function CountyList({
   counties,
   selectedCounty,
@@ -19,6 +32,8 @@ export function CountyList({
   onConfigure,
   sortField,
 }: CountyListProps) {
+  const { sortDirection, selectedStates, selectedLocations, croplandRange, farmsRange } = useStore();
+
   if (counties.length === 0) {
     return (
       <Card className="p-8 text-center">
@@ -27,12 +42,37 @@ export function CountyList({
     );
   }
 
+  const getFilterSummary = () => {
+    const parts = [];
+
+    if (selectedStates.length > 0) {
+      parts.push(selectedStates.join(', '));
+    }
+
+    if (selectedLocations.length > 0) {
+      parts.push(`${selectedLocations.length} Regions`);
+    }
+
+    if (croplandRange[0] !== null || croplandRange[1] !== null) parts.push('Cropland Filter');
+    if (farmsRange[0] !== null || farmsRange[1] !== null) parts.push('Farms Filter');
+
+    if (parts.length === 0) return 'All Locations';
+    return parts.join(' • ');
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-semibold text-foreground">County Rankings</h3>
-          <p className="text-xs text-muted-foreground">{counties.length} counties found</p>
+          <h3 className="text-sm font-semibold text-foreground">
+            {METRIC_LABELS[sortField] || 'County Rankings'}
+            <span className="text-muted-foreground font-normal ml-1">
+              ({sortDirection === 'desc' ? 'High to Low' : 'Low to High'})
+            </span>
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {getFilterSummary()} • {counties.length} results
+          </p>
         </div>
         <button
           onClick={onConfigure}
