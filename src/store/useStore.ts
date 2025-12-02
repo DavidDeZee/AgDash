@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { EnhancedCountyData } from '../types/ag';
+import type { EnhancedCountyData, SortField } from '../types/ag';
 
 interface DashboardState {
   // Selected counties
@@ -13,7 +13,7 @@ interface DashboardState {
   farmsRange: [number | null, number | null];
 
   // Sort
-  sortField: 'countyName' | 'farms' | 'croplandAcres' | 'landInFarmsAcres' | 'irrigatedAcres';
+  sortField: SortField;
   sortDirection: 'asc' | 'desc';
 
   // Query

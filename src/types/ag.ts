@@ -57,7 +57,10 @@ export type SortField =
   | 'croplandAcres'
   | 'landInFarmsAcres'
   | 'irrigatedAcres'
-  | 'harvestedCroplandAcres';
+  | 'harvestedCroplandAcres'
+  | 'marketValueTotalDollars'
+  | 'cropsSalesDollars'
+  | 'livestockSalesDollars';
 
 export type SortDirection = 'asc' | 'desc';
 

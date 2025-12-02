@@ -10,6 +10,7 @@ import { CountyList } from './components/modern/CountyList';
 import { ComparisonDrawer } from './components/modern/ComparisonDrawer';
 import { MobileWarning } from './components/modern/MobileWarning';
 import { CountyDetailModal } from './components/modern/CountyDetailModal';
+import { RankingConfigurationModal } from './components/modern/RankingConfigurationModal';
 import { filterCounties, sortCounties, getUniqueStates } from './utils/dataUtils';
 import { parseQuery } from './utils/queryParser';
 import papeLogo from './assets/pape-logo.svg';
@@ -96,6 +97,7 @@ export default function App() {
   }, [filteredAndSortedCounties, allCounties]);
 
   const [detailCounty, setDetailCounty] = useState<EnhancedCountyData | null>(null);
+  const [isRankingModalOpen, setIsRankingModalOpen] = useState(false);
 
   // Loading state
   if (loading) {
@@ -136,6 +138,13 @@ export default function App() {
         county={detailCounty}
         allCounties={allCounties}
         onClose={() => setDetailCounty(null)}
+      />
+
+      {/* Ranking Configuration Modal */}
+      <RankingConfigurationModal
+        isOpen={isRankingModalOpen}
+        onClose={() => setIsRankingModalOpen(false)}
+        availableStates={availableStates}
       />
 
       <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden">
@@ -204,6 +213,8 @@ export default function App() {
                     setSelectedCounty(county);
                     setDetailCounty(county);
                   }}
+                  onConfigure={() => setIsRankingModalOpen(true)}
+                  sortField={sortField}
                 />
               </div>
             )}
