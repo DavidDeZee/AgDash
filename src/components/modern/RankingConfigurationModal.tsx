@@ -80,6 +80,12 @@ export function RankingConfigurationModal({
         setLocalSelectedLocations([]);
         setLocalSortField('croplandAcres');
         setLocalSortDirection('desc');
+
+        // Apply to store immediately
+        setSelectedStates([]);
+        setSelectedLocations([]);
+        setSortField('croplandAcres');
+        setSortDirection('desc');
     };
 
     const toggleState = (state: string) => {
@@ -109,7 +115,7 @@ export function RankingConfigurationModal({
             >
                 {/* Header */}
                 <div className="bg-card border-b border-border p-4 flex items-center justify-between">
-                    <h2 className="text-lg font-bold">Configure Rankings</h2>
+                    <h2 className="text-lg font-bold">Filter Configuration</h2>
                     <button
                         onClick={onClose}
                         className="p-2 hover:bg-secondary rounded-full transition-colors"
@@ -272,7 +278,7 @@ export function RankingConfigurationModal({
                 <div className="bg-secondary/20 border-t border-border p-4 flex justify-between items-center gap-3">
                     <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground hover:text-foreground">
                         <RotateCcw className="h-4 w-4 mr-2" />
-                        Reset Defaults
+                        Reset Filters
                     </Button>
                     <div className="flex gap-3">
                         <Button variant="outline" onClick={onClose}>

@@ -5,18 +5,13 @@ import { Button } from '../ui/Button';
 import { useStore } from '../../store/useStore';
 import { useState } from 'react';
 
-interface FilterPanelProps {
-  availableStates: string[];
-}
-
-export function FilterPanel({ availableStates }: FilterPanelProps) {
+export function FilterPanel() {
   const {
     selectedStates,
     selectedLocations,
     croplandRange,
     farmsRange,
     searchQuery,
-    setSelectedStates,
 
     setCroplandRange,
     setFarmsRange,
@@ -47,15 +42,6 @@ export function FilterPanel({ availableStates }: FilterPanelProps) {
       handleQuerySubmit();
     }
   };
-
-  const toggleState = (state: string) => {
-    if (selectedStates.includes(state)) {
-      setSelectedStates(selectedStates.filter((s) => s !== state));
-    } else {
-      setSelectedStates([...selectedStates, state]);
-    }
-  };
-
 
 
   const hasActiveFilters =
@@ -158,27 +144,6 @@ export function FilterPanel({ availableStates }: FilterPanelProps) {
           </Button>
         )}
       </div>
-
-      {/* States */}
-      <Card className="p-4">
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium">States</h4>
-          <div className="flex flex-wrap gap-2">
-            {availableStates.map((state) => (
-              <button
-                key={state}
-                onClick={() => toggleState(state)}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${selectedStates.includes(state)
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                  }`}
-              >
-                {state}
-              </button>
-            ))}
-          </div>
-        </div>
-      </Card>
 
 
 
