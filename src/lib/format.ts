@@ -26,6 +26,13 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
+export function formatCurrencyMillions(amount: number): string {
+  if (amount >= 1_000_000) {
+    return `$${(amount / 1_000_000).toFixed(1)}M`;
+  }
+  return formatCurrency(amount);
+}
+
 export function formatPercentage(value: number): string {
   return `${value.toFixed(1)}%`;
 }
