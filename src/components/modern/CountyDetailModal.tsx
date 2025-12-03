@@ -1,6 +1,6 @@
 import { X, MapPin, TrendingUp, Sprout, DollarSign, Beef, Milk, Tractor } from 'lucide-react';
 import type { EnhancedCountyData } from '../../types/ag';
-import { formatNumber, formatAcres, formatCurrency } from '../../lib/format';
+import { formatNumber, formatAcres, formatCurrency, formatCurrencyMillions } from '../../lib/format';
 
 interface CountyDetailModalProps {
     county: EnhancedCountyData | null;
@@ -67,7 +67,7 @@ export function CountyDetailModal({ county, allCounties, onClose }: CountyDetail
                         </div>
                         <div className="p-4 bg-secondary/50 rounded-lg space-y-1">
                             <p className="text-xs text-muted-foreground uppercase tracking-wider">Market Value</p>
-                            <p className="text-xl font-bold text-yellow-500">{formatCurrency(county.marketValueTotalDollars)}</p>
+                            <p className="text-xl font-bold text-yellow-500">{formatCurrencyMillions(county.marketValueTotalDollars)}</p>
                             <p className="text-xs text-primary font-medium">#{rankings.marketValue} in {county.stateName}</p>
                         </div>
                         <div className="p-4 bg-secondary/50 rounded-lg space-y-1">
