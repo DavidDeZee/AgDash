@@ -29,6 +29,11 @@ const FIPS_TO_STATE: Record<string, string> = {
   '30': 'MONTANA',
 };
 
+export const MAP_BOUNDS = {
+  SOUTHWEST: [-130.0, 32.4] as [number, number],
+  NORTHEAST: [-94.8, 49.4] as [number, number],
+};
+
 // Region definitions
 export const REGIONS = {
   PUGET_SOUND: {
@@ -635,10 +640,14 @@ export function MapView({ selectedCounty, counties = [], filteredCounties, onCou
       <Map
         ref={mapRef}
         initialViewState={{
-          latitude: 43.5,
-          longitude: -120.5,
-          zoom: 4.5,
+          latitude: 41.0,
+          longitude: -113.5,
+          zoom: 4,
         }}
+        maxBounds={[
+          MAP_BOUNDS.SOUTHWEST,
+          MAP_BOUNDS.NORTHEAST
+        ]}
         style={{ width: '100%', height: '100%' }}
         mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
         interactiveLayerIds={['counties-fill', 'counties-outline']}
