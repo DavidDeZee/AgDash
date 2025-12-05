@@ -617,12 +617,7 @@ export function MapView({ selectedCounty, counties = [], filteredCounties, onCou
         '#ffffff', // White border on hover
         '#6b7280', // Gray color default
       ] as any,
-      'line-width': [
-        'case',
-        ['boolean', ['feature-state', 'hover'], false],
-        3, // Thicker border on hover
-        1, // Default width
-      ] as any,
+      'line-width': 1,
       'line-opacity': [
         'case',
         ['boolean', ['feature-state', 'hover'], false],
@@ -637,7 +632,7 @@ export function MapView({ selectedCounty, counties = [], filteredCounties, onCou
     type: 'line' as const,
     paint: {
       'line-color': '#ffffff',
-      'line-width': 3,
+      'line-width': 1,
       'line-opacity': [
         'case',
         ['boolean', ['feature-state', 'hover'], false],
