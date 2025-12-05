@@ -21,64 +21,40 @@ COMMON_PARAMS = {
 TARGET_STATES = ["OR", "WA", "CA", "NV", "ID", "MT"]
 
 # --- Metrics Dictionary ------------------------------------------------------
+# FORMAT: {col_name_to_create: (short_desc_string, extra_params_dict)}
 
 METRICS = {
-    # --- CORE LAND & OPERATIONS ---
-    "farms": ("FARM OPERATIONS - NUMBER OF OPERATIONS", None),
-    "land_owned_acres": ("AG LAND, OWNED, IN FARMS - ACRES", None),
-    "land_rented_acres": ("AG LAND, RENTED FROM OTHERS, IN FARMS - ACRES", None),
-    "cropland_acres": ("AG LAND, CROPLAND - ACRES", None),
-    "harvested_cropland_acres": ("AG LAND, CROPLAND, HARVESTED - ACRES", None),
-    "irrigated_acres": ("AG LAND, IRRIGATED - ACRES", {"prodn_practice_desc": "IRRIGATED"}),
-
-    # --- FINANCIALS (Key for Sales Potential) ---
-    "market_value_total_dollars": ("COMMODITY TOTALS - SALES, MEASURED IN $", None),
-    "crops_sales_dollars": ("CROP TOTALS - SALES, MEASURED IN $", None),
-    "livestock_sales_dollars": ("ANIMAL TOTALS, INCL PRODUCTS - SALES, MEASURED IN $", None),
-    "gov_payments_dollars": ("GOVT PROGRAMS, FEDERAL - RECEIPTS, MEASURED IN $", None),
-    "net_cash_income_dollars": ("INCOME, NET CASH FARM, OF OPERATIONS - NET INCOME, MEASURED IN $", None),
-
-    # --- LIVESTOCK SPECIFICS (Equipment Targeting) ---
-    "cattle_head": ("CATTLE, INCL CALVES - INVENTORY", None),
-    "beef_cattle_head": ("CATTLE, COWS, BEEF - INVENTORY", None),
-    "dairy_cattle_head": ("CATTLE, COWS, MILK - INVENTORY", None),
-    "milk_cows_head": ("CATTLE, COWS, MILK - INVENTORY", None), # Keeping for backward compatibility if needed, or remove if redundant. User asked for separate categories.
-
-    # --- CROP SPECIFICS ---
-    # Using 'Operations with Area Harvested' because acreage is often suppressed for veg
-    "veg_harvest_ops": ("VEGETABLE TOTALS, IN THE OPEN - OPERATIONS WITH AREA HARVESTED", None),
+    # --- NEW METRICS ONLY ---
+#     "apples_acres": ("APPLES - ACRES BEARING & NON-BEARING", None),
+#     "wheat_acres": ("WHEAT - ACRES HARVESTED", None),
+    # "rice_acres": ("RICE - ACRES HARVESTED", None),
+#     "hazelnuts_acres": ("HAZELNUTS - ACRES BEARING & NON-BEARING", None),
     
-    # --- NEW METRICS ---
-    "apples_acres": ("APPLES - ACRES BEARING & NON-BEARING", None),
-    "wheat_acres": ("WHEAT - ACRES HARVESTED", None),
-    "rice_acres": ("RICE - ACRES HARVESTED", None),
-    "hazelnuts_acres": ("HAZELNUTS - ACRES BEARING & NON-BEARING", None),
-    
-    # Grass Seeds
-    "grass_seed_bentgrass_acres": ("GRASSES, BENTGRASS, SEED - ACRES HARVESTED", None),
-    "grass_seed_bermudagrass_acres": ("GRASSES, BERMUDA GRASS, SEED - ACRES HARVESTED", None),
-    "grass_seed_bluegrass_acres": ("GRASSES, BLUEGRASS, KENTUCKY, SEED - ACRES HARVESTED", None),
-    "grass_seed_bromegrass_acres": ("GRASSES, BROMEGRASS, SEED - ACRES HARVESTED", None),
-    "grass_seed_fescue_acres": ("GRASSES, FESCUE, SEED - ACRES HARVESTED", None),
-    "grass_seed_orchardgrass_acres": ("GRASSES, ORCHARDGRASS, SEED - ACRES HARVESTED", None),
-    # "grass_seed_redtop_acres": ("GRASSES, REDTOP, SEED - ACRES HARVESTED", None),
-    "grass_seed_ryegrass_acres": ("GRASSES, RYEGRASS, SEED - ACRES HARVESTED", None),
-    "grass_seed_sudangrass_acres": ("GRASSES, SUDANGRASS, SEED - ACRES HARVESTED", None),
-    "grass_seed_timothy_acres": ("GRASSES, TIMOTHY, SEED - ACRES HARVESTED", None),
-    "grass_seed_wheatgrass_acres": ("GRASSES, WHEATGRASS, SEED - ACRES HARVESTED", None),
+#     # Grass Seeds
+#     "grass_seed_bentgrass_acres": ("GRASSES, BENTGRASS, SEED - ACRES HARVESTED", None),
+#     "grass_seed_bermudagrass_acres": ("GRASSES, BERMUDA GRASS, SEED - ACRES HARVESTED", None),
+#     "grass_seed_bluegrass_acres": ("GRASSES, BLUEGRASS, KENTUCKY, SEED - ACRES HARVESTED", None),
+#     "grass_seed_bromegrass_acres": ("GRASSES, BROMEGRASS, SEED - ACRES HARVESTED", None),
+#     "grass_seed_fescue_acres": ("GRASSES, FESCUE, SEED - ACRES HARVESTED", None),
+#     "grass_seed_orchardgrass_acres": ("GRASSES, ORCHARDGRASS, SEED - ACRES HARVESTED", None),
+#     "grass_seed_ryegrass_acres": ("GRASSES, RYEGRASS, SEED - ACRES HARVESTED", None),
+#     "grass_seed_sudangrass_acres": ("GRASSES, SUDANGRASS, SEED - ACRES HARVESTED", None),
+#     "grass_seed_timothy_acres": ("GRASSES, TIMOTHY, SEED - ACRES HARVESTED", None),
+#     "grass_seed_wheatgrass_acres": ("GRASSES, WHEATGRASS, SEED - ACRES HARVESTED", None),
 
-    # CORN
-    "corn_acres": ("CORN, GRAIN - ACRES HARVESTED", None),
-    "corn_silage_acres": ("CORN, SILAGE - ACRES HARVESTED", None),
+
+
+#     # CORN
+#     "corn_acres": ("CORN, GRAIN - ACRES HARVESTED", None),
+#     "corn_silage_acres": ("CORN, SILAGE - ACRES HARVESTED", None),
     
-    # HAY
-    "hay_acres": ("HAY - ACRES HARVESTED", None),
+#     # HAY
+#     "hay_acres": ("HAY - ACRES HARVESTED", None),
     "haylage_acres": ("HAYLAGE - ACRES HARVESTED", None),
 
-    # COWS
-    "beef_cattle_head": ("CATTLE, COWS, BEEF - INVENTORY", None),
-    "dairy_cattle_head": ("CATTLE, COWS, MILK - INVENTORY", None),
-
+#     # COWS
+#     "beef_cattle_head": ("CATTLE, COWS, BEEF - INVENTORY", None),
+#     "dairy_cattle_head": ("CATTLE, COWS, MILK - INVENTORY", None),
 }
 
 # --- Helper Function ---------------------------------------------------------
@@ -120,8 +96,7 @@ def fetch_metric_multistate(short_desc: str, extra_params: dict = None) -> pd.Da
             print(f"Error: {e}")
             
         # Be polite to the API to avoid rate limiting
-        time.sleep(2)
-        # We're going to be mean to the api for now, otherwise this takes forever. 
+        time.sleep(2) 
 
     if not all_states_data:
         return pd.DataFrame()
@@ -133,7 +108,7 @@ def fetch_metric_multistate(short_desc: str, extra_params: dict = None) -> pd.Da
 def main():
     frames = []
 
-    print(f"Starting Multi-State Fetch for: {', '.join(TARGET_STATES)}")
+    print(f"Starting TEST Fetch for: {', '.join(TARGET_STATES)}")
     print("-" * 60)
 
     for col_name, (desc, extras) in METRICS.items():
@@ -184,28 +159,11 @@ def main():
                 # 4. Force to numeric (Coerce errors like "(D)" or "(Z)" into NaN/Empty)
                 merged[col] = pd.to_numeric(clean_series, errors='coerce')
 
-        # Create 'land_in_farms_acres'
-        if "land_owned_acres" in merged.columns and "land_rented_acres" in merged.columns:
-            print("Calculating 'land_in_farms_acres'...")
-            merged["land_in_farms_acres"] = merged["land_owned_acres"].fillna(0) + \
-                                             merged["land_rented_acres"].fillna(0)
-
         # Calculate 'grass_seed_acres'
-        grass_seed_cols = [
-            "grass_seed_bentgrass_acres", "grass_seed_bermudagrass_acres", 
-            "grass_seed_bluegrass_acres", "grass_seed_bromegrass_acres", 
-            "grass_seed_fescue_acres", "grass_seed_orchardgrass_acres", 
-            "grass_seed_redtop_acres", "grass_seed_ryegrass_acres", 
-            "grass_seed_sudangrass_acres", "grass_seed_timothy_acres", 
-            "grass_seed_wheatgrass_acres"
-        ]
-        
-        # Check if any of the grass seed columns exist
-        if any(col in merged.columns for col in grass_seed_cols):
+        if "grass_seed_ryegrass_acres" in merged.columns or "grass_seed_fescue_acres" in merged.columns:
             print("Calculating 'grass_seed_acres'...")
-            merged["grass_seed_acres"] = 0
-            for col in grass_seed_cols:
-                merged["grass_seed_acres"] += merged.get(col, pd.Series(0, index=merged.index)).fillna(0)
+            merged["grass_seed_acres"] = merged.get("grass_seed_ryegrass_acres", pd.Series(0, index=merged.index)).fillna(0) + \
+                                         merged.get("grass_seed_fescue_acres", pd.Series(0, index=merged.index)).fillna(0)
 
         # Save to CSV
         # Determine the output path relative to this script
@@ -213,7 +171,7 @@ def main():
         # Go up one level to root, then into public/data
         output_dir = os.path.join(script_dir, "..", "public", "data")
         os.makedirs(output_dir, exist_ok=True)
-        output_filename = os.path.join(output_dir, "ag_data.csv")
+        output_filename = os.path.join(output_dir, "ag_data_test.csv")
         
         merged.to_csv(output_filename, index=False)
         print(f"\nSUCCESS! Saved to {output_filename}")
