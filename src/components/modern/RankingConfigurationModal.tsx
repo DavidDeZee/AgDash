@@ -10,25 +10,43 @@ interface RankingConfigurationModalProps {
     availableStates: string[];
 }
 
-const METRIC_OPTIONS: { value: SortField; label: string }[] = [
-    { value: 'farms', label: 'Number of Farms' },
-    { value: 'croplandAcres', label: 'Cropland Acres' },
-    { value: 'irrigatedAcres', label: 'Irrigated Acres' },
-    { value: 'harvestedCroplandAcres', label: 'Harvested Cropland' },
-    { value: 'marketValueTotalDollars', label: 'Total Sales' },
-    { value: 'cropsSalesDollars', label: 'Crop Sales' },
-    { value: 'livestockSalesDollars', label: 'Livestock Sales' },
-    { value: 'applesAcres', label: 'Apples (Acres)' },
-    { value: 'wheatAcres', label: 'Wheat (Acres)' },
-    { value: 'riceAcres', label: 'Rice (Acres)' },
-    { value: 'hazelnutsAcres', label: 'Hazelnuts (Acres)' },
-    { value: 'grassSeedAcres', label: 'Grass Seed (Acres)' },
-    { value: 'cornAcres', label: 'Corn (Acres)' },
-    { value: 'cornSilageAcres', label: 'Corn Silage (Acres)' },
-    { value: 'hayAcres', label: 'Hay (Acres)' },
-    { value: 'haylageAcres', label: 'Haylage (Acres)' },
-    { value: 'beefCattleHead', label: 'Beef Cattle (Head)' },
-    { value: 'dairyCattleHead', label: 'Dairy Cattle (Head)' },
+type MetricCategory = 'Generals' | 'Financials' | 'Crops' | 'Livestock';
+
+const METRIC_CATEGORIES: Record<MetricCategory, SortField[]> = {
+    'Generals': ['farms', 'croplandAcres', 'irrigatedAcres', 'harvestedCroplandAcres', 'applesAcres', 'wheatAcres', 'riceAcres', 'hazelnutsAcres', 'grassSeedAcres', 'cornAcres', 'cornSilageAcres', 'hayAcres', 'haylageAcres', 'beefCattleHead', 'dairyCattleHead'],
+    'Financials': ['marketValueTotalDollars', 'cropsSalesDollars', 'livestockSalesDollars'],
+    'Crops': ['applesAcres', 'wheatAcres', 'riceAcres', 'hazelnutsAcres', 'grassSeedAcres', 'cornAcres', 'cornSilageAcres', 'hayAcres', 'haylageAcres'],
+    'Livestock': ['beefCattleHead', 'dairyCattleHead']
+};
+
+interface MetricOption {
+    value: SortField;
+    label: string;
+    category: MetricCategory;
+}
+
+const METRIC_OPTIONS: MetricOption[] = [
+    { value: 'farms', label: 'Number of Farms', category: 'Generals' },
+    { value: 'croplandAcres', label: 'Cropland Acres', category: 'Generals' },
+    { value: 'irrigatedAcres', label: 'Irrigated Acres', category: 'Generals' },
+    { value: 'harvestedCroplandAcres', label: 'Harvested Cropland', category: 'Generals' },
+
+    { value: 'marketValueTotalDollars', label: 'Total Sales', category: 'Financials' },
+    { value: 'cropsSalesDollars', label: 'Crop Sales', category: 'Financials' },
+    { value: 'livestockSalesDollars', label: 'Livestock Sales', category: 'Financials' },
+
+    { value: 'applesAcres', label: 'Apples', category: 'Crops' },
+    { value: 'wheatAcres', label: 'Wheat', category: 'Crops' },
+    { value: 'riceAcres', label: 'Rice', category: 'Crops' },
+    { value: 'hazelnutsAcres', label: 'Hazelnuts', category: 'Crops' },
+    { value: 'grassSeedAcres', label: 'Grass Seed', category: 'Crops' },
+    { value: 'cornAcres', label: 'Corn', category: 'Crops' },
+    { value: 'cornSilageAcres', label: 'Corn Silage', category: 'Crops' },
+    { value: 'hayAcres', label: 'Hay', category: 'Crops' },
+    { value: 'haylageAcres', label: 'Haylage', category: 'Crops' },
+
+    { value: 'beefCattleHead', label: 'Beef Cattle', category: 'Livestock' },
+    { value: 'dairyCattleHead', label: 'Dairy Cattle', category: 'Livestock' },
 ];
 
 export function RankingConfigurationModal({
@@ -48,6 +66,12 @@ export function RankingConfigurationModal({
         removeMetricRange,
     } = useStore();
 
+    // Determine initial category based on sortField
+    const getCategoryForField = (field: SortField): MetricCategory => {
+        const option = METRIC_OPTIONS.find(opt => opt.value === field);
+        return option ? option.category : 'Generals';
+    };
+
     // Local state for the modal
     const [localSortField, setLocalSortField] = useState<SortField>(sortField);
     const [localSelectedStates, setLocalSelectedStates] = useState<string[]>(selectedStates);
@@ -55,7 +79,10 @@ export function RankingConfigurationModal({
     const [localMetricRanges, setLocalMetricRanges] = useState<Record<string, [number | null, number | null]>>(metricRanges);
     const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
     const [selectedMetricToAdd, setSelectedMetricToAdd] = useState<string>('');
-    const [isMetricDropdownOpen, setIsMetricDropdownOpen] = useState(false);
+
+    // Category selection state
+    const [selectedCategory, setSelectedCategory] = useState<MetricCategory>(getCategoryForField(sortField));
+    const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
     const availableLocations = [
         { key: 'PUGET_SOUND', name: 'Puget Sound', color: 'hsl(270, 70%, 50%)' },
@@ -73,8 +100,13 @@ export function RankingConfigurationModal({
             setLocalSelectedStates(selectedStates);
             setLocalSelectedLocations(selectedLocations);
             setLocalMetricRanges(metricRanges);
+            setSelectedCategory(getCategoryForField(sortField));
         }
     }, [isOpen, sortField, selectedStates, selectedLocations, metricRanges]);
+
+    // Update category if the local sort field changes externally (though in this UI flow it's driven by category first)
+    // But importantly, if the user picks a category, we might want to default to the first metric or just wait for them to pick.
+    // Current design: User picks category -> User picks metric.
 
     if (!isOpen) return null;
 
@@ -103,6 +135,7 @@ export function RankingConfigurationModal({
         setLocalSelectedLocations([]);
         setLocalSortField('croplandAcres');
         setLocalMetricRanges({});
+        setSelectedCategory('Generals');
 
         // Apply to store immediately
         setSelectedStates([]);
@@ -155,6 +188,9 @@ export function RankingConfigurationModal({
         });
     };
 
+    // Filter metrics based on selected category
+    const filteredMetrics = METRIC_OPTIONS.filter(opt => opt.category === selectedCategory);
+
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200"
@@ -184,54 +220,87 @@ export function RankingConfigurationModal({
                             <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                                 Rank By Metric
                             </label>
-                            <div className="relative">
-                                <button
-                                    onClick={() => setIsMetricDropdownOpen(!isMetricDropdownOpen)}
-                                    className="w-full flex items-center justify-between p-3 rounded-lg border border-input bg-background hover:bg-secondary/50 transition-colors"
-                                >
-                                    <span className="font-medium">
-                                        {METRIC_OPTIONS.find(opt => opt.value === localSortField)?.label || 'Select Metric'}
-                                    </span>
-                                    {isMetricDropdownOpen ? (
-                                        <ChevronUp className="h-4 w-4 opacity-50" />
-                                    ) : (
-                                        <ChevronDown className="h-4 w-4 opacity-50" />
-                                    )}
-                                </button>
 
-                                {isMetricDropdownOpen && (
-                                    <>
-                                        <div
-                                            className="fixed inset-0 z-10"
-                                            onClick={() => setIsMetricDropdownOpen(false)}
-                                        />
-                                        <div className="absolute z-20 top-full left-0 right-0 mt-2 max-h-[300px] overflow-y-auto rounded-lg border border-border bg-popover shadow-lg animate-in fade-in zoom-in-95 duration-200">
-                                            <div className="p-1">
-                                                {METRIC_OPTIONS.map((option) => (
-                                                    <div
-                                                        key={option.value}
-                                                        className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors ${localSortField === option.value
-                                                            ? 'bg-primary/10 text-primary'
-                                                            : 'hover:bg-secondary'
-                                                            }`}
-                                                        onClick={() => {
-                                                            setLocalSortField(option.value);
-                                                            setIsMetricDropdownOpen(false);
-                                                        }}
-                                                    >
-                                                        <span className="font-medium text-sm">{option.label}</span>
-                                                        {localSortField === option.value && (
-                                                            <Check className="h-4 w-4" />
-                                                        )}
-                                                    </div>
-                                                ))}
+                            <div className="space-y-2">
+                                {/* Category Dropdown */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                                        className="w-full flex items-center justify-between p-3 rounded-lg border border-input bg-background hover:bg-secondary/50 transition-colors"
+                                    >
+                                        <span className="font-medium">
+                                            {selectedCategory}
+                                        </span>
+                                        {isCategoryDropdownOpen ? (
+                                            <ChevronUp className="h-4 w-4 opacity-50" />
+                                        ) : (
+                                            <ChevronDown className="h-4 w-4 opacity-50" />
+                                        )}
+                                    </button>
+
+                                    {isCategoryDropdownOpen && (
+                                        <>
+                                            <div
+                                                className="fixed inset-0 z-10"
+                                                onClick={() => setIsCategoryDropdownOpen(false)}
+                                            />
+                                            <div className="absolute z-20 top-full left-0 right-0 mt-2 rounded-lg border border-border bg-popover shadow-lg animate-in fade-in zoom-in-95 duration-200">
+                                                <div className="p-1">
+                                                    {Object.keys(METRIC_CATEGORIES).map((category) => (
+                                                        <div
+                                                            key={category}
+                                                            className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors ${selectedCategory === category
+                                                                ? 'bg-primary/10 text-primary'
+                                                                : 'hover:bg-secondary'
+                                                                }`}
+                                                            onClick={() => {
+                                                                setSelectedCategory(category as MetricCategory);
+                                                                setIsCategoryDropdownOpen(false);
+                                                                // Reset metric dropdown state if needed, but we keep the current metric until they change it
+                                                                // Or we could auto-select the first one in the new category:
+                                                                // const firstMetric = METRIC_OPTIONS.find(m => m.category === category);
+                                                                // if (firstMetric) setLocalSortField(firstMetric.value);
+                                                            }}
+                                                        >
+                                                            <span className="font-medium text-sm">{category}</span>
+                                                            {selectedCategory === category && (
+                                                                <Check className="h-4 w-4" />
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </>
-                                )}
+                                        </>
+                                    )}
+                                </div>
+
+                                {/* Metric List (Filtered by Category) */}
+                                <div className="border border-border rounded-lg bg-card overflow-hidden flex flex-col max-h-[300px]">
+                                    <div className="p-1 overflow-y-auto flex-1 custom-scrollbar">
+                                        {filteredMetrics.map((option) => (
+                                            <div
+                                                key={option.value}
+                                                className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors mb-1 last:mb-0 ${localSortField === option.value
+                                                    ? 'bg-primary/10 text-primary border border-primary/20'
+                                                    : 'hover:bg-secondary border border-transparent'
+                                                    }`}
+                                                onClick={() => setLocalSortField(option.value)}
+                                            >
+                                                <span className="font-medium text-sm">{option.label}</span>
+                                                {localSortField === option.value && (
+                                                    <Check className="h-4 w-4" />
+                                                )}
+                                            </div>
+                                        ))}
+                                        {filteredMetrics.length === 0 && (
+                                            <div className="p-4 text-sm text-muted-foreground text-center">
+                                                No metrics available in this category
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
 
                     </div>
 
@@ -354,10 +423,16 @@ export function RankingConfigurationModal({
                                     onChange={(e) => setSelectedMetricToAdd(e.target.value)}
                                 >
                                     <option value="">Select a metric to filter...</option>
-                                    {METRIC_OPTIONS.filter(opt => !localMetricRanges[opt.value]).map((option) => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
+                                    {Object.keys(METRIC_CATEGORIES).map((category) => (
+                                        <optgroup key={category} label={category}>
+                                            {METRIC_OPTIONS
+                                                .filter(opt => opt.category === category && !localMetricRanges[opt.value])
+                                                .map((option) => (
+                                                    <option key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </option>
+                                                ))}
+                                        </optgroup>
                                     ))}
                                 </select>
                                 <Button
