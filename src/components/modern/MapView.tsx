@@ -5,7 +5,7 @@ import type { EnhancedCountyData } from '../../types/ag';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 interface MapViewProps {
-  selectedCounty: EnhancedCountyData | null;
+
   onCountyClick?: (county: EnhancedCountyData) => void;
   counties?: EnhancedCountyData[];
   filteredCounties?: EnhancedCountyData[];
@@ -479,7 +479,7 @@ function MapLegend() {
   );
 }
 
-export function MapView({ selectedCounty, counties = [], filteredCounties, onCountyClick }: MapViewProps) {
+export function MapView({ counties = [], filteredCounties, onCountyClick }: MapViewProps) {
   const mapRef = useRef<MapRef>(null);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
   const [hoveredCountyId, setHoveredCountyId] = useState<string | number | null>(null);
@@ -617,12 +617,7 @@ export function MapView({ selectedCounty, counties = [], filteredCounties, onCou
         '#ffffff', // White border on hover
         '#6b7280', // Gray color default
       ] as any,
-      'line-width': [
-        'case',
-        ['boolean', ['feature-state', 'hover'], false],
-        3, // Thicker border on hover
-        1, // Default width
-      ] as any,
+      'line-width': 1,
       'line-opacity': [
         'case',
         ['boolean', ['feature-state', 'hover'], false],
@@ -637,7 +632,7 @@ export function MapView({ selectedCounty, counties = [], filteredCounties, onCou
     type: 'line' as const,
     paint: {
       'line-color': '#ffffff',
-      'line-width': 3,
+      'line-width': 1,
       'line-opacity': [
         'case',
         ['boolean', ['feature-state', 'hover'], false],
@@ -648,11 +643,7 @@ export function MapView({ selectedCounty, counties = [], filteredCounties, onCou
   };
 
 
-  useEffect(() => {
-    if (selectedCounty && mapRef.current) {
-      // Center map on selected county (would need geocoding in production)
-    }
-  }, [selectedCounty]);
+
 
   return (
     <div className="h-full w-full relative">
@@ -732,26 +723,7 @@ export function MapView({ selectedCounty, counties = [], filteredCounties, onCou
         </div>
       )}
 
-      {/* Selected county info */}
-      {selectedCounty && (
-        <div className="absolute bottom-6 left-6 bg-card border border-border rounded-lg p-4 shadow-lg max-w-sm animate-fade-in">
-          <h3 className="font-semibold text-lg mb-2">
-            {selectedCounty.countyName}, {selectedCounty.stateName}
-          </h3>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <div className="text-muted-foreground">Farms</div>
-              <div className="font-medium">{selectedCounty.farms.toLocaleString()}</div>
-            </div>
-            <div>
-              <div className="text-muted-foreground">Cropland</div>
-              <div className="font-medium">
-                {(selectedCounty.croplandAcres / 1000).toFixed(1)}K ac
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

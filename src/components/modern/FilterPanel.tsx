@@ -1,4 +1,4 @@
-import { Search, SlidersHorizontal, X, Info, Sparkles } from 'lucide-react';
+import { Search, X, Info, Sparkles } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
@@ -7,11 +7,8 @@ import { useState } from 'react';
 
 export function FilterPanel() {
   const {
-    selectedStates,
-    selectedLocations,
     searchQuery,
     setSearchQuery,
-    resetFilters,
   } = useStore();
 
   const [showExamples, setShowExamples] = useState(false);
@@ -37,11 +34,6 @@ export function FilterPanel() {
       handleQuerySubmit();
     }
   };
-
-
-  const hasActiveFilters =
-    selectedStates.length > 0 ||
-    selectedLocations.length > 0;
 
   return (
     <div className="space-y-4 p-6">
@@ -116,29 +108,6 @@ export function FilterPanel() {
           )}
         </div>
       </Card>
-
-      {/* Filters Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <SlidersHorizontal className="h-4 w-4" />
-          <h3 className="font-semibold">Filters</h3>
-        </div>
-        {hasActiveFilters && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={resetFilters}
-            className="h-8 text-xs"
-          >
-            <X className="h-3 w-3 mr-1" />
-            Clear
-          </Button>
-        )}
-      </div>
-
-
-
-
     </div>
   );
 }

@@ -191,7 +191,6 @@ export default function App() {
             {/* Map */}
             <div className="flex-1 relative">
               <MapView
-                selectedCounty={selectedCounty}
                 counties={allCounties}
                 filteredCounties={filteredAndSortedCounties}
                 onCountyClick={(county) => {
