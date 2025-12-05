@@ -1,4 +1,4 @@
-import { X, MapPin, TrendingUp, Sprout, DollarSign, Beef, Milk, Tractor } from 'lucide-react';
+import { X, MapPin, Sprout, DollarSign, Beef } from 'lucide-react';
 import type { EnhancedCountyData } from '../../types/ag';
 import { formatNumber, formatAcres, formatCurrency, formatCurrencyMillions } from '../../lib/format';
 
@@ -15,8 +15,13 @@ export function CountyDetailModal({ county, allCounties, onClose }: CountyDetail
     const stateCounties = allCounties.filter(c => c.stateName === county.stateName);
 
     const getRank = (key: keyof EnhancedCountyData) => {
-        const sorted = [...stateCounties].sort((a, b) => (b[key] as number) - (a[key] as number));
-        return sorted.findIndex(c => c.id === county.id) + 1;
+        // Filter out counties with null values for this key
+        const validStateCounties = stateCounties.filter(c => c[key] !== null);
+        const sorted = [...validStateCounties].sort((a, b) => ((b[key] as number) || 0) - ((a[key] as number) || 0));
+        const index = sorted.findIndex(c => c.id === county.id);
+
+        if (index === -1) return null; // Current county doesn't have this metric or not found
+        return index + 1;
     };
     //test
     const rankings = {
@@ -26,8 +31,15 @@ export function CountyDetailModal({ county, allCounties, onClose }: CountyDetail
         irrigated: getRank('irrigatedAcres'),
         cropSales: getRank('cropsSalesDollars'),
         livestockSales: getRank('livestockSalesDollars'),
-        cattle: getRank('cattleHead'),
-        milkCows: getRank('milkCowsHead'),
+        cattle: getRank('beefCattleHead'),
+        milkCows: getRank('dairyCattleHead'),
+    };
+
+
+
+    const displayRank = (rank: number | null) => {
+        if (rank === null || rank > 10) return null;
+        return <span className="text-xs text-primary font-medium ml-2">#{rank} in {county.stateName}</span>;
     };
 
     return (
@@ -60,117 +72,157 @@ export function CountyDetailModal({ county, allCounties, onClose }: CountyDetail
 
                     {/* Key Metrics Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="p-4 bg-secondary/50 rounded-lg space-y-1">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wider">Farms</p>
-                            <p className="text-xl font-bold">{formatNumber(county.farms)}</p>
-                            <p className="text-xs text-primary font-medium">#{rankings.farms} in {county.stateName}</p>
-                        </div>
-                        <div className="p-4 bg-secondary/50 rounded-lg space-y-1">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wider">Market Value</p>
-                            <p className="text-xl font-bold text-yellow-500">{formatCurrencyMillions(county.marketValueTotalDollars)}</p>
-                            <p className="text-xs text-primary font-medium">#{rankings.marketValue} in {county.stateName}</p>
-                        </div>
-                        {/*  MAKE THE UI CHANGE HERE MAKE IT AGGREGATED IN MILLIONS RATHER THAN WHAT IT IS RIGHT NOW. ALSO HAVE THE COUNTIES BOARDER HIGHLIGHT WHEN YOU HOVER OVER IT RATHER THEN IT BEING YELLOW. - MIGUEL  */}
-
-                        <div className="p-4 bg-secondary/50 rounded-lg space-y-1">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wider">Cropland</p>
-                            <p className="text-xl font-bold text-emerald-500">{formatAcres(county.croplandAcres)}</p>
-                            <p className="text-xs text-primary font-medium">#{rankings.cropland} in {county.stateName}</p>
-                        </div>
-                        <div className="p-4 bg-secondary/50 rounded-lg space-y-1">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wider">Irrigated</p>
-                            <p className="text-xl font-bold text-cyan-500">{formatAcres(county.irrigatedAcres)}</p>
-                            <p className="text-xs text-primary font-medium">#{rankings.irrigated} in {county.stateName}</p>
-                        </div>
+                        {county.farms !== null && (
+                            <div className="p-4 bg-secondary/50 rounded-lg space-y-1">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider">Farms</p>
+                                <p className="text-xl font-bold">{formatNumber(county.farms)}</p>
+                                {displayRank(rankings.farms)}
+                            </div>
+                        )}
+                        {county.marketValueTotalDollars !== null && (
+                            <div className="p-4 bg-secondary/50 rounded-lg space-y-1">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider">Market Value</p>
+                                <p className="text-xl font-bold text-yellow-500">{formatCurrencyMillions(county.marketValueTotalDollars)}</p>
+                                {displayRank(rankings.marketValue)}
+                            </div>
+                        )}
+                        {county.croplandAcres !== null && (
+                            <div className="p-4 bg-secondary/50 rounded-lg space-y-1">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider">Cropland</p>
+                                <p className="text-xl font-bold text-emerald-500">{formatAcres(county.croplandAcres)}</p>
+                                {displayRank(rankings.cropland)}
+                            </div>
+                        )}
+                        {county.irrigatedAcres !== null && (
+                            <div className="p-4 bg-secondary/50 rounded-lg space-y-1">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider">Irrigated</p>
+                                <p className="text-xl font-bold text-cyan-500">{formatAcres(county.irrigatedAcres)}</p>
+                                {displayRank(rankings.irrigated)}
+                            </div>
+                        )}
                     </div>
+
 
                     {/* Financials Section */}
-                    <div>
-                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                            <DollarSign className="h-5 w-5 text-yellow-500" />
-                            Financial Overview
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="border border-border rounded-lg p-4">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-sm text-muted-foreground">Crop Sales</span>
-                                    <Sprout className="h-4 w-4 text-lime-500" />
-                                </div>
-                                <p className="text-2xl font-bold">{formatCurrency(county.cropsSalesDollars)}</p>
-                                <p className="text-xs text-muted-foreground mt-1">#{rankings.cropSales} in {county.stateName}</p>
-                            </div>
-                            <div className="border border-border rounded-lg p-4">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-sm text-muted-foreground">Livestock Sales</span>
-                                    <Beef className="h-4 w-4 text-orange-500" />
-                                </div>
-                                <p className="text-2xl font-bold">{formatCurrency(county.livestockSalesDollars)}</p>
-                                <p className="text-xs text-muted-foreground mt-1">#{rankings.livestockSales} in {county.stateName}</p>
-                            </div>
-                            <div className="border border-border rounded-lg p-4">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-sm text-muted-foreground">Net Cash Income</span>
-                                    <TrendingUp className="h-4 w-4 text-green-500" />
-                                </div>
-                                <p className="text-2xl font-bold">{formatCurrency(county.netCashIncomeDollars)}</p>
-                            </div>
-                            <div className="border border-border rounded-lg p-4">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-sm text-muted-foreground">Govt Payments</span>
-                                    <DollarSign className="h-4 w-4 text-blue-500" />
-                                </div>
-                                <p className="text-2xl font-bold">{formatCurrency(county.govPaymentsDollars)}</p>
-                            </div>
-                        </div>
-                    </div>
+                    {(county.cropsSalesDollars !== null || county.livestockSalesDollars !== null || county.govPaymentsDollars !== null) && (
+                        <div>
+                            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                                <DollarSign className="h-5 w-5 text-yellow-500" />
+                                Financial Overview
+                            </h3>
 
-                    {/* Land Use Section */}
-                    <div>
-                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                            <MapPin className="h-5 w-5 text-emerald-500" />
-                            Land Use
-                        </h3>
-                        <div className="space-y-4">
-                            <div className="p-4 bg-secondary/30 rounded-lg flex justify-between items-center">
-                                <span className="text-sm font-medium">Owned Land</span>
-                                <span className="text-lg font-bold">{formatAcres(county.landOwnedAcres)}</span>
+                            {/* Sales Icons */}
+                            <div className="grid grid-cols-2 gap-4 mb-6">
+                                {county.cropsSalesDollars !== null && (
+                                    <div className="flex flex-col items-center justify-center p-3 bg-secondary/30 rounded-xl border border-border">
+                                        <div className="p-2 bg-lime-500/10 rounded-full mb-2">
+                                            <Sprout className="h-5 w-5 text-lime-600" />
+                                        </div>
+                                        <p className="text-xs text-muted-foreground mb-0.5">Crop Sales</p>
+                                        <p className="text-lg font-bold">{formatCurrency(county.cropsSalesDollars)}</p>
+                                        {displayRank(rankings.cropSales)}
+                                    </div>
+                                )}
+                                {county.livestockSalesDollars !== null && (
+                                    <div className="flex flex-col items-center justify-center p-3 bg-secondary/30 rounded-xl border border-border">
+                                        <div className="p-2 bg-orange-500/10 rounded-full mb-2">
+                                            <Beef className="h-5 w-5 text-orange-600" />
+                                        </div>
+                                        <p className="text-xs text-muted-foreground mb-0.5">Livestock Sales</p>
+                                        <p className="text-lg font-bold">{formatCurrency(county.livestockSalesDollars)}</p>
+                                        {displayRank(rankings.livestockSales)}
+                                    </div>
+                                )}
                             </div>
-                            <div className="p-4 bg-secondary/30 rounded-lg flex justify-between items-center">
-                                <span className="text-sm font-medium">Rented Land</span>
-                                <span className="text-lg font-bold">{formatAcres(county.landRentedAcres)}</span>
-                            </div>
-                            <div className="pt-2 border-t border-border flex justify-between font-medium">
-                                <span>Total Land in Farms</span>
-                                <span>{formatAcres(county.landInFarmsAcres)}</span>
-                            </div>
-                        </div>
-                    </div>
 
-                    {/* Livestock & Operations */}
-                    <div>
-                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                            <Tractor className="h-5 w-5 text-orange-500" />
-                            Operations & Livestock
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="bg-secondary/30 rounded-lg p-4 text-center">
-                                <Beef className="h-6 w-6 mx-auto mb-2 text-red-500" />
-                                <p className="text-sm text-muted-foreground">Cattle Head</p>
-                                <p className="text-lg font-bold">{formatNumber(county.cattleHead)}</p>
-                                <p className="text-xs text-muted-foreground mt-1">#{rankings.cattle} in {county.stateName}</p>
-                            </div>
-                            <div className="bg-secondary/30 rounded-lg p-4 text-center">
-                                <Milk className="h-6 w-6 mx-auto mb-2 text-pink-500" />
-                                <p className="text-sm text-muted-foreground">Milk Cows</p>
-                                <p className="text-lg font-bold">{formatNumber(county.milkCowsHead)}</p>
-                                <p className="text-xs text-muted-foreground mt-1">#{rankings.milkCows} in {county.stateName}</p>
-                            </div>
-                            <div className="bg-secondary/30 rounded-lg p-4 text-center">
-                                <Sprout className="h-6 w-6 mx-auto mb-2 text-green-500" />
-                                <p className="text-sm text-muted-foreground">Veg Harvest Ops</p>
-                                <p className="text-lg font-bold">{formatNumber(county.vegHarvestOps)}</p>
+                            {/* Other Financials List */}
+                            <div className="space-y-2">
+                                {county.govPaymentsDollars !== null && (
+                                    <div className="flex justify-between items-center py-1">
+                                        <div className="flex items-center gap-2">
+                                            <DollarSign className="h-4 w-4 text-blue-500" />
+                                            <span className="text-sm text-foreground">Govt Payments</span>
+                                        </div>
+                                        <p className="font-bold">{formatCurrency(county.govPaymentsDollars)}</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
+                    )}
+
+                    {/* Split Crops and Livestock Sections */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Major Crops Section */}
+                        {(county.wheatAcres !== null || county.hayAcres !== null || county.grassSeedAcres !== null || county.cornAcres !== null || county.hazelnutsAcres !== null || county.applesAcres !== null) && (
+                            <div>
+                                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                                    <Sprout className="h-5 w-5 text-green-600" />
+                                    Major Crops
+                                </h3>
+                                <div className="space-y-2">
+                                    {county.wheatAcres !== null && (
+                                        <div className="flex justify-between items-center py-1">
+                                            <span className="text-sm text-muted-foreground">Wheat</span>
+                                            <span className="font-medium">{formatAcres(county.wheatAcres)}</span>
+                                        </div>
+                                    )}
+                                    {county.hayAcres !== null && (
+                                        <div className="flex justify-between items-center py-1">
+                                            <span className="text-sm text-muted-foreground">Hay</span>
+                                            <span className="font-medium">{formatAcres(county.hayAcres)}</span>
+                                        </div>
+                                    )}
+                                    {county.grassSeedAcres !== null && (
+                                        <div className="flex justify-between items-center py-1">
+                                            <span className="text-sm text-muted-foreground">Grass Seed</span>
+                                            <span className="font-medium">{formatAcres(county.grassSeedAcres)}</span>
+                                        </div>
+                                    )}
+                                    {county.cornAcres !== null && (
+                                        <div className="flex justify-between items-center py-1">
+                                            <span className="text-sm text-muted-foreground">Corn</span>
+                                            <span className="font-medium">{formatAcres(county.cornAcres)}</span>
+                                        </div>
+                                    )}
+                                    {county.hazelnutsAcres !== null && (
+                                        <div className="flex justify-between items-center py-1">
+                                            <span className="text-sm text-muted-foreground">Hazelnuts</span>
+                                            <span className="font-medium">{formatAcres(county.hazelnutsAcres)}</span>
+                                        </div>
+                                    )}
+                                    {county.applesAcres !== null && (
+                                        <div className="flex justify-between items-center py-1">
+                                            <span className="text-sm text-muted-foreground">Apples</span>
+                                            <span className="font-medium">{formatAcres(county.applesAcres)}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Livestock Section */}
+                        {(county.beefCattleHead !== null || county.dairyCattleHead !== null) && (
+                            <div>
+                                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                                    <Beef className="h-5 w-5 text-orange-600" />
+                                    Livestock
+                                </h3>
+                                <div className="space-y-2">
+                                    {county.beefCattleHead !== null && (
+                                        <div className="flex justify-between items-center py-1">
+                                            <span className="text-sm text-muted-foreground">Beef Cattle</span>
+                                            <span className="font-medium">{formatNumber(county.beefCattleHead)} heads</span>
+                                        </div>
+                                    )}
+                                    {county.dairyCattleHead !== null && (
+                                        <div className="flex justify-between items-center py-1">
+                                            <span className="text-sm text-muted-foreground">Dairy Cattle</span>
+                                            <span className="font-medium">{formatNumber(county.dairyCattleHead)} heads</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                 </div>

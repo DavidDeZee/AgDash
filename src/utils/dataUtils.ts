@@ -54,11 +54,16 @@ export function filterCounties(
       }
     }
 
-    // Cropland acres filter
     // Metric filters
     for (const [metric, range] of Object.entries(filters.metricRanges)) {
       const value = county[metric as keyof EnhancedCountyData];
-      if (typeof value !== 'number') continue;
+
+      // If value is null (not available), we should probably exclude it if a filter is set
+      // Or should we treat it as 0? Let's exclude for now as "not matching range" implies we need a value.
+      if (value === null || typeof value !== 'number') {
+        // However, if we filter by a range, we expect data to be present.
+        return false;
+      }
 
       const [min, max] = range;
       if (min !== null && value < min) return false;
@@ -86,7 +91,18 @@ export function sortCounties(
       return sortConfig.direction === 'asc' ? comparison : -comparison;
     }
 
-    // Handle number comparison
+    // Handle number comparison with nulls
+    // We treat null as -Infinity for desc sort (bottom) and +Infinity for asc sort? 
+    // Usually missing data goes to bottom logic:
+    // Asc: 0, 1, 2, NULL
+    // Desc: 2, 1, 0, NULL
+    // So let's treat null as -Infinity effectively for value comparison purposes relative to valid numbers?
+    // Actually, simple approach:
+
+    if (aValue === null && bValue === null) return 0;
+    if (aValue === null) return 1; // Put nulls at the end
+    if (bValue === null) return -1; // Put nulls at the end
+
     if (typeof aValue === 'number' && typeof bValue === 'number') {
       return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue;
     }
@@ -102,19 +118,25 @@ export function sortCounties(
 export function getCountyColor(
   county: EnhancedCountyData,
   allCounties: EnhancedCountyData[],
-  metric: 'croplandAcres' | 'farms' | 'irrigatedAcres' = 'croplandAcres'
+  metric: 'croplandAcres' | 'farms' | 'irrigatedAcres' | 'marketValueTotalDollars' = 'croplandAcres'
 ): string {
-  if (county[metric] === 0) {
+  const val = county[metric];
+  if (val === null || val === 0) {
     return '#f0f0f0'; // Gray for no data
   }
 
   // Find min and max values for normalization
-  const values = allCounties.map((c) => c[metric]).filter((v) => v > 0);
+  const values = allCounties
+    .map((c) => c[metric])
+    .filter((v): v is number => v !== null && v > 0);
+
+  if (values.length === 0) return '#f0f0f0';
+
   const min = Math.min(...values);
   const max = Math.max(...values);
 
   // Normalize value to 0-1 range
-  const normalized = (county[metric] - min) / (max - min);
+  const normalized = (val - min) / (max - min);
 
   // Color scale: light green -> dark green
   const lightness = 90 - normalized * 50; // 90% to 40%
@@ -164,7 +186,7 @@ export function getMetricStats(
 } {
   const values = counties
     .map((c) => c[field])
-    .filter((v): v is number => typeof v === 'number' && v > 0);
+    .filter((v): v is number => typeof v === 'number' && v !== null && v > 0);
 
   if (values.length === 0) {
     return { min: 0, max: 0, avg: 0, total: 0 };

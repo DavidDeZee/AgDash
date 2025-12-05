@@ -14,14 +14,21 @@ const METRIC_OPTIONS: { value: SortField; label: string }[] = [
     { value: 'farms', label: 'Number of Farms' },
     { value: 'croplandAcres', label: 'Cropland Acres' },
     { value: 'irrigatedAcres', label: 'Irrigated Acres' },
-    { value: 'landInFarmsAcres', label: 'Total Land in Farms' },
     { value: 'harvestedCroplandAcres', label: 'Harvested Cropland' },
     { value: 'marketValueTotalDollars', label: 'Total Sales' },
     { value: 'cropsSalesDollars', label: 'Crop Sales' },
-
-    // Adding these even though they might not be in SortField yet, 
-    // we might need to extend SortField if we want to rank by them.
-    // For now, sticking to what's in SortField type.
+    { value: 'livestockSalesDollars', label: 'Livestock Sales' },
+    { value: 'applesAcres', label: 'Apples (Acres)' },
+    { value: 'wheatAcres', label: 'Wheat (Acres)' },
+    { value: 'riceAcres', label: 'Rice (Acres)' },
+    { value: 'hazelnutsAcres', label: 'Hazelnuts (Acres)' },
+    { value: 'grassSeedAcres', label: 'Grass Seed (Acres)' },
+    { value: 'cornAcres', label: 'Corn (Acres)' },
+    { value: 'cornSilageAcres', label: 'Corn Silage (Acres)' },
+    { value: 'hayAcres', label: 'Hay (Acres)' },
+    { value: 'haylageAcres', label: 'Haylage (Acres)' },
+    { value: 'beefCattleHead', label: 'Beef Cattle (Head)' },
+    { value: 'dairyCattleHead', label: 'Dairy Cattle (Head)' },
 ];
 
 export function RankingConfigurationModal({
@@ -48,6 +55,7 @@ export function RankingConfigurationModal({
     const [localMetricRanges, setLocalMetricRanges] = useState<Record<string, [number | null, number | null]>>(metricRanges);
     const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
     const [selectedMetricToAdd, setSelectedMetricToAdd] = useState<string>('');
+    const [isMetricDropdownOpen, setIsMetricDropdownOpen] = useState(false);
 
     const availableLocations = [
         { key: 'PUGET_SOUND', name: 'Puget Sound', color: 'hsl(270, 70%, 50%)' },
@@ -176,22 +184,51 @@ export function RankingConfigurationModal({
                             <label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                                 Rank By Metric
                             </label>
-                            <div className="grid grid-cols-1 gap-2">
-                                {METRIC_OPTIONS.map((option) => (
-                                    <div
-                                        key={option.value}
-                                        className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${localSortField === option.value
-                                            ? 'border-primary bg-primary/5 ring-1 ring-primary'
-                                            : 'border-border hover:bg-secondary/50'
-                                            }`}
-                                        onClick={() => setLocalSortField(option.value)}
-                                    >
-                                        <span className="font-medium">{option.label}</span>
-                                        {localSortField === option.value && (
-                                            <Check className="h-4 w-4 text-primary" />
-                                        )}
-                                    </div>
-                                ))}
+                            <div className="relative">
+                                <button
+                                    onClick={() => setIsMetricDropdownOpen(!isMetricDropdownOpen)}
+                                    className="w-full flex items-center justify-between p-3 rounded-lg border border-input bg-background hover:bg-secondary/50 transition-colors"
+                                >
+                                    <span className="font-medium">
+                                        {METRIC_OPTIONS.find(opt => opt.value === localSortField)?.label || 'Select Metric'}
+                                    </span>
+                                    {isMetricDropdownOpen ? (
+                                        <ChevronUp className="h-4 w-4 opacity-50" />
+                                    ) : (
+                                        <ChevronDown className="h-4 w-4 opacity-50" />
+                                    )}
+                                </button>
+
+                                {isMetricDropdownOpen && (
+                                    <>
+                                        <div
+                                            className="fixed inset-0 z-10"
+                                            onClick={() => setIsMetricDropdownOpen(false)}
+                                        />
+                                        <div className="absolute z-20 top-full left-0 right-0 mt-2 max-h-[300px] overflow-y-auto rounded-lg border border-border bg-popover shadow-lg animate-in fade-in zoom-in-95 duration-200">
+                                            <div className="p-1">
+                                                {METRIC_OPTIONS.map((option) => (
+                                                    <div
+                                                        key={option.value}
+                                                        className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors ${localSortField === option.value
+                                                            ? 'bg-primary/10 text-primary'
+                                                            : 'hover:bg-secondary'
+                                                            }`}
+                                                        onClick={() => {
+                                                            setLocalSortField(option.value);
+                                                            setIsMetricDropdownOpen(false);
+                                                        }}
+                                                    >
+                                                        <span className="font-medium text-sm">{option.label}</span>
+                                                        {localSortField === option.value && (
+                                                            <Check className="h-4 w-4" />
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
 
