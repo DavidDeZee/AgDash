@@ -70,6 +70,8 @@ export function CountyDetailModal({ county, allCounties, onClose }: CountyDetail
                             <p className="text-xl font-bold text-yellow-500">{formatCurrencyMillions(county.marketValueTotalDollars)}</p>
                             <p className="text-xs text-primary font-medium">#{rankings.marketValue} in {county.stateName}</p>
                         </div>
+                        {/*  MAKE THE UI CHANGE HERE MAKE IT AGGREGATED IN MILLIONS RATHER THAN WHAT IT IS RIGHT NOW. ALSO HAVE THE COUNTIES BOARDER HIGHLIGHT WHEN YOU HOVER OVER IT RATHER THEN IT BEING YELLOW. - MIGUEL  */}
+
                         <div className="p-4 bg-secondary/50 rounded-lg space-y-1">
                             <p className="text-xs text-muted-foreground uppercase tracking-wider">Cropland</p>
                             <p className="text-xl font-bold text-emerald-500">{formatAcres(county.croplandAcres)}</p>

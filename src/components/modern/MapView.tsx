@@ -602,29 +602,48 @@ export function MapView({ selectedCounty, counties = [], filteredCounties, onCou
     id: 'counties-fill',
     type: 'fill' as const,
     paint: {
-      'fill-color': [
-        'case',
-        ['boolean', ['feature-state', 'hover'], false],
-        'hsl(48, 100%, 50%)', // Yellow on hover
-        buildFilteredColorExpression(filteredCountySet, FIPS_TO_STATE),
-      ] as any,
-      'fill-opacity': [
-        'case',
-        ['boolean', ['feature-state', 'hover'], false],
-        0.7, // More opaque on hover
-        buildFilteredOpacityExpression(filteredCountySet, FIPS_TO_STATE),
-      ] as any,
+      'fill-color': buildFilteredColorExpression(filteredCountySet, FIPS_TO_STATE) as any,
+      'fill-opacity': buildFilteredOpacityExpression(filteredCountySet, FIPS_TO_STATE) as any,
     },
   }), [filteredCountySet]);
 
-  const countyOutlineLayer = {
+  const countyOutlineLayer = useMemo(() => ({
     id: 'counties-outline',
     type: 'line' as const,
     paint: {
-      'line-color': '#6b7280', // Gray color
-      'line-width': 1,
-      'line-dasharray': [3, 2],
-      'line-opacity': 0.6,
+      'line-color': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        '#ffffff', // White border on hover
+        '#6b7280', // Gray color default
+      ] as any,
+      'line-width': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        3, // Thicker border on hover
+        1, // Default width
+      ] as any,
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1, // Full opacity on hover
+        0.6, // Default opacity
+      ] as any,
+    },
+  }), []);
+
+  const countyOutlineHoverLayer = {
+    id: 'counties-outline-hover',
+    type: 'line' as const,
+    paint: {
+      'line-color': '#ffffff',
+      'line-width': 3,
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1,
+        0,
+      ] as any,
     },
   };
 
@@ -650,7 +669,7 @@ export function MapView({ selectedCounty, counties = [], filteredCounties, onCou
         ]}
         style={{ width: '100%', height: '100%' }}
         mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-        interactiveLayerIds={['counties-fill', 'counties-outline']}
+        interactiveLayerIds={['counties-fill', 'counties-outline', 'counties-outline-hover']}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
         onClick={onClick}
@@ -660,6 +679,7 @@ export function MapView({ selectedCounty, counties = [], filteredCounties, onCou
           <Source id="counties" type="geojson" data={countiesData} generateId={true}>
             <Layer {...countyFillLayer} />
             <Layer {...countyOutlineLayer} />
+            <Layer {...countyOutlineHoverLayer} />
           </Source>
         )}
 
