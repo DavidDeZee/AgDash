@@ -155,6 +155,7 @@ export default function App() {
         isOpen={isRankingModalOpen}
         onClose={() => setIsRankingModalOpen(false)}
         availableStates={availableStates}
+        allCounties={allCounties}
       />
 
       <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden">
