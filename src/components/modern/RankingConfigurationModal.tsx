@@ -104,6 +104,23 @@ export function RankingConfigurationModal({
         }
     }, [isOpen, sortField, selectedStates, selectedLocations, metricRanges]);
 
+    // Handle Escape key
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                onClose();
+            }
+        };
+
+        if (isOpen) {
+            window.addEventListener('keydown', handleKeyDown);
+        }
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isOpen, onClose]);
+
     // Update category if the local sort field changes externally (though in this UI flow it's driven by category first)
     // But importantly, if the user picks a category, we might want to default to the first metric or just wait for them to pick.
     // Current design: User picks category -> User picks metric.
