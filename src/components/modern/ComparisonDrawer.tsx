@@ -37,6 +37,8 @@ export function ComparisonDrawer({
         </Button>
       </div>
 
+      {counties.length >= 2 && <ComparisonInsights counties={counties} />}
+
       <div className="grid gap-4">
         {counties.map((county) => (
           <Card key={county.id} className="p-4">
@@ -105,7 +107,7 @@ export function ComparisonDrawer({
         ))}
       </div>
 
-      {counties.length >= 2 && <ComparisonInsights counties={counties} />}
+
     </div>
   );
 }
