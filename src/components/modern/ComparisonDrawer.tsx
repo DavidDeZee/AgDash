@@ -12,7 +12,6 @@ interface ComparisonDrawerProps {
 
 export function ComparisonDrawer({
   counties,
-  onRemove,
   onClear,
 }: ComparisonDrawerProps) {
   if (counties.length === 0) {
@@ -37,76 +36,7 @@ export function ComparisonDrawer({
       </div>
 
       {counties.length >= 2 && <ComparisonInsights counties={counties} />}
-
-      <div className="grid gap-4">
-        {counties.map((county) => (
-          <Card key={county.id} className="p-4">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h4 className="font-semibold text-lg">
-                  {county.countyName}
-                </h4>
-                <p className="text-sm text-muted-foreground">{county.stateName}</p>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onRemove(county.id)}
-                className="h-8 w-8"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <div className="text-xs text-muted-foreground">Total Farms</div>
-                <div className="font-semibold text-lg text-emerald-900">
-                  {formatNumber(county.farms || 0)}
-                </div>
-              </div>
-              <div>
-                <div className="text-sm text-emerald-600 mb-1">Cropland</div>
-                <div className="font-semibold text-lg text-emerald-900">
-                  {formatAcres(county.croplandAcres || 0)}
-                </div>
-              </div>
-              <div>
-                <div className="text-sm text-emerald-600 mb-1">Irrigated</div>
-                <div className="font-semibold text-lg text-emerald-900">
-                  {formatAcres(county.irrigatedAcres || 0)}
-                </div>
-              </div>
-              <div>
-                <div className="text-sm text-emerald-600 mb-1">Avg Farm Size</div>
-                <div className="font-semibold text-lg text-emerald-900">
-                  {county.farms ? formatAcres(Math.round((county.croplandAcres || 0) / county.farms)) : 'N/A'}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 pt-4 border-t border-border grid grid-cols-2 gap-2">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-primary" />
-                <div>
-                  <div className="text-xs text-muted-foreground">Cropland %</div>
-                  <div className="text-sm font-medium">
-                    {county.croplandPercentage ? `${county.croplandPercentage.toFixed(1)}%` : 'N/A'}
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-muted-foreground">Irrigation %</div>
-                <div className="text-sm font-medium">
-                  {county.irrigationPercentage ? `${county.irrigationPercentage.toFixed(1)}%` : 'N/A'}
-                </div>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
-
-
+      
     </div>
   );
 }
