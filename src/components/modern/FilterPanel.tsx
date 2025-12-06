@@ -1,4 +1,4 @@
-import { Search, X, Info, Sparkles, Plus, ChevronDown, BarChart3, TrendingUp } from 'lucide-react';
+import { Search, X, Info, Sparkles, Plus, ChevronDown, BarChart3, Clock } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
@@ -273,7 +273,7 @@ function ComparisonInsights({ counties }: { counties: EnhancedCountyData[] }) {
   return (
     <Card className="p-2 bg-primary/10 border-primary/20">
       <h4 className="font-semibold mb-3 flex items-center gap-2">
-        <TrendingUp className="h-4 w-4" />
+        <Clock className="h-4 w-4" />
         Quick Insights
       </h4>
       <ul className="space-y-2 text-sm">
