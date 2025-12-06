@@ -275,7 +275,7 @@ export function RankingConfigurationModal({
                                 </div>
 
                                 {/* Metric List (Filtered by Category) */}
-                                <div className="border border-border rounded-lg bg-card overflow-hidden flex flex-col max-h-[300px]">
+                                <div className={`border border-border rounded-lg bg-card overflow-hidden flex flex-col ${selectedCategory === 'Crops' ? 'max-h-[500px]' : 'max-h-[300px]'}`}>
                                     <div className="p-1 overflow-y-auto flex-1 custom-scrollbar">
                                         {filteredMetrics.map((option) => (
                                             <div
