@@ -2,6 +2,7 @@ import { useRef, useEffect, useState, useMemo } from 'react';
 import Map, { Source, Layer } from 'react-map-gl/maplibre';
 import type { MapRef, MapLayerMouseEvent } from 'react-map-gl/maplibre';
 import type { EnhancedCountyData } from '../../types/ag';
+import { useStore } from '../../store/useStore';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 interface MapViewProps {
@@ -484,6 +485,20 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
   const [hoveredCountyId, setHoveredCountyId] = useState<string | number | null>(null);
   const [countiesData, setCountiesData] = useState<any>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
+
+  // Get comparison counties from store
+  const comparisonCounties = useStore((state) => state.comparisonCounties);
+
+  // Create a Set of comparison county keys for quick lookup
+  const comparisonCountySet = useMemo(() => {
+    const set = new Set<string>();
+    comparisonCounties.forEach((county) => {
+      const key = `${county.countyName.toUpperCase()}|${county.stateName.toUpperCase()}`;
+      set.add(key);
+    });
+    return set;
+  }, [comparisonCounties]);
 
 
   // Create a Set of filtered county names+states for quick lookup
@@ -513,6 +528,29 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
       });
 
   }, []);
+
+  // Update feature state for comparison counties
+  useEffect(() => {
+    const map = mapRef.current?.getMap();
+    if (!map || !mapLoaded || !countiesData) return;
+
+    // Iterate through all features and set comparison state
+    countiesData.features.forEach((feature: any, index: number) => {
+      const countyName = feature.properties?.NAME;
+      const stateFips = feature.properties?.STATEFP;
+      const stateName = FIPS_TO_STATE[stateFips];
+
+      if (countyName && stateName) {
+        const key = `${countyName.toUpperCase()}|${stateName.toUpperCase()}`;
+        const isInComparison = comparisonCountySet.has(key);
+
+        map.setFeatureState(
+          { source: 'counties', id: index },
+          { comparison: isInComparison }
+        );
+      }
+    });
+  }, [mapLoaded, countiesData, comparisonCountySet]);
 
 
   // Handle hover
@@ -609,32 +647,40 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
     },
   }), [filteredCountySet]);
 
+  // Base outline layer - just gray borders for all counties
   const countyOutlineLayer = useMemo(() => ({
     id: 'counties-outline',
     type: 'line' as const,
     paint: {
-      'line-color': [
-        'case',
-        ['boolean', ['feature-state', 'hover'], false],
-        '#ffffff', // White border on hover
-        '#6b7280', // Gray color default
-      ] as any,
+      'line-color': '#6b7280',
       'line-width': 1,
-      'line-opacity': [
-        'case',
-        ['boolean', ['feature-state', 'hover'], false],
-        1, // Full opacity on hover
-        0.6, // Default opacity
-      ] as any,
+      'line-opacity': 0.6,
     },
   }), []);
 
+  // Comparison outline layer - white borders for comparison counties, rendered on top
+  const countyOutlineComparisonLayer = {
+    id: 'counties-outline-comparison',
+    type: 'line' as const,
+    paint: {
+      'line-color': '#ffffff',
+      'line-width': 2,
+      'line-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'comparison'], false],
+        1,
+        0,
+      ] as any,
+    },
+  };
+
+  // Hover outline layer - white borders on hover, rendered on top of everything
   const countyOutlineHoverLayer = {
     id: 'counties-outline-hover',
     type: 'line' as const,
     paint: {
       'line-color': '#ffffff',
-      'line-width': 1,
+      'line-width': 2,
       'line-opacity': [
         'case',
         ['boolean', ['feature-state', 'hover'], false],
@@ -662,10 +708,11 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
         ]}
         style={{ width: '100%', height: '100%' }}
         mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-        interactiveLayerIds={['counties-fill', 'counties-outline', 'counties-outline-hover']}
+        interactiveLayerIds={['counties-fill', 'counties-outline', 'counties-outline-comparison', 'counties-outline-hover']}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
         onClick={onClick}
+        onLoad={() => setMapLoaded(true)}
         {...({
           canvasContextAttributes: {
             preserveDrawingBuffer: true
@@ -677,6 +724,7 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
           <Source id="counties" type="geojson" data={countiesData} generateId={true}>
             <Layer {...countyFillLayer} />
             <Layer {...countyOutlineLayer} />
+            <Layer {...countyOutlineComparisonLayer} />
             <Layer {...countyOutlineHoverLayer} />
           </Source>
         )}

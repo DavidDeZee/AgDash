@@ -53,7 +53,7 @@ export const useStore = create<DashboardState>((set) => ({
 
   addToComparison: (county) =>
     set((state) => {
-      if (state.comparisonCounties.length >= 3) return state;
+      if (state.comparisonCounties.length >= 5) return state;
       if (state.comparisonCounties.some((c) => c.id === county.id)) return state;
       return { comparisonCounties: [...state.comparisonCounties, county] };
     }),
