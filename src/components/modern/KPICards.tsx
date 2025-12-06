@@ -22,7 +22,7 @@ export function KPICards({
       color: 'text-green-400',
     },
     {
-      label: 'Cropland',
+      label: 'Total Cropland',
       value: formatAcres(totalCropland),
       icon: Sprout,
       color: 'text-emerald-400',
