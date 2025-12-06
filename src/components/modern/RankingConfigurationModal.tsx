@@ -1,13 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { X, Check, RotateCcw, ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import { Button } from '../ui/Button';
 import type { SortField } from '../../types/ag';
 
+import type { EnhancedCountyData } from '../../types/ag';
+
 interface RankingConfigurationModalProps {
     isOpen: boolean;
     onClose: () => void;
     availableStates: string[];
+    allCounties: EnhancedCountyData[];
 }
 
 type MetricCategory = 'Generals' | 'Financials' | 'Crops' | 'Livestock';
@@ -49,10 +52,12 @@ const METRIC_OPTIONS: MetricOption[] = [
     { value: 'dairyCattleHead', label: 'Dairy Cattle', category: 'Livestock' },
 ];
 
+
 export function RankingConfigurationModal({
     isOpen,
     onClose,
     availableStates,
+    allCounties,
 }: RankingConfigurationModalProps) {
     const {
         sortField,
@@ -79,6 +84,24 @@ export function RankingConfigurationModal({
     const [localMetricRanges, setLocalMetricRanges] = useState<Record<string, [number | null, number | null]>>(metricRanges);
     const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
     const [selectedMetricToAdd, setSelectedMetricToAdd] = useState<string>('');
+
+    // Compute valid states for the current metric
+    const validStates = useMemo(() => {
+        const states = new Set<string>();
+        allCounties.forEach(county => {
+            const val = county[localSortField];
+            if (typeof val === 'number' && val > 0) {
+                states.add(county.stateName);
+            }
+        });
+        return Array.from(states).sort();
+    }, [allCounties, localSortField]);
+
+    // Determines which states to show: intersection of availableStates and validStates
+    // (availableStates usually has all of them, but good to be safe if parent passes a subset)
+    const displayedStates = useMemo(() => {
+        return availableStates.filter(s => validStates.includes(s));
+    }, [availableStates, validStates]);
 
     // Category selection state
     const [selectedCategory, setSelectedCategory] = useState<MetricCategory>(getCategoryForField(sortField));
@@ -331,12 +354,12 @@ export function RankingConfigurationModal({
                                 </label>
                                 {localSelectedLocations.length > 0 && localSelectedLocations.length < availableLocations.length && (
                                     <span className="text-xs text-muted-foreground italic">
-                                        Clear regions to enable
+                                        Clear states to enable
                                     </span>
                                 )}
                             </div>
                             <div className="flex flex-wrap gap-2">
-                                {availableStates.map((state) => {
+                                {displayedStates.map((state) => {
                                     const isSelected = localSelectedStates.length === 0 || localSelectedStates.includes(state);
                                     const isRegionFilterActive = localSelectedLocations.length > 0 && localSelectedLocations.length < availableLocations.length;
                                     const isDisabled = isRegionFilterActive;
@@ -359,7 +382,7 @@ export function RankingConfigurationModal({
                                 })}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                {localSelectedStates.length === 0 ? "Showing all states" : `Showing ${localSelectedStates.length} state(s)`}
+                                {localSelectedStates.length === 0 ? "Showing all applicable states" : `Showing ${localSelectedStates.length} state(s)`}
                             </p>
                         </div>
 

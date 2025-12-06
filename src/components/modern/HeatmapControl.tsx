@@ -24,6 +24,19 @@ export function HeatmapControl({ availableStates, allCounties }: HeatmapControlP
         setHeatmapStateFilter(null);
     };
 
+    // Filter states based on selected metric
+    const displayedStates = useMemo(() => {
+        const states = new Set<string>();
+        allCounties.forEach(county => {
+            const val = county[heatmapMetric as keyof EnhancedCountyData];
+            if (typeof val === 'number' && val > 0) {
+                states.add(county.stateName);
+            }
+        });
+        const validStateList = Array.from(states).sort();
+        return availableStates.filter(s => validStateList.includes(s));
+    }, [allCounties, heatmapMetric, availableStates]);
+
     const metrics = [
         {
             group: 'Crops',
@@ -137,7 +150,7 @@ export function HeatmapControl({ availableStates, allCounties }: HeatmapControlP
                                                 <span>All States</span>
                                                 {!heatmapStateFilter && <Check className="h-3 w-3" />}
                                             </button>
-                                            {availableStates.map(state => (
+                                            {displayedStates.map(state => (
                                                 <button
                                                     key={state}
                                                     onClick={() => { setHeatmapStateFilter(state); setIsStateOpen(false); }}
