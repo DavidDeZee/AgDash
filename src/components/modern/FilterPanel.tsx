@@ -8,6 +8,10 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import type { EnhancedCountyData } from '../../types/ag';
 
 
+import { HeatmapControl } from './HeatmapControl';
+
+import { getUniqueStates } from '../../utils/dataUtils';
+
 interface FilterPanelProps {
   allCounties: EnhancedCountyData[];
 }
@@ -21,6 +25,8 @@ export function FilterPanel({ allCounties }: FilterPanelProps) {
     removeFromComparison,
     clearComparison,
   } = useStore();
+
+  const availableStates = useMemo(() => getUniqueStates(allCounties), [allCounties]);
 
   const [showExamples, setShowExamples] = useState(false);
   const [queryInput, setQueryInput] = useState('');
@@ -84,6 +90,7 @@ export function FilterPanel({ allCounties }: FilterPanelProps) {
 
   return (
     <div className="space-y-4 p-4">
+
       {/* Natural Language Query */}
       <Card className="p-4">
         <div className="space-y-3">
@@ -259,6 +266,9 @@ export function FilterPanel({ allCounties }: FilterPanelProps) {
           {comparisonCounties.length >= 2 && <ComparisonInsights counties={comparisonCounties} />}
         </div>
       </Card>
+
+      {/* Heatmap Control */}
+      <HeatmapControl availableStates={availableStates} allCounties={allCounties} />
     </div>
   );
 }

@@ -18,6 +18,11 @@ interface DashboardState {
   // Query
   searchQuery: string;
 
+  // Heatmap
+  heatmapMode: boolean;
+  heatmapMetric: string;
+  heatmapStateFilter: string | null;
+
   // Actions
   setSelectedCounty: (county: EnhancedCountyData | null) => void;
   addToComparison: (county: EnhancedCountyData) => void;
@@ -34,6 +39,10 @@ interface DashboardState {
 
   setSearchQuery: (query: string) => void;
 
+  setHeatmapMode: (enabled: boolean) => void;
+  setHeatmapMetric: (metric: string) => void;
+  setHeatmapStateFilter: (state: string | null) => void;
+
   resetFilters: () => void;
 }
 
@@ -47,6 +56,9 @@ export const useStore = create<DashboardState>((set) => ({
   sortField: 'croplandAcres',
   sortDirection: 'desc',
   searchQuery: '',
+  heatmapMode: false,
+  heatmapMetric: 'croplandAcres', // Default metric
+  heatmapStateFilter: null,
 
   // Actions
   setSelectedCounty: (county) => set({ selectedCounty: county }),
@@ -83,6 +95,9 @@ export const useStore = create<DashboardState>((set) => ({
   setSortDirection: (direction) => set({ sortDirection: direction }),
 
   setSearchQuery: (query) => set({ searchQuery: query }),
+  setHeatmapMode: (enabled) => set({ heatmapMode: enabled }),
+  setHeatmapMetric: (metric) => set({ heatmapMetric: metric }),
+  setHeatmapStateFilter: (state) => set({ heatmapStateFilter: state }),
 
   resetFilters: () =>
     set({
@@ -90,5 +105,8 @@ export const useStore = create<DashboardState>((set) => ({
       selectedLocations: [],
       metricRanges: {},
       searchQuery: '',
+      heatmapMode: false,
+      heatmapMetric: 'croplandAcres',
+      heatmapStateFilter: null,
     }),
 }));
