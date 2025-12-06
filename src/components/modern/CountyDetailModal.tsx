@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
-import { X, MapPin, Sprout, DollarSign, Beef } from 'lucide-react';
+import { X, MapPin, Sprout, DollarSign, Beef, Plus, Minus } from 'lucide-react';
 import type { EnhancedCountyData } from '../../types/ag';
 import { formatNumber, formatAcres, formatCurrency, formatCurrencyMillions } from '../../lib/format';
+import { useStore } from '../../store/useStore';
+import { Button } from '../ui/Button';
 
 interface CountyDetailModalProps {
     county: EnhancedCountyData | null;
@@ -10,6 +12,11 @@ interface CountyDetailModalProps {
 }
 
 export function CountyDetailModal({ county, allCounties, onClose }: CountyDetailModalProps) {
+    const { comparisonCounties, addToComparison, removeFromComparison } = useStore();
+
+    const isInComparison = county ? comparisonCounties.some(c => c.id === county.id) : false;
+    const canAddToComparison = comparisonCounties.length < 5;
+
     // Handle Escape key
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -90,12 +97,39 @@ export function CountyDetailModal({ county, allCounties, onClose }: CountyDetail
                             <p className="text-muted-foreground">{county.stateName}</p>
                         </div>
                     </div>
-                    <button
-                        onClick={onClose}
-                        className="p-2 hover:bg-secondary rounded-full transition-colors"
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant={isInComparison ? "secondary" : "outline"}
+                            size="sm"
+                            onClick={() => {
+                                if (isInComparison) {
+                                    removeFromComparison(county.id);
+                                } else if (canAddToComparison) {
+                                    addToComparison(county);
+                                }
+                            }}
+                            disabled={!isInComparison && !canAddToComparison}
+                            className="flex items-center gap-1.5"
+                        >
+                            {isInComparison ? (
+                                <>
+                                    <Minus className="h-4 w-4" />
+                                    <span>Remove</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Compare</span>
+                                </>
+                            )}
+                        </Button>
+                        <button
+                            onClick={onClose}
+                            className="p-2 hover:bg-secondary rounded-full transition-colors"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+                    </div>
                 </div>
 
                 {/* Content */}
