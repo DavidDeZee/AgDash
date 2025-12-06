@@ -85,14 +85,14 @@ export default function App() {
 
     return {
       totalCounties: counties.length,
-      totalFarms: counties.reduce((sum, c) => sum + c.farms, 0),
-      totalCropland: counties.reduce((sum, c) => sum + c.croplandAcres, 0),
-      totalIrrigated: counties.reduce((sum, c) => sum + c.irrigatedAcres, 0),
-      totalMarketValue: counties.reduce((sum, c) => sum + c.marketValueTotalDollars, 0),
-      totalCropsSales: counties.reduce((sum, c) => sum + c.cropsSalesDollars, 0),
-      totalLivestockSales: counties.reduce((sum, c) => sum + c.livestockSalesDollars, 0),
-      totalCattle: counties.reduce((sum, c) => sum + c.cattleHead, 0),
-      totalMilkCows: counties.reduce((sum, c) => sum + c.milkCowsHead, 0),
+      totalFarms: counties.reduce((sum, c) => sum + (c.farms || 0), 0),
+      totalCropland: counties.reduce((sum, c) => sum + (c.croplandAcres || 0), 0),
+      totalIrrigated: counties.reduce((sum, c) => sum + (c.irrigatedAcres || 0), 0),
+      totalMarketValue: counties.reduce((sum, c) => sum + (c.marketValueTotalDollars || 0), 0),
+      totalCropsSales: counties.reduce((sum, c) => sum + (c.cropsSalesDollars || 0), 0),
+      totalLivestockSales: counties.reduce((sum, c) => sum + (c.livestockSalesDollars || 0), 0),
+      totalCattle: counties.reduce((sum, c) => sum + (c.beefCattleHead || 0), 0),
+      totalMilkCows: counties.reduce((sum, c) => sum + (c.dairyCattleHead || 0), 0),
     };
   }, [filteredAndSortedCounties, allCounties]);
 

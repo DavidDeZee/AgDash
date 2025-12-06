@@ -21,14 +21,12 @@ COMMON_PARAMS = {
 TARGET_STATES = ["OR", "WA", "CA", "NV", "ID", "MT"]
 
 # --- Metrics Dictionary ------------------------------------------------------
-# --- Metrics Dictionary ------------------------------------------------------
-# FORMAT: {col_name_to_create: (short_desc_string, extra_params_dict)}
 
 METRICS = {
     # --- CORE LAND & OPERATIONS ---
     "farms": ("FARM OPERATIONS - NUMBER OF OPERATIONS", None),
-    "land_owned_acres": ("AG LAND, OWNED, IN FARMS - ACRES", None),
-    "land_rented_acres": ("AG LAND, RENTED FROM OTHERS, IN FARMS - ACRES", None),
+    # "land_owned_acres": ("AG LAND, OWNED, IN FARMS - ACRES", None),
+    # "land_rented_acres": ("AG LAND, RENTED FROM OTHERS, IN FARMS - ACRES", None),
     "cropland_acres": ("AG LAND, CROPLAND - ACRES", None),
     "harvested_cropland_acres": ("AG LAND, CROPLAND, HARVESTED - ACRES", None),
     "irrigated_acres": ("AG LAND, IRRIGATED - ACRES", {"prodn_practice_desc": "IRRIGATED"}),
@@ -38,18 +36,39 @@ METRICS = {
     "crops_sales_dollars": ("CROP TOTALS - SALES, MEASURED IN $", None),
     "livestock_sales_dollars": ("ANIMAL TOTALS, INCL PRODUCTS - SALES, MEASURED IN $", None),
     "gov_payments_dollars": ("GOVT PROGRAMS, FEDERAL - RECEIPTS, MEASURED IN $", None),
-    "net_cash_income_dollars": ("INCOME, NET CASH FARM, OF OPERATIONS - NET INCOME, MEASURED IN $", None),
-
-    # --- LIVESTOCK SPECIFICS (Equipment Targeting) ---
-    "cattle_head": ("CATTLE, INCL CALVES - INVENTORY", None),
-    "milk_cows_head": ("CATTLE, COWS, MILK - INVENTORY", None),
+    # "net_cash_income_dollars": ("INCOME, NET CASH FARM, OF OPERATIONS - NET INCOME, MEASURED IN $", None),
 
     # --- CROP SPECIFICS ---
-    # Using 'Operations with Area Harvested' because acreage is often suppressed for veg
-    "veg_harvest_ops": ("VEGETABLE TOTALS, IN THE OPEN - OPERATIONS WITH AREA HARVESTED", None),
+    "apples_acres": ("APPLES - ACRES BEARING & NON-BEARING", None),
+    "wheat_acres": ("WHEAT - ACRES HARVESTED", None),
+    "rice_acres": ("RICE - ACRES HARVESTED", None),
+    "hazelnuts_acres": ("HAZELNUTS - ACRES BEARING & NON-BEARING", None),
+    
+    # Grass Seeds
+    "grass_seed_bentgrass_acres": ("GRASSES, BENTGRASS, SEED - ACRES HARVESTED", None),
+    "grass_seed_bermudagrass_acres": ("GRASSES, BERMUDA GRASS, SEED - ACRES HARVESTED", None),
+    "grass_seed_bluegrass_acres": ("GRASSES, BLUEGRASS, KENTUCKY, SEED - ACRES HARVESTED", None),
+    "grass_seed_bromegrass_acres": ("GRASSES, BROMEGRASS, SEED - ACRES HARVESTED", None),
+    "grass_seed_fescue_acres": ("GRASSES, FESCUE, SEED - ACRES HARVESTED", None),
+    "grass_seed_orchardgrass_acres": ("GRASSES, ORCHARDGRASS, SEED - ACRES HARVESTED", None),
+    # "grass_seed_redtop_acres": ("GRASSES, REDTOP, SEED - ACRES HARVESTED", None),
+    "grass_seed_ryegrass_acres": ("GRASSES, RYEGRASS, SEED - ACRES HARVESTED", None),
+    "grass_seed_sudangrass_acres": ("GRASSES, SUDANGRASS, SEED - ACRES HARVESTED", None),
+    "grass_seed_timothy_acres": ("GRASSES, TIMOTHY, SEED - ACRES HARVESTED", None),
+    "grass_seed_wheatgrass_acres": ("GRASSES, WHEATGRASS, SEED - ACRES HARVESTED", None),
 
-    # --- INFRASTRUCTURE ---
-    "internet_access_pct": ("INTERNET, ACCESS - OPERATIONS, MEASURED IN PCT OF FARM OPERATIONS", None),
+    # CORN
+    "corn_acres": ("CORN, GRAIN - ACRES HARVESTED", None),
+    "corn_silage_acres": ("CORN, SILAGE - ACRES HARVESTED", None),
+    
+    # HAY
+    "hay_acres": ("HAY - ACRES HARVESTED", None),
+    "haylage_acres": ("HAYLAGE - ACRES HARVESTED", None),
+
+    # COWS
+    "beef_cattle_head": ("CATTLE, COWS, BEEF - INVENTORY", None),
+    "dairy_cattle_head": ("CATTLE, COWS, MILK - INVENTORY", None),
+
 }
 
 # --- Helper Function ---------------------------------------------------------
@@ -91,7 +110,7 @@ def fetch_metric_multistate(short_desc: str, extra_params: dict = None) -> pd.Da
             print(f"Error: {e}")
             
         # Be polite to the API to avoid rate limiting
-        # time.sleep(0.5)
+        time.sleep(2)
         # We're going to be mean to the api for now, otherwise this takes forever. 
 
     if not all_states_data:
@@ -160,6 +179,23 @@ def main():
             print("Calculating 'land_in_farms_acres'...")
             merged["land_in_farms_acres"] = merged["land_owned_acres"].fillna(0) + \
                                              merged["land_rented_acres"].fillna(0)
+
+        # Calculate 'grass_seed_acres'
+        grass_seed_cols = [
+            "grass_seed_bentgrass_acres", "grass_seed_bermudagrass_acres", 
+            "grass_seed_bluegrass_acres", "grass_seed_bromegrass_acres", 
+            "grass_seed_fescue_acres", "grass_seed_orchardgrass_acres", 
+            "grass_seed_redtop_acres", "grass_seed_ryegrass_acres", 
+            "grass_seed_sudangrass_acres", "grass_seed_timothy_acres", 
+            "grass_seed_wheatgrass_acres"
+        ]
+        
+        # Check if any of the grass seed columns exist
+        if any(col in merged.columns for col in grass_seed_cols):
+            print("Calculating 'grass_seed_acres'...")
+            merged["grass_seed_acres"] = 0
+            for col in grass_seed_cols:
+                merged["grass_seed_acres"] += merged.get(col, pd.Series(0, index=merged.index)).fillna(0)
 
         # Save to CSV
         # Determine the output path relative to this script

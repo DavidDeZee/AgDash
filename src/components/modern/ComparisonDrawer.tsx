@@ -60,26 +60,26 @@ export function ComparisonDrawer({
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <div className="text-xs text-muted-foreground">Total Farms</div>
-                <div className="text-lg font-bold text-primary">
-                  {formatNumber(county.farms)}
+                <div className="font-semibold text-lg text-emerald-900">
+                  {formatNumber(county.farms || 0)}
                 </div>
               </div>
-              <div className="space-y-1">
-                <div className="text-xs text-muted-foreground">Cropland</div>
-                <div className="text-lg font-bold text-emerald-400">
-                  {formatAcres(county.croplandAcres)}
+              <div>
+                <div className="text-sm text-emerald-600 mb-1">Cropland</div>
+                <div className="font-semibold text-lg text-emerald-900">
+                  {formatAcres(county.croplandAcres || 0)}
                 </div>
               </div>
-              <div className="space-y-1">
-                <div className="text-xs text-muted-foreground">Irrigated</div>
-                <div className="text-sm font-medium">
-                  {formatAcres(county.irrigatedAcres)}
+              <div>
+                <div className="text-sm text-emerald-600 mb-1">Irrigated</div>
+                <div className="font-semibold text-lg text-emerald-900">
+                  {formatAcres(county.irrigatedAcres || 0)}
                 </div>
               </div>
-              <div className="space-y-1">
-                <div className="text-xs text-muted-foreground">Land in Farms</div>
-                <div className="text-sm font-medium">
-                  {formatAcres(county.landInFarmsAcres)}
+              <div>
+                <div className="text-sm text-emerald-600 mb-1">Avg Farm Size</div>
+                <div className="font-semibold text-lg text-emerald-900">
+                  {county.farms ? formatAcres(Math.round((county.croplandAcres || 0) / county.farms)) : 'N/A'}
                 </div>
               </div>
             </div>
@@ -90,14 +90,14 @@ export function ComparisonDrawer({
                 <div>
                   <div className="text-xs text-muted-foreground">Cropland %</div>
                   <div className="text-sm font-medium">
-                    {county.croplandPercentage.toFixed(1)}%
+                    {county.croplandPercentage ? `${county.croplandPercentage.toFixed(1)}%` : 'N/A'}
                   </div>
                 </div>
               </div>
               <div>
                 <div className="text-xs text-muted-foreground">Irrigation %</div>
                 <div className="text-sm font-medium">
-                  {county.irrigationPercentage.toFixed(1)}%
+                  {county.irrigationPercentage ? `${county.irrigationPercentage.toFixed(1)}%` : 'N/A'}
                 </div>
               </div>
             </div>
@@ -111,9 +111,9 @@ export function ComparisonDrawer({
 }
 
 function ComparisonInsights({ counties }: { counties: EnhancedCountyData[] }) {
-  const topByFarms = [...counties].sort((a, b) => b.farms - a.farms)[0];
+  const topByFarms = [...counties].sort((a, b) => (b.farms || 0) - (a.farms || 0))[0];
   const topByCropland = [...counties].sort(
-    (a, b) => b.croplandAcres - a.croplandAcres
+    (a, b) => (b.croplandAcres || 0) - (a.croplandAcres || 0)
   )[0];
 
   return (
@@ -127,14 +127,14 @@ function ComparisonInsights({ counties }: { counties: EnhancedCountyData[] }) {
           <span className="text-primary">•</span>
           <span>
             <strong>{topByFarms.countyName}</strong> has the most farms (
-            {formatNumber(topByFarms.farms)})
+            {formatNumber(topByFarms.farms || 0)})
           </span>
         </li>
         <li className="flex items-start gap-2">
           <span className="text-primary">•</span>
           <span>
             <strong>{topByCropland.countyName}</strong> has the most cropland (
-            {formatAcres(topByCropland.croplandAcres)})
+            {formatAcres(topByCropland.croplandAcres || 0)})
           </span>
         </li>
       </ul>

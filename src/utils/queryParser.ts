@@ -152,7 +152,6 @@ function extractField(query: string): SortField {
   if (lowerQuery.includes('farm')) return 'farms';
   if (lowerQuery.includes('irrigat')) return 'irrigatedAcres';
   if (lowerQuery.includes('harvest')) return 'harvestedCroplandAcres';
-  if (lowerQuery.includes('land in farms')) return 'landInFarmsAcres';
 
   // Default to cropland
   return 'croplandAcres';

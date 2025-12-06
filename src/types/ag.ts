@@ -7,22 +7,34 @@ export interface CountyData {
   stateName: string;
   countyName: string;
   year: number;
-  farms: number;
-  landOwnedAcres: number;
-  landRentedAcres: number;
-  croplandAcres: number;
-  harvestedCroplandAcres: number;
-  irrigatedAcres: number;
-  landInFarmsAcres: number;
-  marketValueTotalDollars: number;
-  cropsSalesDollars: number;
-  livestockSalesDollars: number;
-  govPaymentsDollars: number;
-  netCashIncomeDollars: number;
-  cattleHead: number;
-  milkCowsHead: number;
-  vegHarvestOps: number;
-  internetAccessPct: number;
+  farms: number | null;
+  croplandAcres: number | null;
+  harvestedCroplandAcres: number | null;
+  irrigatedAcres: number | null;
+  marketValueTotalDollars: number | null;
+  cropsSalesDollars: number | null;
+  livestockSalesDollars: number | null;
+  govPaymentsDollars: number | null;
+  applesAcres: number | null;
+  wheatAcres: number | null;
+  riceAcres: number | null;
+  hazelnutsAcres: number | null;
+  grassSeedBentgrassAcres: number | null;
+  grassSeedBermudagrassAcres: number | null;
+  grassSeedBluegrassAcres: number | null;
+  grassSeedBromegrassAcres: number | null;
+  grassSeedFescueAcres: number | null;
+  grassSeedOrchardgrassAcres: number | null;
+  grassSeedRyegrassAcres: number | null;
+  grassSeedSudangrassAcres: number | null;
+  grassSeedTimothyAcres: number | null;
+  grassSeedWheatgrassAcres: number | null;
+  cornAcres: number | null;
+  cornSilageAcres: number | null;
+  hayAcres: number | null;
+  haylageAcres: number | null;
+  beefCattleHead: number | null;
+  dairyCattleHead: number | null;
 }
 
 /**
@@ -30,9 +42,9 @@ export interface CountyData {
  */
 export interface EnhancedCountyData extends CountyData {
   id: string; // Unique identifier: "STATE-COUNTY"
-  totalLandAcres: number; // landOwnedAcres + landRentedAcres
-  croplandPercentage: number; // croplandAcres / landInFarmsAcres * 100
-  irrigationPercentage: number; // irrigatedAcres / croplandAcres * 100
+  croplandPercentage: number | null; // croplandAcres / landInFarmsAcres * 100 (Note: landInFarmsAcres is removed from base, checking usage)
+  irrigationPercentage: number | null; // irrigatedAcres / croplandAcres * 100
+  grassSeedAcres: number | null; // Aggregated grass seed acres
 }
 
 /**
@@ -52,12 +64,22 @@ export type SortField =
   | 'countyName'
   | 'farms'
   | 'croplandAcres'
-  | 'landInFarmsAcres'
   | 'irrigatedAcres'
   | 'harvestedCroplandAcres'
   | 'marketValueTotalDollars'
   | 'cropsSalesDollars'
-  | 'livestockSalesDollars';
+  | 'livestockSalesDollars'
+  | 'applesAcres'
+  | 'wheatAcres'
+  | 'riceAcres'
+  | 'hazelnutsAcres'
+  | 'grassSeedAcres'
+  | 'cornAcres'
+  | 'cornSilageAcres'
+  | 'hayAcres'
+  | 'haylageAcres'
+  | 'beefCattleHead'
+  | 'dairyCattleHead';
 
 export type SortDirection = 'asc' | 'desc';
 

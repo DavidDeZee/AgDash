@@ -1,7 +1,7 @@
 import { Card } from '../ui/Card';
 import type { EnhancedCountyData } from '../../types/ag';
 import { formatNumber, formatAcres, formatCurrency } from '../../lib/format';
-import { MapPin, Filter, ArrowUp, ArrowDown } from 'lucide-react';
+import { MapPin, Filter, ArrowUp, ArrowDown, RotateCcw } from 'lucide-react';
 import type { SortField } from '../../types/ag';
 import { useStore } from '../../store/useStore';
 
@@ -32,12 +32,29 @@ export function CountyList({
   onConfigure,
   sortField,
 }: CountyListProps) {
-  const { sortDirection, selectedStates, selectedLocations, metricRanges, setSortDirection } = useStore();
+  const {
+    sortDirection,
+    selectedStates,
+    selectedLocations,
+    metricRanges,
+    setSortDirection,
+    setSortField,
+    resetFilters
+  } = useStore();
 
   if (counties.length === 0) {
     return (
       <Card className="p-8 text-center">
         <p className="text-muted-foreground">No counties match your filters.</p>
+        <button
+          onClick={() => {
+            resetFilters();
+            setSortField('croplandAcres');
+          }}
+          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors text-sm font-medium"
+        >
+          Reset Filters
+        </button>
       </Card>
     );
   }
@@ -61,6 +78,11 @@ export function CountyList({
     return parts.join(' • ');
   };
 
+  const handleReset = () => {
+    resetFilters();
+    setSortField('croplandAcres');
+  }
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between mb-4">
@@ -83,6 +105,13 @@ export function CountyList({
             ) : (
               <ArrowDown className="h-4 w-4" />
             )}
+          </button>
+          <button
+            onClick={handleReset}
+            className="p-1.5 rounded-md hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+            title="Reset Filters"
+          >
+            <RotateCcw className="h-4 w-4" />
           </button>
           <button
             onClick={onConfigure}
@@ -116,7 +145,7 @@ export function CountyList({
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div>
                 <div className="text-xs text-muted-foreground">Farms</div>
-                <div className="font-medium">{formatNumber(county.farms)}</div>
+                <div className="font-medium">{formatNumber(county.farms || 0)}</div>
               </div>
               <div className="text-right">
                 <div className="text-xs text-muted-foreground">
@@ -127,11 +156,11 @@ export function CountyList({
                           'Value'}
                 </div>
                 <div className="font-bold text-primary">
-                  {sortField === 'croplandAcres' || sortField === 'irrigatedAcres' || sortField === 'landInFarmsAcres' || sortField === 'harvestedCroplandAcres'
-                    ? formatAcres(county[sortField] as number)
+                  {sortField === 'croplandAcres' || sortField === 'irrigatedAcres' || sortField === 'harvestedCroplandAcres'
+                    ? formatAcres((county[sortField] as number) || 0)
                     : sortField === 'marketValueTotalDollars' || sortField === 'cropsSalesDollars' || sortField === 'livestockSalesDollars'
-                      ? formatCurrency(county[sortField] as number)
-                      : formatNumber(county[sortField] as number)}
+                      ? formatCurrency((county[sortField] as number) || 0)
+                      : formatNumber((county[sortField] as number) || 0)}
                 </div>
               </div>
             </div>

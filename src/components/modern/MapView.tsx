@@ -456,21 +456,21 @@ function MapLegend() {
   ];
 
   return (
-    <div className="absolute top-6 right-6 bg-card/95 backdrop-blur-sm border border-border rounded-lg p-4 shadow-lg z-10 min-w-[200px]">
-      <h3 className="text-sm font-semibold mb-3 text-foreground">Region Key</h3>
-      <div className="space-y-2">
+    <div className="absolute bottom-12 right-6 bg-card/95 backdrop-blur-sm border border-border rounded-md p-3 shadow-lg z-10 min-w-[140px]">
+      <h3 className="text-xs font-semibold mb-2 text-foreground">Region Key</h3>
+      <div className="space-y-1.5">
         {regionOrder.map((regionKey) => {
           const region = REGIONS[regionKey];
           return (
-            <div key={regionKey} className="flex items-center gap-3">
+            <div key={regionKey} className="flex items-center gap-2">
               <div
-                className="w-5 h-5 rounded border border-border/50 flex-shrink-0"
+                className="w-3 h-3 rounded-full border border-border/50 flex-shrink-0"
                 style={{
                   backgroundColor: region.color,
                   opacity: region.opacity + 0.3,
                 }}
               />
-              <span className="text-xs text-foreground/90">{region.name}</span>
+              <span className="text-[11px] text-foreground/90">{region.name}</span>
             </div>
           );
         })}
@@ -707,18 +707,18 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
             <div className="space-y-1 border-t border-border pt-2">
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Farms:</span>
-                <span className="font-medium">{hoverInfo.countyData.farms.toLocaleString()}</span>
+                <span className="font-medium">{(hoverInfo.countyData.farms || 0).toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Cropland:</span>
                 <span className="font-medium">
-                  {(hoverInfo.countyData.croplandAcres / 1000).toFixed(1)}K ac
+                  {((hoverInfo.countyData.croplandAcres || 0) / 1000).toFixed(1)}K ac
                 </span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Market Val:</span>
                 <span className="font-medium">
-                  ${(hoverInfo.countyData.marketValueTotalDollars / 1000000).toFixed(1)}M
+                  ${((hoverInfo.countyData.marketValueTotalDollars || 0) / 1000000).toFixed(1)}M
                 </span>
               </div>
             </div>
