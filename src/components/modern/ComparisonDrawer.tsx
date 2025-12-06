@@ -1,4 +1,4 @@
-import { X, TrendingUp } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import type { EnhancedCountyData } from '../../types/ag';
@@ -72,7 +72,7 @@ export function ComparisonDrawer({
         </Button>
       </div>
 
-      {counties.length >= 2 && <ComparisonInsights counties={counties} />}
+
 
       {/* Comparison Visualization */}
       <Card className="p-4">
@@ -116,38 +116,5 @@ export function ComparisonDrawer({
         )}
       </Card>
     </div>
-  );
-}
-
-// Quick insights
-function ComparisonInsights({ counties }: { counties: EnhancedCountyData[] }) {
-  const topByFarms = [...counties].sort((a, b) => (b.farms || 0) - (a.farms || 0))[0];
-  const topByCropland = [...counties].sort(
-    (a, b) => (b.croplandAcres || 0) - (a.croplandAcres || 0)
-  )[0];
-
-  return (
-    <Card className="p-4 bg-primary/10 border-primary/20">
-      <h4 className="font-semibold mb-3 flex items-center gap-2">
-        <TrendingUp className="h-4 w-4" />
-        Quick Insights
-      </h4>
-      <ul className="space-y-2 text-sm">
-        <li className="flex items-start gap-2">
-          <span className="text-primary">•</span>
-          <span>
-            <strong>{topByFarms.countyName}</strong> has the most farms (
-            {formatNumber(topByFarms.farms || 0)})
-          </span>
-        </li>
-        <li className="flex items-start gap-2">
-          <span className="text-primary">•</span>
-          <span>
-            <strong>{topByCropland.countyName}</strong> has the most cropland (
-            {formatAcres(topByCropland.croplandAcres || 0)})
-          </span>
-        </li>
-      </ul>
-    </Card>
   );
 }
