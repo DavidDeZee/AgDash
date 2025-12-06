@@ -323,7 +323,7 @@ export function FilterPanel({ allCounties }: FilterPanelProps) {
 
           {comparisonCounties.length === 0 && (
             <p className="text-xs text-muted-foreground text-center py-2">
-              Search and select counties to compare their metrics
+              Search for counties or click a county on the map and select "compare"
             </p>
           )}
         </div>
