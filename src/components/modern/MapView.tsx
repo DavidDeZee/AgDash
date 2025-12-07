@@ -552,6 +552,47 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
   const [countiesData, setCountiesData] = useState<any>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
+  // Clustering state
+  const [clusters, setClusters] = useState<any[]>([]);
+  const [bounds, setBounds] = useState<[number, number, number, number] | null>(null);
+  const [zoom, setZoom] = useState(4);
+
+  // Initialize Supercluster
+  const supercluster = useMemo(() => {
+    const index = new Supercluster({
+      radius: 100, // Radius 100 to group into ~4 main clusters as requested
+      maxZoom: 14,
+    });
+    index.load(papeLocationsData.features as any);
+    return index;
+  }, []);
+
+  // Update clusters when map moves
+  const updateClusters = useCallback(() => {
+    if (!mapRef.current) return;
+    const map = mapRef.current.getMap();
+
+    const b = map.getBounds();
+    const newBounds: [number, number, number, number] = [
+      b.getWest(), b.getSouth(), b.getEast(), b.getNorth()
+    ];
+    const newZoom = map.getZoom();
+
+    setBounds(newBounds);
+    setZoom(newZoom);
+
+    try {
+      setClusters(supercluster.getClusters(newBounds, Math.floor(newZoom)));
+    } catch (e) {
+      console.error("Error updating clusters", e);
+    }
+  }, [supercluster]);
+
+  // Initial cluster load 
+  useEffect(() => {
+    updateClusters();
+  }, [updateClusters]);
+
   // Get comparison counties from store
   const { comparisonCounties, heatmapMode, heatmapMetric, heatmapStateFilter } = useStore();
 
@@ -676,6 +717,136 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
 
   }, [mapLoaded, countiesData, comparisonCountySet, heatmapMode, heatmapMetric, heatmapStateFilter, counties]);
 
+
+  // Update popup when clusters change (handle zoom/pan updates)
+  useEffect(() => {
+    if (!popupInfo || !mapRef.current) return;
+    const map = mapRef.current.getMap();
+
+    // Find the nearest cluster/point in the NEW clusters list to the current popup position
+    const currentPoint = map.project([popupInfo.longitude, popupInfo.latitude]);
+
+    let closestFeature = null;
+    let minDistance = Infinity;
+
+    // We only check clusters that are rendered (in the clusters array)
+    for (const feature of clusters) {
+      const [lon, lat] = feature.geometry.coordinates;
+      const featurePoint = map.project([lon, lat]);
+      const dist = Math.sqrt(
+        Math.pow(featurePoint.x - currentPoint.x, 2) +
+        Math.pow(featurePoint.y - currentPoint.y, 2)
+      );
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestFeature = feature;
+      }
+    }
+
+    // Threshold: If the closest feature is more than 50px away, assume the cluster decomposed/merged significantly
+    if (!closestFeature || minDistance > 50) {
+      // Check if the popup is simply off-screen (Supercluster only returns on-screen clusters)
+      // If it's off-screen, keep it open (standard map behavior)
+      const bounds = map.getBounds();
+      if (!bounds.contains([popupInfo.longitude, popupInfo.latitude])) {
+        return;
+      }
+
+      setPopupInfo(null);
+      return;
+    }
+
+    // If we found a matching features, update the popup
+    const { cluster: isCluster, cluster_id, point_count } = closestFeature.properties;
+    const [newLon, newLat] = closestFeature.geometry.coordinates;
+
+    // Strict check: If the point count changed, the cluster composition changed (merged or split) -> Close popup
+    // exception: single points don't have point_count, so check for that.
+    const currentCount = popupInfo.features.length;
+    const newCount = isCluster ? point_count : 1;
+
+    if (currentCount !== newCount) {
+      setPopupInfo(null);
+      return;
+    }
+
+    if (isCluster) {
+      // Update with new leaves (position might have shifted slightly)
+      const leaves = supercluster.getLeaves(cluster_id, 2000); // Increased limit
+      setPopupInfo(prev => prev ? ({
+        ...prev,
+        longitude: newLon,
+        latitude: newLat,
+        features: leaves
+      }) : null);
+    } else {
+      // It became a single point (or was one), and count matches (1 === 1)
+      setPopupInfo(prev => prev ? ({
+        ...prev,
+        longitude: newLon,
+        latitude: newLat,
+        features: [closestFeature]
+      }) : null);
+    }
+  }, [clusters, supercluster]);
+
+  // Close popup logic for external clicks (sidebar, menus, etc.)
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      // Close popup if click is NOT inside the popup itself.
+      // This handles map background, sidebar buttons, modals, etc.
+      if (popupInfo && !target.closest('.maplibregl-popup')) {
+        setPopupInfo(null);
+      }
+    };
+    // Use capture phase to intercept clicks before they are stopped by other components
+    // Changed from 'mousedown' to 'click' to allow map dragging/panning (which starts with mousedown)
+    // without immediately closing the popup.
+    document.addEventListener('click', handleClickOutside, true);
+    return () => document.removeEventListener('click', handleClickOutside, true);
+  }, [popupInfo]);
+
+  // Marker Click Handlers
+  const handleClusterClick = (clusterId: number, latitude: number, longitude: number) => {
+    const leaves = supercluster.getLeaves(clusterId, 2000); // Increased limit
+
+    let anchor: 'top' | 'bottom' = 'bottom';
+    if (mapRef.current) {
+      const map = mapRef.current.getMap();
+      const point = map.project([longitude, latitude]);
+      // If in top half of screen, anchor top (open down), else anchor bottom (open up)
+      if (point.y < map.getContainer().clientHeight / 2) {
+        anchor = 'top';
+      }
+    }
+
+    setPopupInfo({
+      longitude,
+      latitude,
+      features: leaves,
+      anchor
+    });
+  };
+
+  const handlePointClick = (feature: any) => {
+    const [longitude, latitude] = feature.geometry.coordinates;
+    let anchor: 'top' | 'bottom' = 'bottom';
+    if (mapRef.current) {
+      const map = mapRef.current.getMap();
+      const point = map.project([longitude, latitude]);
+      if (point.y < map.getContainer().clientHeight / 2) {
+        anchor = 'top';
+      }
+    }
+
+    setPopupInfo({
+      longitude,
+      latitude,
+      features: [feature],
+      anchor
+    });
+  };
 
   // Handle hover
   const onMouseMove = (event: MapLayerMouseEvent) => {
@@ -929,7 +1100,10 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
         onClick={onClick}
         onMove={updateClusters}
         onZoomEnd={updateClusters}
-        onLoad={updateClusters} // Ensure clusters render immediately on load
+        onLoad={() => {
+          updateClusters(); // Ensure clusters render immediately
+          setMapLoaded(true); // Enable heatmap/comparison logic
+        }}
         {...({
           canvasContextAttributes: {
             preserveDrawingBuffer: true
