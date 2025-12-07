@@ -1,7 +1,9 @@
-import { useRef, useEffect, useState, useMemo } from 'react';
-import Map, { Source, Layer } from 'react-map-gl/maplibre';
+import { useRef, useEffect, useState, useMemo, useCallback } from 'react';
+import Map, { Source, Layer, Popup, Marker } from 'react-map-gl/maplibre';
 import type { MapRef, MapLayerMouseEvent } from 'react-map-gl/maplibre';
+import Supercluster from 'supercluster';
 import type { EnhancedCountyData } from '../../types/ag';
+import papeLocationsData from '../../data/pape-locations.json';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 interface MapViewProps {
@@ -479,11 +481,191 @@ function MapLegend() {
   );
 }
 
+// Popup info interface
+interface PopupInfo {
+  longitude: number;
+  latitude: number;
+  features: any[]; // Array of GeoJSON features
+  anchor?: 'top' | 'bottom';
+}
+
 export function MapView({ counties = [], filteredCounties, onCountyClick }: MapViewProps) {
   const mapRef = useRef<MapRef>(null);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
+  const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
   const [hoveredCountyId, setHoveredCountyId] = useState<string | number | null>(null);
   const [countiesData, setCountiesData] = useState<any>(null);
+
+  // Clustering state
+  const [clusters, setClusters] = useState<any[]>([]);
+  const [bounds, setBounds] = useState<[number, number, number, number] | null>(null);
+  const [zoom, setZoom] = useState(4);
+
+  // Initialize Supercluster
+  const supercluster = useMemo(() => {
+    const index = new Supercluster({
+      radius: 75, // Radius 75 to balance distribution (break up large 20+ clusters)
+      maxZoom: 14,
+    });
+    index.load(papeLocationsData.features as any);
+    return index;
+  }, []);
+
+  // Update clusters when map moves
+  const updateClusters = useCallback(() => {
+    if (!mapRef.current) return;
+    const map = mapRef.current.getMap();
+
+    const b = map.getBounds();
+    const newBounds: [number, number, number, number] = [
+      b.getWest(), b.getSouth(), b.getEast(), b.getNorth()
+    ];
+    const newZoom = map.getZoom();
+
+    setBounds(newBounds);
+    setZoom(newZoom);
+
+    try {
+      setClusters(supercluster.getClusters(newBounds, Math.floor(newZoom)));
+    } catch (e) {
+      console.error("Error updating clusters", e);
+    }
+  }, [supercluster]);
+
+  // Initial cluster load 
+  useEffect(() => {
+    updateClusters();
+  }, [updateClusters]);
+
+  // Update popup when clusters change (handle zoom/pan updates)
+  useEffect(() => {
+    if (!popupInfo || !mapRef.current) return;
+    const map = mapRef.current.getMap();
+
+    // Find the nearest cluster/point in the NEW clusters list to the current popup position
+    const currentPoint = map.project([popupInfo.longitude, popupInfo.latitude]);
+
+    let closestFeature = null;
+    let minDistance = Infinity;
+
+    // We only check clusters that are rendered (in the clusters array)
+    for (const feature of clusters) {
+      const [lon, lat] = feature.geometry.coordinates;
+      const featurePoint = map.project([lon, lat]);
+      const dist = Math.sqrt(
+        Math.pow(featurePoint.x - currentPoint.x, 2) +
+        Math.pow(featurePoint.y - currentPoint.y, 2)
+      );
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestFeature = feature;
+      }
+    }
+
+    // Threshold: If the closest feature is more than 50px away, assume the cluster decomposed/merged significantly
+    if (!closestFeature || minDistance > 50) {
+      // Check if the popup is simply off-screen (Supercluster only returns on-screen clusters)
+      // If it's off-screen, keep it open (standard map behavior)
+      const bounds = map.getBounds();
+      if (!bounds.contains([popupInfo.longitude, popupInfo.latitude])) {
+        return;
+      }
+
+      setPopupInfo(null);
+      return;
+    }
+
+    // If we found a matching features, update the popup
+    const { cluster: isCluster, cluster_id, point_count } = closestFeature.properties;
+    const [newLon, newLat] = closestFeature.geometry.coordinates;
+
+    // Strict check: If the point count changed, the cluster composition changed (merged or split) -> Close popup
+    // exception: single points don't have point_count, so check for that.
+    const currentCount = popupInfo.features.length;
+    const newCount = isCluster ? point_count : 1;
+
+    if (currentCount !== newCount) {
+      setPopupInfo(null);
+      return;
+    }
+
+    if (isCluster) {
+      // Update with new leaves (position might have shifted slightly)
+      const leaves = supercluster.getLeaves(cluster_id, 2000); // Increased limit
+      setPopupInfo(prev => prev ? ({
+        ...prev,
+        longitude: newLon,
+        latitude: newLat,
+        features: leaves
+      }) : null);
+    } else {
+      // It became a single point (or was one), and count matches (1 === 1)
+      setPopupInfo(prev => prev ? ({
+        ...prev,
+        longitude: newLon,
+        latitude: newLat,
+        features: [closestFeature]
+      }) : null);
+    }
+  }, [clusters, supercluster]); // Removed popupInfo from dependencies to prevent immediate auto-close
+
+  // Close popup logic for external clicks (sidebar, menus, etc.)
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      // Close popup if click is NOT inside the popup itself.
+      // This handles map background, sidebar buttons, modals, etc.
+      if (popupInfo && !target.closest('.maplibregl-popup')) {
+        setPopupInfo(null);
+      }
+    };
+    // Use capture phase to intercept clicks before they are stopped by other components
+    // Changed from 'mousedown' to 'click' to allow map dragging/panning (which starts with mousedown)
+    // without immediately closing the popup.
+    document.addEventListener('click', handleClickOutside, true);
+    return () => document.removeEventListener('click', handleClickOutside, true);
+  }, [popupInfo]);
+
+  // Marker Click Handlers
+  const handleClusterClick = (clusterId: number, latitude: number, longitude: number) => {
+    const leaves = supercluster.getLeaves(clusterId, 2000); // Increased limit
+
+    let anchor: 'top' | 'bottom' = 'bottom';
+    if (mapRef.current) {
+      const map = mapRef.current.getMap();
+      const point = map.project([longitude, latitude]);
+      // If in top half of screen, anchor top (open down), else anchor bottom (open up)
+      if (point.y < map.getContainer().clientHeight / 2) {
+        anchor = 'top';
+      }
+    }
+
+    setPopupInfo({
+      longitude,
+      latitude,
+      features: leaves,
+      anchor
+    });
+  };
+
+  const handlePointClick = (feature: any) => {
+    const [longitude, latitude] = feature.geometry.coordinates;
+    let anchor: 'top' | 'bottom' = 'bottom';
+    if (mapRef.current) {
+      const map = mapRef.current.getMap();
+      const point = map.project([longitude, latitude]);
+      if (point.y < map.getContainer().clientHeight / 2) {
+        anchor = 'top';
+      }
+    }
+
+    setPopupInfo({
+      longitude,
+      latitude,
+      features: [feature],
+      anchor
+    });
+  };
 
 
   // Create a Set of filtered county names+states for quick lookup
@@ -518,7 +700,33 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
   // Handle hover
   const onMouseMove = (event: MapLayerMouseEvent) => {
     const feature = event.features?.[0];
-    if (feature && feature.properties) {
+
+    // Check if we are hovering over a Papè location or cluster
+    const isPapeLocation = feature && (
+      feature.layer.id === 'pape-locations-bg' ||
+      feature.layer.id === 'pape-locations-symbol' ||
+      feature.layer.id === 'clusters' ||
+      feature.layer.id === 'cluster-count'
+    );
+
+    if (isPapeLocation) {
+      // Change cursor to pointer for clickable items
+      if (mapRef.current) {
+        mapRef.current.getCanvas().style.cursor = 'pointer';
+      }
+      // Clear county hover if we were hovering a county
+      if (hoveredCountyId !== null) {
+        mapRef.current?.getMap().setFeatureState(
+          { source: 'counties', id: hoveredCountyId },
+          { hover: false }
+        );
+        setHoveredCountyId(null);
+        setHoverInfo(null);
+      }
+      return;
+    }
+
+    if (feature && feature.properties && feature.source === 'counties') {
       const map = mapRef.current?.getMap();
 
       // Update hover state
@@ -548,17 +756,33 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
           c.stateName.toUpperCase() === stateName.toUpperCase()
       );
 
-      setHoverInfo({
-        countyName,
-        stateName: stateName ? stateName.charAt(0) + stateName.slice(1).toLowerCase() : '',
-        x: event.point.x,
-        y: event.point.y,
-        countyData,
-      });
+      // Only show tooltip if NOT dragging map
+      if (!event.originalEvent.buttons) {
+        setHoverInfo({
+          countyName,
+          stateName: stateName ? stateName.charAt(0) + stateName.slice(1).toLowerCase() : '',
+          x: event.point.x,
+          y: event.point.y,
+          countyData,
+        });
+      }
 
       // Change cursor
       if (map) {
         map.getCanvas().style.cursor = 'pointer';
+      }
+    } else {
+      // Not hovering anything 
+      if (hoveredCountyId !== null) {
+        mapRef.current?.getMap().setFeatureState(
+          { source: 'counties', id: hoveredCountyId },
+          { hover: false }
+        );
+        setHoveredCountyId(null);
+      }
+      setHoverInfo(null);
+      if (mapRef.current) {
+        mapRef.current.getCanvas().style.cursor = '';
       }
     }
   };
@@ -580,24 +804,30 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
     }
   };
 
+
+
   const onClick = (event: MapLayerMouseEvent) => {
     const feature = event.features?.[0];
-    if (feature && feature.properties && onCountyClick) {
-      const countyName = feature.properties.NAME || feature.properties.name;
-      const stateFips = feature.properties.STATEFP;
-      const stateName = FIPS_TO_STATE[stateFips] || '';
 
-      // Look up county data
+    // Always close Pape popup if we click on the map (unless stopped by marker click which happens before this)
+    if (popupInfo) {
+      setPopupInfo(null);
+    }
+
+    // Check if clicked county
+    if (feature && feature.source === 'counties' && onCountyClick) {
+      const countyName = feature.properties?.NAME || feature.properties?.name;
+      const stateFips = feature.properties?.STATEFP;
+      const stateName = FIPS_TO_STATE[stateFips as string] || '';
       const countyData = counties.find(
         (c) => c.countyName.toUpperCase() === countyName.toUpperCase() &&
           c.stateName.toUpperCase() === stateName.toUpperCase()
       );
-
-      if (countyData) {
-        onCountyClick(countyData);
-      }
+      if (countyData) onCountyClick(countyData);
     }
   };
+
+
 
   // Layer styles - memoized to update when filter changes
   const countyFillLayer = useMemo(() => ({
@@ -644,7 +874,32 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
     },
   };
 
+  // Helper to get City, State, Zip from address string
+  // Expected format: "1906 S. Main St, Moscow, ID 83843"
+  const getCityStateFromAddress = (address: string) => {
+    if (!address) return { cityState: '', zip: '' };
 
+    const parts = address.split(',');
+    if (parts.length >= 3) {
+      // Last part is usually " ID 83843" or " State Zip"
+      const stateZip = parts[parts.length - 1].trim();
+      // Second to last is City
+      const city = parts[parts.length - 2].trim();
+
+      // Extract State and Zip
+      const stateZipParts = stateZip.split(' ');
+      const state = stateZipParts[0];
+      const zip = stateZipParts.length > 1 ? stateZipParts[1] : '';
+
+      return {
+        city: city,
+        state: state,
+        zip: zip,
+        fullStateZip: stateZip
+      };
+    }
+    return { city: address, state: '', zip: '', fullStateZip: '' };
+  };
 
 
   return (
@@ -666,6 +921,9 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
         onClick={onClick}
+        onMove={updateClusters}
+        onZoomEnd={updateClusters}
+        onLoad={updateClusters} // Ensure clusters render immediately on load
         {...({
           canvasContextAttributes: {
             preserveDrawingBuffer: true
@@ -681,16 +939,117 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
           </Source>
         )}
 
+        {/* CLUSTER MARKERS */}
+        {clusters.map((cluster) => {
+          const [longitude, latitude] = cluster.geometry.coordinates;
+          const { cluster: isCluster, point_count: pointCount } = cluster.properties;
 
+          if (isCluster) {
+            return (
+              <Marker
+                key={`cluster-${cluster.id}`}
+                longitude={longitude}
+                latitude={latitude}
+                anchor="center"
+                onClick={(e) => {
+                  e.originalEvent.stopPropagation();
+                  handleClusterClick(cluster.id, latitude, longitude);
+                }}
+              >
+                <div
+                  className="flex items-center justify-center rounded-full border-2 border-[#FFDE00] bg-black text-white font-bold cursor-pointer hover:scale-110 transition-transform shadow-lg hover:z-50"
+                  style={{
+                    width: `${30 + (pointCount / 40) * 30}px`,
+                    height: `${30 + (pointCount / 40) * 30}px`,
+                    fontSize: '13px'
+                  }}
+                >
+                  {pointCount}
+                </div>
+              </Marker>
+            );
+          }
+
+          return (
+            <Marker
+              key={`location-${cluster.properties.name}-${longitude}-${latitude}`}
+              longitude={longitude}
+              latitude={latitude}
+              anchor="center"
+              onClick={(e) => {
+                e.originalEvent.stopPropagation();
+                handlePointClick(cluster);
+              }}
+            >
+              <div className="flex items-center justify-center w-6 h-6 rounded-full border-[1.5px] border-white bg-black text-[#FFDE00] font-bold cursor-pointer hover:scale-110 transition-transform shadow-md group">
+                <span className="text-[10px] font-bold">P</span>
+              </div>
+            </Marker>
+          );
+        })}
+
+        {popupInfo && (
+          <Popup
+            longitude={popupInfo.longitude}
+            latitude={popupInfo.latitude}
+            anchor={popupInfo.anchor || 'bottom'}
+            onClose={() => setPopupInfo(null)}
+            closeOnClick={false}
+            closeOnMove={false} // Allow moving map without closing
+            className="pape-popup"
+            maxWidth="300px"
+            offset={20}
+          >
+            <div
+              className="flex flex-col max-h-[300px]"
+              onMouseEnter={() => setHoverInfo(null)}
+              onMouseMove={(e) => e.stopPropagation()}
+            >
+              {popupInfo.features.length > 3 && (
+                <div className="text-[10px] font-bold text-gray-400 mb-2 sticky top-0 bg-black z-10 pb-0.5 border-b border-gray-800 pr-10 -mt-3">
+                  SCROLL TO VIEW MORE LOCATIONS.
+                </div>
+              )}
+              <div
+                className="overflow-y-auto pr-1"
+                key={`${popupInfo.latitude}-${popupInfo.longitude}`} // Force re-render to reset scroll on location change
+              >
+                {popupInfo.features.map((feature, index) => {
+                  const address = feature.properties.address || '';
+                  const { city, state } = getCityStateFromAddress(address);
+                  const phone = feature.properties.phone || '541-555-0100'; // Fallback if missing
+
+                  return (
+                    <div key={index} className={`flex flex-col gap-1 ${index > 0 ? 'mt-4 border-t border-yellow-500/30 pt-3' : ''}`}>
+                      <div className="font-bold text-base leading-tight text-white">
+                        {city}, {state}
+                      </div>
+                      <div className="text-[10px] font-bold text-[#FFDE00] uppercase tracking-wide leading-tight">
+                        PAPÉ MACHINERY AGRICULTURE & TURF
+                      </div>
+                      <a href={`tel:${phone}`} className="font-bold text-sm text-white hover:text-[#FFDE00] transition-colors outline-none focus:outline-none">
+                        {phone}
+                      </a>
+                      <div className="text-sm text-gray-300 leading-tight">
+                        {address.split(',')[0]}<br />
+                        {city}, {state} {address.split(' ').pop()}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Popup>
+        )}
       </Map>
 
       {/* Map Legend */}
       <MapLegend />
 
-      {/* Hover tooltip */}
+      {/* Hover tooltip - ONLY for counties now */}
       {hoverInfo && (
         <div
-          className="absolute bg-card border border-border rounded-md px-3 py-2 shadow-lg pointer-events-none z-10 min-w-[220px]"
+          className="absolute bg-card border border-border rounded-md px-3 py-2 shadow-lg pointer-events-none z-[1] min-w-[220px] text-center flex flex-col justify-center items-center"
           style={{
             left: hoverInfo.x + 10,
             top: hoverInfo.y + 10,
@@ -704,7 +1063,7 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
           </div>
 
           {hoverInfo.countyData ? (
-            <div className="space-y-1 border-t border-border pt-2">
+            <div className="space-y-1 border-t border-border pt-2 w-full">
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Farms:</span>
                 <span className="font-medium">{(hoverInfo.countyData.farms || 0).toLocaleString()}</span>
@@ -729,7 +1088,6 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
           )}
         </div>
       )}
-
 
     </div>
   );

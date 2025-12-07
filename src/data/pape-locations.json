@@ -1,0 +1,645 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Moscow",
+                "address": "1906 S. Main St., Moscow, ID 83843",
+                "type": "Ag & Turf",
+                "phone": "208-882-0303"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.0001651,
+                    46.7323875
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Tekoa",
+                "address": "E. 525 Poplar St., Tekoa, WA 99033",
+                "type": "Ag & Turf",
+                "phone": "509-284-2501"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.081919,
+                    47.227081
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Ponderay",
+                "address": "477303 HWY 95, Ponderay, ID 83852",
+                "type": "Ag & Turf",
+                "phone": "208-265-7282"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.5435,
+                    48.3052
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Walla Walla",
+                "address": "3037 E. Melrose Ave, Walla Walla, WA 99362",
+                "type": "Ag & Turf",
+                "phone": "509-525-2010"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.3065,
+                    46.0776
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Four Lakes",
+                "address": "10010 S. State Route 904, Four Lakes, WA 99014",
+                "type": "Ag & Turf",
+                "phone": "509-483-2868"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.5855,
+                    47.5532
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Merrill",
+                "address": "21600 Oregon 39, Merrill, OR 97633",
+                "type": "Ag & Turf",
+                "phone": "541-798-5660"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.6033,
+                    42.026
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Madras",
+                "address": "2347 S.W. Hwy 97, Madras, OR 97741",
+                "type": "Ag & Turf",
+                "phone": "541-475-6116"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.1436,
+                    44.6182
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Bend",
+                "address": "20444 Cady Way, Bend, OR 97701",
+                "type": "Ag & Turf",
+                "phone": "541-633-7671"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.2831,
+                    44.1087
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Yakima",
+                "address": "3110 Fruitvale Blvd, Yakima, WA 98902",
+                "type": "Ag & Turf",
+                "phone": "509-452-2880"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.5059,
+                    46.6137
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Medford",
+                "address": "24 Schulz Rd, Medford, OR 97502",
+                "type": "Ag & Turf",
+                "phone": "541-826-2422"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.8981,
+                    42.3765
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Gresham",
+                "address": "1510 East Powell Blvd, Gresham, OR 97030",
+                "type": "Ag & Turf",
+                "phone": "503-663-4353"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.4495,
+                    45.5187
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Donald",
+                "address": "11693 Ehlen Road NE, Aurora, OR 97002",
+                "type": "Ag & Turf",
+                "phone": "503-678-3200"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.8423,
+                    45.2229
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Roseburg",
+                "address": "7101 Old Highway 99 N, Roseburg, OR 97470",
+                "type": "Ag & Turf",
+                "phone": "541-673-7567"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.3392,
+                    43.2384
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Eugene",
+                "address": "90496 Hwy 99 N., Eugene, OR 97402",
+                "type": "Ag & Turf",
+                "phone": "(541) 334-7060"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.1784,
+                    44.0765
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Salem",
+                "address": "5101 Lardon Road NE, Salem, OR 97305",
+                "type": "Ag & Turf",
+                "phone": "503-581-5033"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.0034,
+                    44.8976
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Harrisburg",
+                "address": "23838 HWY 99E, Harrisburg, OR 97446",
+                "type": "Ag & Turf",
+                "phone": "541-995-8400"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.1742,
+                    44.2754
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Tangent",
+                "address": "31970 Old Highway 34, Tangent, OR 97389",
+                "type": "Ag & Turf",
+                "phone": "541-926-1534"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.1073,
+                    44.5462
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Sumner",
+                "address": "2700 136th AVE CT E., Sumner, WA 98390",
+                "type": "Ag & Turf",
+                "phone": "253-863-4436"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.2282,
+                    47.2034
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Hillsboro",
+                "address": "3793 Baseline St., Cornelius, OR 97123",
+                "type": "Ag & Turf",
+                "phone": "503-648-1171"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.9645,
+                    45.5087
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - McMinnville",
+                "address": "9889 SW HWY 99W, McMinnville, OR 97128",
+                "type": "Ag & Turf",
+                "phone": "503-472-5184"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.1737,
+                    45.2234
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Snohomish",
+                "address": "3305 Bickford Ave., Snohomish, WA 98290",
+                "type": "Ag & Turf",
+                "phone": "425-334-4048"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.0542,
+                    47.8734
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Chehalis",
+                "address": "127 N. Hamilton Road, Chehalis, WA 98532",
+                "type": "Ag & Turf",
+                "phone": "360-748-9944"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.9782,
+                    46.6684
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Olympia",
+                "address": "204 Ranger Dr SE, Lacey, WA 98503",
+                "type": "Ag & Turf",
+                "phone": "360-491-2503"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.8087,
+                    47.0548
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Mount Vernon",
+                "address": "4220 Old Highway 99 S RD, Mount Vernon, WA 98273",
+                "type": "Ag & Turf",
+                "phone": "360-424-7995"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.3365,
+                    48.4365
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Lynden",
+                "address": "830 Evergreen Street, Lynden, WA 98264",
+                "type": "Ag & Turf",
+                "phone": "360-354-2186"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.4865,
+                    48.9321
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Chico",
+                "address": "489 Country Dr, Chico, CA 95928",
+                "type": "Ag & Turf",
+                "phone": "(530) 343-8288"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.8497,
+                    39.7188
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Colusa",
+                "address": "2100 State Hwy 20, Colusa, CA 95932",
+                "type": "Ag & Turf",
+                "phone": "(530) 458-4923"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.00944,
+                    39.21444
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Fall River Mills",
+                "address": "43428 State Highway 299 E, Fall River Mills, CA 96028",
+                "type": "Ag & Turf",
+                "phone": "530-336-5549"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.44083,
+                    41.00583
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Gridley",
+                "address": "1751 CA-99, Gridley, CA 95948",
+                "type": "Ag & Turf",
+                "phone": "(530) 846-3677"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.6874,
+                    39.3792
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Robbins",
+                "address": "17698 CA-113, Robbins, CA 95676",
+                "type": "Ag & Turf",
+                "phone": "(530) 738-4421"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.708,
+                    38.8694
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Willows",
+                "address": "160 Co Rd G, Willows, CA 95988",
+                "type": "Ag & Turf",
+                "phone": "(530) 934-7051"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.2137,
+                    39.5273
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Woodland",
+                "address": "2100 E Main St, Woodland, CA 95776",
+                "type": "Ag & Turf",
+                "phone": "(530) 662-4637"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.7525,
+                    38.6775
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Yuba City",
+                "address": "1549 Colusa Highway, Yuba City, CA 95993",
+                "type": "Ag & Turf",
+                "phone": "(530) 673-8283"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.6429,
+                    39.1293
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Fallon",
+                "address": "5222 Reno Hwy, Fallon, NV 89406",
+                "type": "Ag & Turf",
+                "phone": "(775) 867-4555"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.8258,
+                    39.4357
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Yerington",
+                "address": "402 W Bridge St, Yerington, NV 89447",
+                "type": "Ag & Turf",
+                "phone": "(775) 463-3535"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.1627,
+                    38.9959
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Colfax",
+                "address": "42951 SR 195, Colfax, WA 99111",
+                "type": "Ag & Turf",
+                "phone": "509-397-4377"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.3732,
+                    46.8829
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Ellensburg",
+                "address": "1004 Canyon Road, Ellensburg, WA 98926",
+                "type": "Ag & Turf",
+                "phone": "509-494-8808"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.5401,
+                    46.9744
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Okanogan",
+                "address": "1 Patrol Street, Okanogan, WA 98840",
+                "type": "Ag & Turf",
+                "phone": "509-422-3030"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.5786,
+                    48.3639
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Quincy",
+                "address": "731 F Street SE, Quincy, WA 98848",
+                "type": "Ag & Turf",
+                "phone": "509-787-4553"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.8458,
+                    47.2272
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pap\u00e8 Machinery Ag & Turf - Poulsbo",
+                "address": "20081 Viking Ave. NW, Poulsbo, WA 98370",
+                "type": "Ag & Turf",
+                "phone": "360-930-0095"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.6277,
+                    47.7471
+                ]
+            }
+        }
+    ]
+}
