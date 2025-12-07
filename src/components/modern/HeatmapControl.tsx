@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import { Flame, Info, RotateCcw, Filter } from 'lucide-react';
+import { Flame, Info, Filter } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { useStore } from '../../store/useStore';
 import type { EnhancedCountyData, SortField } from '../../types/ag';
@@ -15,21 +14,14 @@ export function HeatmapControl({ onOpenRankingModal }: HeatmapControlProps) {
         heatmapMode,
         setHeatmapMode,
         sortField,
-        setSortField,
         selectedStates,
         selectedLocations,
         metricRanges,
-        resetFilters,
-        setHeatmapMode: setStoreHeatmapMode // alias if needed, but we have it above
+        // resetFilters, // resetFilters not currently used in this component, removing if unused or keeping if needed later? 
+        // actually resetFilters IS used effectively if we had a reset button, but we removed it.
+        // Wait, I added resetFilters in step 68. But handleReset uses it. And handleReset is unused.
+        // So I should remove resetFilters from destructuring too if I remove handleReset.
     } = useStore();
-
-    const handleReset = () => {
-        resetFilters();
-        // Keep heatmap mode on if user just clicked reset inside the heatmap logic? 
-        // resetFilters turns heatmapMode off in store. 
-        // Maybe we just want to reset the sort field?
-        setSortField('croplandAcres');
-    };
 
     // Metric Label Lookup
     const getMetricLabel = (field: SortField) => {
