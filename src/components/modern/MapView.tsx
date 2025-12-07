@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
+import { Plus, Minus, RotateCcw } from 'lucide-react';
 import Map, { Source, Layer } from 'react-map-gl/maplibre';
 import type { MapRef, MapLayerMouseEvent } from 'react-map-gl/maplibre';
 import type { EnhancedCountyData } from '../../types/ag';
@@ -539,7 +540,24 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
   const [hoveredCountyId, setHoveredCountyId] = useState<string | number | null>(null);
   const [countiesData, setCountiesData] = useState<any>(null);
+  const [stateData, setStateData] = useState<any>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+
+  // Map Control Handlers
+  const handleZoomIn = () => {
+    mapRef.current?.zoomIn();
+  };
+
+  const handleZoomOut = () => {
+    mapRef.current?.zoomOut();
+  };
+
+  const handleResetMap = () => {
+    mapRef.current?.fitBounds(
+      [MAP_BOUNDS.SOUTHWEST, MAP_BOUNDS.NORTHEAST],
+      { padding: 20 }
+    );
+  };
 
   // Get comparison counties from store
   const { comparisonCounties, heatmapMode, sortField } = useStore();
@@ -573,6 +591,7 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
 
   // Load GeoJSON data
   useEffect(() => {
+    // Load counties
     fetch('/data/counties_expanded.json')
       .then((response) => response.json())
       .then((data) => {
@@ -581,6 +600,17 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
       })
       .catch((err) => {
         console.error('Error loading county boundaries:', err);
+      });
+
+    // Load state outlines
+    fetch('/data/state_outlines.json')
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('State outlines loaded:', data);
+        setStateData(data);
+      })
+      .catch((err) => {
+        console.error('Error loading state outlines:', err);
       });
 
   }, []);
@@ -856,8 +886,53 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
           </Source>
         )}
 
+        {/* State outlines source and layer */}
+        {stateData && (
+          <Source id="states" type="geojson" data={stateData}>
+            <Layer
+              id="states-outline"
+              type="line"
+              paint={{
+                'line-color': '#9ca3af',
+                'line-width': 1,
+              }}
+            />
+          </Source>
+        )}
+
 
       </Map>
+
+      {/* Map Controls */}
+      <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
+        <div className="bg-card/95 backdrop-blur-sm border border-border rounded-md shadow-lg flex flex-col overflow-hidden">
+          <button
+            onClick={handleZoomIn}
+            className="p-2 hover:bg-secondary/50 active:bg-secondary transition-colors border-b border-border/50 text-foreground"
+            title="Zoom In"
+            type="button"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+          <button
+            onClick={handleZoomOut}
+            className="p-2 hover:bg-secondary/50 active:bg-secondary transition-colors text-foreground"
+            title="Zoom Out"
+            type="button"
+          >
+            <Minus className="h-4 w-4" />
+          </button>
+        </div>
+
+        <button
+          onClick={handleResetMap}
+          className="bg-card/95 backdrop-blur-sm border border-border rounded-md shadow-lg p-2 hover:bg-secondary/50 active:bg-secondary transition-colors text-foreground"
+          title="Reset Map View"
+          type="button"
+        >
+          <RotateCcw className="h-4 w-4" />
+        </button>
+      </div>
 
       {/* Map Legend */}
       <MapLegend />
