@@ -552,13 +552,16 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
   const [countiesData, setCountiesData] = useState<any>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
+  // Get comparison counties from store
+  const { comparisonCounties, heatmapMode, heatmapMetric, heatmapStateFilter, showPapeLocations } = useStore();
+
   // Clustering state
   const [clusters, setClusters] = useState<any[]>([]);
 
   // Initialize Supercluster
   const supercluster = useMemo(() => {
     const index = new Supercluster({
-      radius: 100, // Radius 100 to group into ~4 main clusters as requested
+      radius: 35, // Reduced from 100 to show more granularity as requested
       maxZoom: 14,
     });
     index.load(papeLocationsData.features as any);
@@ -587,9 +590,6 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
   useEffect(() => {
     updateClusters();
   }, [updateClusters]);
-
-  // Get comparison counties from store
-  const { comparisonCounties, heatmapMode, heatmapMetric, heatmapStateFilter } = useStore();
 
   // Create a Set of comparison county keys for quick lookup
   const comparisonCountySet = useMemo(() => {
@@ -1115,8 +1115,8 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
           </Source>
         )}
 
-        {/* CLUSTER MARKERS */}
-        {clusters.map((cluster) => {
+        {/* CLUSTER MARKERS - Only show if toggle is enabled */}
+        {showPapeLocations && clusters.map((cluster) => {
           const [longitude, latitude] = cluster.geometry.coordinates;
           const { cluster: isCluster, point_count: pointCount } = cluster.properties;
 

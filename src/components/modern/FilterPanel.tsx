@@ -1,4 +1,4 @@
-import { Search, X, Info, Sparkles, Plus, ChevronDown, BarChart3, Clock } from 'lucide-react';
+import { Search, X, Info, Sparkles, Plus, ChevronDown, BarChart3, Clock, Layers } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
@@ -24,6 +24,8 @@ export function FilterPanel({ allCounties }: FilterPanelProps) {
     addToComparison,
     removeFromComparison,
     clearComparison,
+    showPapeLocations,
+    togglePapeLocations,
   } = useStore();
 
   const availableStates = useMemo(() => getUniqueStates(allCounties), [allCounties]);
@@ -269,6 +271,27 @@ export function FilterPanel({ allCounties }: FilterPanelProps) {
 
       {/* Heatmap Control */}
       <HeatmapControl availableStates={availableStates} allCounties={allCounties} />
+
+      {/* Map Layers */}
+      <Card className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Layers className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium">Map Layers</span>
+          </div>
+        </div>
+        <div className="mt-3 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-foreground">Show Papé Locations</span>
+            <div
+              className={`w-9 h-5 rounded-full p-1 cursor-pointer transition-colors ${showPapeLocations ? 'bg-primary' : 'bg-input'}`}
+              onClick={togglePapeLocations}
+            >
+              <div className={`w-3 h-3 rounded-full bg-background shadow-sm transition-transform ${showPapeLocations ? 'translate-x-4' : 'translate-x-0'}`} />
+            </div>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }
