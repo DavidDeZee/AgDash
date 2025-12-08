@@ -3,6 +3,8 @@ import { X, Check, RotateCcw, ChevronDown, ChevronUp, Plus, Trash2 } from 'lucid
 import { useStore } from '../../store/useStore';
 import { Button } from '../ui/Button';
 import type { SortField } from '../../types/ag';
+import { STATE_TO_FIPS } from '../../utils/dataUtils';
+import { getCountyRegion } from './MapView';
 
 import type { EnhancedCountyData } from '../../types/ag';
 
@@ -106,6 +108,7 @@ export function RankingConfigurationModal({
     // Category selection state
     const [selectedCategory, setSelectedCategory] = useState<MetricCategory>(getCategoryForField(sortField));
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+    const [isAddMetricDropdownOpen, setIsAddMetricDropdownOpen] = useState(false);
 
     const availableLocations = [
         { key: 'PUGET_SOUND', name: 'Puget Sound', color: 'hsl(270, 70%, 50%)' },
@@ -115,6 +118,40 @@ export function RankingConfigurationModal({
         { key: 'SUTTER_BUTTE', name: 'Sutter Butte', color: 'hsl(25, 95%, 53%)' },
         { key: 'SACRAMENTO', name: 'Sacramento', color: 'hsl(195, 70%, 60%)' },
     ];
+
+    // Compute available metrics based on filtered counties
+    const availableMetrics = useMemo(() => {
+        // 1. Filter counties based on geographic selection
+        const geofilteredCounties = allCounties.filter(county => {
+            // State filter
+            if (localSelectedStates.length > 0 && !localSelectedStates.includes(county.stateName)) {
+                return false;
+            }
+            // Region filter
+            if (localSelectedLocations.length > 0) {
+                const stateFips = STATE_TO_FIPS[county.stateName.toUpperCase()];
+                if (!stateFips) return false;
+                const region = getCountyRegion(county.countyName, stateFips);
+                if (!region || !localSelectedLocations.includes(region)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        // 2. Check which metrics have data (value > 0) in the filtered set
+        const metrics = new Set<string>();
+        METRIC_OPTIONS.forEach(metric => {
+            const hasData = geofilteredCounties.some(c => {
+                const val = c[metric.value];
+                return typeof val === 'number' && val > 0;
+            });
+            if (hasData) {
+                metrics.add(metric.value);
+            }
+        });
+        return metrics;
+    }, [allCounties, localSelectedStates, localSelectedLocations]);
 
     // Sync local state with store when modal opens
     useEffect(() => {
@@ -228,8 +265,10 @@ export function RankingConfigurationModal({
         });
     };
 
-    // Filter metrics based on selected category
-    const filteredMetrics = METRIC_OPTIONS.filter(opt => opt.category === selectedCategory);
+    // Filter metrics based on selected category AND availability
+    const filteredMetrics = METRIC_OPTIONS.filter(opt =>
+        opt.category === selectedCategory && availableMetrics.has(opt.value)
+    );
 
     return (
         <div
@@ -237,11 +276,11 @@ export function RankingConfigurationModal({
             onClick={onClose}
         >
             <div
-                className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+                className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-2xl animate-in zoom-in-95 duration-200"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="bg-card border-b border-border p-4 flex items-center justify-between">
+                <div className="bg-card border-b border-border rounded-t-xl p-4 flex items-center justify-between">
                     <h2 className="text-lg font-bold">Filter Configuration</h2>
                     <button
                         onClick={onClose}
@@ -457,24 +496,61 @@ export function RankingConfigurationModal({
                         <div className="p-4 bg-secondary/5 space-y-4 animate-in slide-in-from-top-2 duration-200">
                             {/* Add new filter */}
                             <div className="flex gap-2">
-                                <select
-                                    className="flex-1 h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                                    value={selectedMetricToAdd}
-                                    onChange={(e) => setSelectedMetricToAdd(e.target.value)}
-                                >
-                                    <option value="">Select a metric to filter...</option>
-                                    {Object.keys(METRIC_CATEGORIES).map((category) => (
-                                        <optgroup key={category} label={category}>
-                                            {METRIC_OPTIONS
-                                                .filter(opt => opt.category === category && !localMetricRanges[opt.value])
-                                                .map((option) => (
-                                                    <option key={option.value} value={option.value}>
-                                                        {option.label}
-                                                    </option>
-                                                ))}
-                                        </optgroup>
-                                    ))}
-                                </select>
+                                <div className="flex-1 relative">
+                                    <button
+                                        onClick={() => setIsAddMetricDropdownOpen(!isAddMetricDropdownOpen)}
+                                        className="w-full flex items-center justify-between h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                    >
+                                        <span className={!selectedMetricToAdd ? "text-muted-foreground" : ""}>
+                                            {selectedMetricToAdd
+                                                ? METRIC_OPTIONS.find(o => o.value === selectedMetricToAdd)?.label
+                                                : "Select a metric to filter..."}
+                                        </span>
+                                        {isAddMetricDropdownOpen ? (
+                                            <ChevronUp className="h-4 w-4 opacity-50" />
+                                        ) : (
+                                            <ChevronDown className="h-4 w-4 opacity-50" />
+                                        )}
+                                    </button>
+
+                                    {isAddMetricDropdownOpen && (
+                                        <>
+                                            <div
+                                                className="fixed inset-0 z-10"
+                                                onClick={() => setIsAddMetricDropdownOpen(false)}
+                                            />
+                                            <div className="absolute z-20 bottom-full left-0 right-0 mb-1 max-h-[300px] overflow-y-auto rounded-md border border-border bg-popover shadow-md animate-in fade-in zoom-in-95 duration-200">
+                                                <div className="p-1">
+                                                    {Object.keys(METRIC_CATEGORIES).map((category) => (
+                                                        <div key={category}>
+                                                            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                                                                {category}
+                                                            </div>
+                                                            {METRIC_OPTIONS
+                                                                .filter(opt => opt.category === category && !localMetricRanges[opt.value] && availableMetrics.has(opt.value))
+                                                                .map((option) => (
+                                                                    <div
+                                                                        key={option.value}
+                                                                        className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground ${selectedMetricToAdd === option.value ? "bg-accent text-accent-foreground" : ""
+                                                                            }`}
+                                                                        onClick={() => {
+                                                                            setSelectedMetricToAdd(option.value);
+                                                                            setIsAddMetricDropdownOpen(false);
+                                                                        }}
+                                                                    >
+                                                                        {option.label}
+                                                                        {selectedMetricToAdd === option.value && (
+                                                                            <Check className="ml-auto h-4 w-4" />
+                                                                        )}
+                                                                    </div>
+                                                                ))}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                                 <Button
                                     size="sm"
                                     onClick={addMetricFilter}
@@ -533,7 +609,7 @@ export function RankingConfigurationModal({
                 </div>
 
                 {/* Footer */}
-                <div className="bg-secondary/20 border-t border-border p-4 flex justify-between items-center gap-3">
+                <div className="bg-secondary/20 border-t border-border rounded-b-xl p-4 flex justify-between items-center gap-3">
                     <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground hover:text-foreground">
                         <RotateCcw className="h-4 w-4 mr-2" />
                         Reset Filters

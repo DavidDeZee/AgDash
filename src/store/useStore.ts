@@ -25,6 +25,8 @@ interface DashboardState {
 
   // Layer Visibility
   showPapeLocations: boolean;
+  // Regions
+  regionMode: boolean;
 
   // Actions
   setSelectedCounty: (county: EnhancedCountyData | null) => void;
@@ -47,6 +49,7 @@ interface DashboardState {
   setHeatmapStateFilter: (state: string | null) => void;
 
   togglePapeLocations: () => void;
+  setRegionMode: (enabled: boolean) => void;
 
   resetFilters: () => void;
 }
@@ -65,6 +68,7 @@ export const useStore = create<DashboardState>((set) => ({
   heatmapMetric: 'croplandAcres', // Default metric
   heatmapStateFilter: null,
   showPapeLocations: true,
+  regionMode: true,
 
   // Actions
   setSelectedCounty: (county) => set({ selectedCounty: county }),
@@ -104,6 +108,7 @@ export const useStore = create<DashboardState>((set) => ({
   setHeatmapMode: (enabled) => set({ heatmapMode: enabled }),
   setHeatmapMetric: (metric) => set({ heatmapMetric: metric }),
   setHeatmapStateFilter: (state) => set({ heatmapStateFilter: state }),
+  setRegionMode: (enabled) => set({ regionMode: enabled }),
 
   togglePapeLocations: () => set((state) => ({ showPapeLocations: !state.showPapeLocations })),
 
@@ -116,5 +121,6 @@ export const useStore = create<DashboardState>((set) => ({
       heatmapMode: false,
       heatmapMetric: 'croplandAcres',
       heatmapStateFilter: null,
+      regionMode: true,
     }),
 }));

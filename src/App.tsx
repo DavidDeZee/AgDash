@@ -177,7 +177,10 @@ export default function App() {
         <div className="flex-1 flex overflow-hidden">
           {/* Left Sidebar - Filters */}
           <aside className="w-80 border-r border-border bg-card overflow-y-auto">
-            <FilterPanel allCounties={allCounties} />
+            <FilterPanel
+              allCounties={allCounties}
+              onOpenRankingModal={() => setIsRankingModalOpen(true)}
+            />
           </aside>
 
           {/* Center - Map & KPIs */}

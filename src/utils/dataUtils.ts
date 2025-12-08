@@ -8,7 +8,7 @@ import type {
 import { getCountyRegion } from '../components/modern/MapView';
 
 // Reverse mapping from state name to FIPS code
-const STATE_TO_FIPS: Record<string, string> = {
+export const STATE_TO_FIPS: Record<string, string> = {
   'CALIFORNIA': '06',
   'NEVADA': '32',
   'OREGON': '41',
