@@ -1141,7 +1141,7 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
               anchor="center"
             >
               <div
-                className="w-3 h-3 bg-[#FFDE00] rounded-full border border-black/50 shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
+                className="w-2 h-2 bg-[#FFDE00] rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
                 onMouseEnter={(e) => {
                   e.stopPropagation();
                   handlePapeHoverEnter(cluster);
