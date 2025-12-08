@@ -560,7 +560,7 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
   };
 
   // Get comparison counties from store
-  const { comparisonCounties, heatmapMode, sortField } = useStore();
+  const { comparisonCounties, heatmapMode, sortField, regionMode } = useStore();
 
   // Create a Set of comparison county keys for quick lookup
   const comparisonCountySet = useMemo(() => {
@@ -790,8 +790,18 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
       fillColorExpression = buildHeatmapColorExpression(sortField, targetCounties);
       fillOpacityExpression = buildFilteredOpacityExpression(filteredCountySet, FIPS_TO_STATE, true);
     } else {
-      fillColorExpression = buildFilteredColorExpression(filteredCountySet, FIPS_TO_STATE);
-      fillOpacityExpression = buildFilteredOpacityExpression(filteredCountySet, FIPS_TO_STATE, false);
+      // If region mode is OFF, and we are showing all data (not filtering), 
+      // we hide the region colors to prevent the default "rainbow map".
+      // We check if filteredCounties matches the total count (or is undefined).
+      const isShowingAll = filteredCounties === undefined || (counties && filteredCounties.length === counties.length);
+
+      if (!regionMode && isShowingAll) {
+        fillColorExpression = 'rgba(0, 0, 0, 0)';
+        fillOpacityExpression = 0;
+      } else {
+        fillColorExpression = buildFilteredColorExpression(filteredCountySet, FIPS_TO_STATE);
+        fillOpacityExpression = buildFilteredOpacityExpression(filteredCountySet, FIPS_TO_STATE, false);
+      }
     }
 
     return {
@@ -802,7 +812,7 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
         'fill-opacity': fillOpacityExpression as any,
       },
     };
-  }, [filteredCountySet, heatmapMode, sortField, counties, filteredCounties]);
+  }, [filteredCountySet, heatmapMode, sortField, counties, filteredCounties, regionMode]);
 
   // Base outline layer - just gray borders for all counties
   const countyOutlineLayer = useMemo(() => ({
@@ -935,7 +945,7 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
       </div>
 
       {/* Map Legend */}
-      <MapLegend />
+      {regionMode && <MapLegend />}
 
       {/* Hover tooltip */}
       {hoverInfo && (

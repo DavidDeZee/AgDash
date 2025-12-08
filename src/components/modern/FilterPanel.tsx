@@ -9,6 +9,7 @@ import type { EnhancedCountyData } from '../../types/ag';
 
 
 import { HeatmapControl } from './HeatmapControl';
+import { RegionControl } from './RegionControl';
 
 import { getUniqueStates } from '../../utils/dataUtils';
 
@@ -273,6 +274,9 @@ export function FilterPanel({ allCounties, onOpenRankingModal }: FilterPanelProp
         allCounties={allCounties}
         onOpenRankingModal={onOpenRankingModal}
       />
+
+      {/* Region Control */}
+      <RegionControl />
     </div>
   );
 }
