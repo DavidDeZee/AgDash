@@ -33,6 +33,7 @@ export function FilterPanel({ allCounties, onOpenRankingModal }: FilterPanelProp
 
   const [countySearchQuery, setCountySearchQuery] = useState('');
   const [showCountyDropdown, setShowCountyDropdown] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Filter counties for search dropdown
@@ -49,6 +50,11 @@ export function FilterPanel({ allCounties, onOpenRankingModal }: FilterPanelProp
       .slice(0, 8);
   }, [countySearchQuery, allCounties, comparisonCounties]);
 
+  // Reset active index when search results change
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [filteredCountiesForSearch]);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -59,6 +65,23 @@ export function FilterPanel({ allCounties, onOpenRankingModal }: FilterPanelProp
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showCountyDropdown || filteredCountiesForSearch.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveIndex(prev => (prev + 1) % filteredCountiesForSearch.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveIndex(prev => (prev - 1 + filteredCountiesForSearch.length) % filteredCountiesForSearch.length);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (filteredCountiesForSearch[activeIndex]) {
+        handleAddCounty(filteredCountiesForSearch[activeIndex]);
+      }
+    }
+  };
 
   const handleAddCounty = (county: EnhancedCountyData) => {
     addToComparison(county);
@@ -108,6 +131,7 @@ export function FilterPanel({ allCounties, onOpenRankingModal }: FilterPanelProp
                     setShowCountyDropdown(true);
                   }}
                   onFocus={() => setShowCountyDropdown(true)}
+                  onKeyDown={handleKeyDown}
                   className="pr-8"
                   disabled={comparisonCounties.length >= 5}
                 />
@@ -117,17 +141,20 @@ export function FilterPanel({ allCounties, onOpenRankingModal }: FilterPanelProp
             {/* Dropdown */}
             {showCountyDropdown && filteredCountiesForSearch.length > 0 && (
               <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
-                {filteredCountiesForSearch.map((county) => (
+                {filteredCountiesForSearch.map((county, index) => (
                   <button
                     key={county.id}
                     onClick={() => handleAddCounty(county)}
-                    className="w-full px-3 py-2 text-left text-sm hover:bg-accent flex items-center justify-between group"
+                    onMouseEnter={() => setActiveIndex(index)}
+                    className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between group ${index === activeIndex ? 'bg-accent' : 'hover:bg-accent'
+                      }`}
                   >
                     <span>
                       <span className="font-medium">{county.countyName}</span>
                       <span className="text-muted-foreground">, {county.stateName}</span>
                     </span>
-                    <Plus className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Plus className={`h-4 w-4 text-muted-foreground transition-opacity ${index === activeIndex ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                      }`} />
                   </button>
                 ))}
               </div>

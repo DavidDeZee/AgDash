@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useAgData } from './hooks/useAgData';
+import { usePapeData } from './hooks/usePapeData';
 import { useMobileDetection } from './hooks/useMobileDetection';
 import type { EnhancedCountyData } from './types/ag';
 import { useStore } from './store/useStore';
@@ -17,12 +18,16 @@ import { parseQuery } from './utils/queryParser';
 import papeLogo from './assets/pape-logo.svg';
 // import { BarChart3 } from 'lucide-react';
 
+import { Settings } from 'lucide-react';
+import { AdminPanel } from './components/admin/AdminPanel';
+
 export default function App() {
   // Mobile detection
   const isMobile = useMobileDetection(1024);
 
   // Load data
   const { data: allCounties, loading, error } = useAgData();
+  const { papeData, lastUpdated } = usePapeData();
 
   // Get state from Zustand store
   const {
@@ -98,6 +103,7 @@ export default function App() {
 
   const [detailCounty, setDetailCounty] = useState<EnhancedCountyData | null>(null);
   const [isRankingModalOpen, setIsRankingModalOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   // Reset state when switching to mobile
   useEffect(() => {
@@ -147,6 +153,8 @@ export default function App() {
       <CountyDetailModal
         county={detailCounty}
         allCounties={allCounties}
+        papeData={papeData}
+        lastUpdated={lastUpdated}
         onClose={() => setDetailCounty(null)}
       />
 
@@ -156,6 +164,12 @@ export default function App() {
         onClose={() => setIsRankingModalOpen(false)}
         availableStates={availableStates}
         allCounties={allCounties}
+      />
+
+      {/* Admin Panel */}
+      <AdminPanel
+        isOpen={isAdminOpen}
+        onClose={() => setIsAdminOpen(false)}
       />
 
       <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden">
@@ -170,7 +184,16 @@ export default function App() {
               </p>
             </div>
           </div>
-          <SaveView />
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsAdminOpen(true)}
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full transition-colors"
+              title="Upload Data (Admin)"
+            >
+              <Settings className="h-5 w-5" />
+            </button>
+            <SaveView />
+          </div>
         </header>
 
         {/* Main Content */}
@@ -208,10 +231,11 @@ export default function App() {
           </main>
 
           {/* Right Sidebar - County List / Comparison */}
-          <aside className="w-96 border-l border-border bg-card flex flex-col overflow-y-auto">
+          <aside className="w-96 border-l border-border bg-card flex flex-col overflow-hidden">
             {comparisonCounties.length > 1 ? (
               <ComparisonDrawer
                 counties={comparisonCounties}
+                papeData={papeData}
                 onRemove={removeFromComparison}
                 onClear={() => {
                   // Clear all comparison counties
