@@ -1,35 +1,42 @@
 import { put } from '@vercel/blob';
+import multer from 'multer';
+
+// Configure multer to store files in memory
+const upload = multer({ storage: multer.memoryStorage() });
 
 export const config = {
-    runtime: 'nodejs',
+    api: {
+        bodyParser: false, // Disallow Vercel from parsing body, let multer do it
+    },
 };
 
-export default async function handler(request: Request) {
-    if (request.method !== 'POST') {
-        return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-            status: 405,
-            headers: { 'Content-Type': 'application/json' },
+// Helper function to run middleware
+function runMiddleware(req: any, res: any, fn: any) {
+    return new Promise((resolve, reject) => {
+        fn(req, res, (result: any) => {
+            if (result instanceof Error) {
+                return reject(result);
+            }
+            return resolve(result);
         });
+    });
+}
+
+export default async function handler(req: any, res: any) {
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
     }
 
     try {
-        const contentType = request.headers.get('content-type') || '';
-        if (!contentType.includes('multipart/form-data')) {
-            return new Response(JSON.stringify({ error: 'Content-Type must be multipart/form-data' }), { status: 400 });
-        }
+        // Run multer middleware
+        await runMiddleware(req, res, upload.single('file'));
 
-        const formData = await request.formData();
-        const file = formData.get('file') as File;
-
-        if (!file) {
-            return new Response(JSON.stringify({ error: 'No file provided' }), {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' },
-            });
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file provided' });
         }
 
         // Upload to Blob storage
-        const blob = await put('market-data-v2.xlsx', file, {
+        const blob = await put('market-data-v2.xlsx', req.file.buffer, {
             access: 'public',
             token: process.env.BLOB_READ_WRITE_TOKEN,
             addRandomSuffix: false,
@@ -37,15 +44,9 @@ export default async function handler(request: Request) {
             cacheControlMaxAge: 0,
         });
 
-        return new Response(JSON.stringify({ success: true, url: blob.url }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-        });
-    } catch (error) {
+        return res.status(200).json({ success: true, url: blob.url });
+    } catch (error: any) {
         console.error('Upload error:', error);
-        return new Response(JSON.stringify({ error: 'Upload failed' }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' },
-        });
+        return res.status(500).json({ error: 'Upload failed: ' + (error.message || error) });
     }
 }
