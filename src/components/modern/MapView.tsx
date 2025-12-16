@@ -959,9 +959,9 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      // Close popup if click is NOT inside the popup itself.
+      // Close popup if click is NOT inside the popup itself or on a dealership marker.
       // This handles map background, sidebar buttons, modals, etc.
-      if (popupInfo && !target.closest('.maplibregl-popup')) {
+      if (popupInfo && !target.closest('.maplibregl-popup') && !target.closest('.dealership-marker')) {
         setPopupInfo(null);
       }
     };
@@ -1328,8 +1328,9 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
               anchor="center"
             >
               <div
-                className="w-2 h-2 rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
+                className="dealership-marker w-2 h-2 rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
                 style={{ backgroundColor: DEALERSHIP_BRANDING.PAPE.color }}
+                onClick={(e) => e.stopPropagation()}
                 onMouseEnter={(e) => {
                   e.stopPropagation();
                   handlePapeHoverEnter(cluster);
@@ -1352,8 +1353,9 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
               anchor="center"
             >
               <div
-                className="w-2 h-2 rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
+                className="dealership-marker w-2 h-2 rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
                 style={{ backgroundColor: DEALERSHIP_BRANDING.NEW_HOLLAND.color }}
+                onClick={(e) => e.stopPropagation()}
                 onMouseEnter={(e) => {
                   e.stopPropagation();
                   handlePapeHoverEnter(cluster);
@@ -1376,8 +1378,9 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
               anchor="center"
             >
               <div
-                className="w-2 h-2 rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
+                className="dealership-marker w-2 h-2 rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
                 style={{ backgroundColor: DEALERSHIP_BRANDING.CASE_IH.color }}
+                onClick={(e) => e.stopPropagation()}
                 onMouseEnter={(e) => {
                   e.stopPropagation();
                   handlePapeHoverEnter(cluster);
@@ -1400,8 +1403,9 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
               anchor="center"
             >
               <div
-                className="w-2 h-2 rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
+                className="dealership-marker w-2 h-2 rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
                 style={{ backgroundColor: DEALERSHIP_BRANDING.KUBOTA.color }}
+                onClick={(e) => e.stopPropagation()}
                 onMouseEnter={(e) => {
                   e.stopPropagation();
                   handlePapeHoverEnter(cluster);
@@ -1424,8 +1428,9 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
               anchor="center"
             >
               <div
-                className="w-2 h-2 rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
+                className="dealership-marker w-2 h-2 rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
                 style={{ backgroundColor: DEALERSHIP_BRANDING.KIOTI.color }}
+                onClick={(e) => e.stopPropagation()}
                 onMouseEnter={(e) => {
                   e.stopPropagation();
                   handlePapeHoverEnter(cluster);
@@ -1469,7 +1474,6 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
                 {popupInfo.features.map((feature, index) => {
                   const address = feature.properties.address || '';
                   const { city, state } = getCityStateFromAddress(address);
-                  const phone = feature.properties.phone || '541-555-0100'; // Fallback if missing
                   const isNewHolland = feature.properties.type === 'New Holland Dealer';
                   const isCaseIH = feature.properties.type === 'Case IH Dealer';
                   const isKubota = feature.properties.type === 'Kubota Dealer';
@@ -1495,9 +1499,6 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
                       <div className="text-[10px] font-bold uppercase tracking-wide leading-tight" style={{ color: themeColor }}>
                         {displayName}
                       </div>
-                      <a href={`tel:${phone}`} className="font-bold text-sm text-white hover:opacity-80 transition-opacity outline-none focus:outline-none">
-                        {phone}
-                      </a>
                       <div className="text-sm text-gray-300 leading-tight">
                         {address.split(',')[0]}<br />
                         {city}, {state} {address.split(' ').pop()}

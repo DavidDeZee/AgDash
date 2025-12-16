@@ -267,7 +267,7 @@ export function FilterPanel({ allCounties, onOpenRankingModal }: FilterPanelProp
         {/* Expandable Section */}
         <div className={`grid transition-all duration-300 ease-in-out ${dealershipsExpanded ? 'grid-rows-[1fr] opacity-100 mt-4' : 'grid-rows-[0fr] opacity-0 mt-0'}`}>
           <div className="overflow-hidden">
-            <div className="space-y-3 pl-2 border-l-2 border-muted ml-1">
+            <div className="space-y-3 pl-2 ">
               {/* Pape Dealerships */}
               <div className="flex items-center justify-between group">
                 <div className="flex items-center gap-2">
