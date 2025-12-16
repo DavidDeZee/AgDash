@@ -1,0 +1,5 @@
+state_name,county_name,year,Value,is_estimated
+OR,BENTON,2022,3495.0,False
+OR,LINN,2022,2458.0,False
+OR,MARION,2022,159.0,False
+OR,WASHINGTON,2022,292.0,False

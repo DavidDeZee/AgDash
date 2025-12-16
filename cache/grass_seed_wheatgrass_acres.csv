@@ -1,0 +1,4 @@
+state_name,county_name,year,Value,is_estimated
+CA,YOLO,2022,240.0,False
+ID,CASSIA,2022,1784.0,False
+ID,ONEIDA,2022,2184.0,False

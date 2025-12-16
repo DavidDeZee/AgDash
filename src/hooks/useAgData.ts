@@ -26,6 +26,9 @@ export function useAgData() {
         const parsedData = parseCSV(csvText);
         const enhancedData = parsedData.map(enhanceCountyData);
 
+        console.log('Parsed Data Sample:', enhancedData.slice(0, 3));
+        console.log('Total Records:', enhancedData.length);
+
         setData(enhancedData);
         setError(null);
       } catch (err) {
@@ -46,65 +49,125 @@ export function useAgData() {
  * Parse CSV text into CountyData objects
  * Handles empty values and type conversion
  */
-/**
- * Parse CSV text into CountyData objects
- * Handles empty values and type conversion
- */
 function parseCSV(csvText: string): CountyData[] {
   const lines = csvText.trim().split('\n');
+  if (lines.length < 2) return [];
+
+  // Parse headers (handle BOM if present)
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^\ufeff/, ''));
+  const headerMap = new Map<string, number>();
+  headers.forEach((h, i) => headerMap.set(h, i));
+
+  // Mapping from CountyData keys to CSV header names
+  const columnMapping: Record<keyof CountyData, string> = {
+    stateName: 'state_name',
+    countyName: 'county_name',
+    year: 'year',
+    farms: 'farms',
+    croplandAcres: 'cropland_acres',
+    harvestedCroplandAcres: 'harvested_cropland_acres',
+    irrigatedAcres: 'irrigated_acres',
+    marketValueTotalDollars: 'market_value_total_dollars',
+    cropsSalesDollars: 'crops_sales_dollars',
+    livestockSalesDollars: 'livestock_sales_dollars',
+    govPaymentsDollars: 'gov_payments_dollars',
+    applesAcres: 'apples_acres',
+    wheatAcres: 'wheat_acres',
+    riceAcres: 'rice_acres',
+    hazelnutsAcres: 'hazelnuts_acres',
+    grassSeedBentgrassAcres: 'grass_seed_bentgrass_acres',
+    grassSeedBermudagrassAcres: 'grass_seed_bermudagrass_acres',
+    grassSeedBluegrassAcres: 'grass_seed_bluegrass_acres',
+    grassSeedBromegrassAcres: 'grass_seed_bromegrass_acres',
+    grassSeedFescueAcres: 'grass_seed_fescue_acres',
+    grassSeedOrchardgrassAcres: 'grass_seed_orchardgrass_acres',
+    grassSeedRyegrassAcres: 'grass_seed_ryegrass_acres',
+    grassSeedSudangrassAcres: 'grass_seed_sudangrass_acres',
+    grassSeedTimothyAcres: 'grass_seed_timothy_acres',
+    grassSeedWheatgrassAcres: 'grass_seed_wheatgrass_acres',
+    cornAcres: 'corn_acres',
+    cornSilageAcres: 'corn_silage_acres',
+    hayAcres: 'hay_acres',
+    haylageAcres: 'haylage_acres',
+    beefCattleHead: 'beef_cattle_head',
+    dairyCattleHead: 'dairy_cattle_head',
+  };
 
   return lines.slice(1).map((line) => {
     // Handle potential quoted values in CSV, though simple split works if no commas in values
     const values = line.split(',');
 
     // Helper to safely parse numbers, returning null for empty/invalid values
-    const parseNumber = (value: string | undefined): number | null => {
+    const parseNumber = (columnKey: keyof CountyData): number | null => {
+      const csvHeader = columnMapping[columnKey];
+      const index = headerMap.get(csvHeader);
+
+      if (index === undefined) return null; // Column not in CSV
+
+      const value = values[index];
       if (!value) return null;
+
       const trimmed = value.trim();
       if (trimmed === '') return null;
+
       const parsed = parseFloat(trimmed);
       return isNaN(parsed) ? null : parsed;
     };
 
+    // Helper for string values
+    const parseString = (columnKey: keyof CountyData): string => {
+      const csvHeader = columnMapping[columnKey];
+      const index = headerMap.get(csvHeader);
+
+      if (index === undefined) return '';
+
+      return values[index]?.trim() || '';
+    };
+
     return {
-      stateName: values[0]?.trim() || '',
-      countyName: values[1]?.trim() || '',
-      year: parseNumber(values[2]) || 0, // Year should probably not be null
-      farms: parseNumber(values[3]),
-      croplandAcres: parseNumber(values[4]),
-      harvestedCroplandAcres: parseNumber(values[5]),
-      irrigatedAcres: parseNumber(values[6]),
-      marketValueTotalDollars: parseNumber(values[7]),
-      cropsSalesDollars: parseNumber(values[8]),
-      livestockSalesDollars: parseNumber(values[9]),
-      govPaymentsDollars: parseNumber(values[10]),
-      applesAcres: parseNumber(values[11]),
-      wheatAcres: parseNumber(values[12]),
-      riceAcres: parseNumber(values[13]),
-      hazelnutsAcres: parseNumber(values[14]),
-      grassSeedBentgrassAcres: parseNumber(values[15]),
-      grassSeedBermudagrassAcres: parseNumber(values[16]),
-      grassSeedBluegrassAcres: parseNumber(values[17]),
-      grassSeedBromegrassAcres: parseNumber(values[18]),
-      grassSeedFescueAcres: parseNumber(values[19]),
-      grassSeedOrchardgrassAcres: parseNumber(values[20]),
-      grassSeedRyegrassAcres: parseNumber(values[21]),
-      grassSeedSudangrassAcres: parseNumber(values[22]),
-      grassSeedTimothyAcres: parseNumber(values[23]),
-      grassSeedWheatgrassAcres: parseNumber(values[24]),
-      cornAcres: parseNumber(values[25]),
-      cornSilageAcres: parseNumber(values[26]),
-      hayAcres: parseNumber(values[27]),
-      haylageAcres: parseNumber(values[28]),
-      beefCattleHead: parseNumber(values[29]),
-      dairyCattleHead: parseNumber(values[30]),
-      // grass_seed_acres (aggregated in CSV) is at index 31, but we will aggregate manually as requested
-      // or should we use the CSV provided one if it matches? 
-      // User said: "aggregation should be done inside of some place other than the fetch data"
-      // So we ignore column 31 if it exists and compute it ourselves
+      stateName: parseString('stateName'),
+      countyName: parseString('countyName'),
+      year: parseNumber('year') || 0,
+      farms: parseNumber('farms'),
+      croplandAcres: parseNumber('croplandAcres'),
+      harvestedCroplandAcres: parseNumber('harvestedCroplandAcres'),
+      irrigatedAcres: parseNumber('irrigatedAcres'),
+      marketValueTotalDollars: parseNumber('marketValueTotalDollars'),
+      cropsSalesDollars: parseNumber('cropsSalesDollars'),
+      livestockSalesDollars: parseNumber('livestockSalesDollars'),
+      govPaymentsDollars: parseNumber('govPaymentsDollars'),
+      applesAcres: parseNumber('applesAcres'),
+      wheatAcres: parseNumber('wheatAcres'),
+      riceAcres: parseNumber('riceAcres'),
+      hazelnutsAcres: parseNumber('hazelnutsAcres'),
+      grassSeedBentgrassAcres: parseNumber('grassSeedBentgrassAcres'),
+      grassSeedBermudagrassAcres: parseNumber('grassSeedBermudagrassAcres'),
+      grassSeedBluegrassAcres: parseNumber('grassSeedBluegrassAcres'),
+      grassSeedBromegrassAcres: parseNumber('grassSeedBromegrassAcres'),
+      grassSeedFescueAcres: parseNumber('grassSeedFescueAcres'),
+      grassSeedOrchardgrassAcres: parseNumber('grassSeedOrchardgrassAcres'),
+      grassSeedRyegrassAcres: parseNumber('grassSeedRyegrassAcres'),
+      grassSeedSudangrassAcres: parseNumber('grassSeedSudangrassAcres'),
+      grassSeedTimothyAcres: parseNumber('grassSeedTimothyAcres'),
+      grassSeedWheatgrassAcres: parseNumber('grassSeedWheatgrassAcres'),
+      cornAcres: parseNumber('cornAcres'),
+      cornSilageAcres: parseNumber('cornSilageAcres'),
+      hayAcres: parseNumber('hayAcres'),
+      haylageAcres: parseNumber('haylageAcres'),
+      beefCattleHead: parseNumber('beefCattleHead'),
+      dairyCattleHead: parseNumber('dairyCattleHead'),
     };
   });
 }
+
+const STATE_ABBR_TO_FULL: Record<string, string> = {
+  'CA': 'CALIFORNIA',
+  'OR': 'OREGON',
+  'WA': 'WASHINGTON',
+  'ID': 'IDAHO',
+  'MT': 'MONTANA',
+  'NV': 'NEVADA',
+};
 
 /**
  * Enhance county data with computed fields
@@ -141,27 +204,19 @@ function enhanceCountyData(county: CountyData): EnhancedCountyData {
   }
 
   // Handle percentages with null checks
-  // Note: landInFarmsAcres was removed, so we can't calculate croplandPercentage exactly as before if that was the denominator
-  // Let's check what was removed.
-  // Previous: croplandPercentage = county.landInFarmsAcres > 0 ? (county.croplandAcres / county.landInFarmsAcres) * 100 : 0;
-  // Since landInFarmsAcres is gone, maybe we use croplandAcres vs total land? 
-  // Wait, I removed landInFarmsAcres based on my plan because it wasn't in the new CSV list I seemingly read?
-  // Let's re-read the CSV header I printed earlier:
-  // state_name,county_name,year,farms,cropland_acres,harvested_cropland_acres,irrigated_acres,market_value_total_dollars,crops_sales_dollars,livestock_sales_dollars,gov_payments_dollars,apples_acres,wheat_acres,rice_acres,hazelnuts_acres,...
-  // It seems 'land_in_farms_acres' is indeed NOT in the new CSV headers I saw.
-  // So croplandPercentage cannot be calculated as per old formula.
-  // I will set it to null for now or remove it from UI if not needed.
-  // For now, let's just make it null to avoid errors.
-
   const croplandPercentage = null;
 
   const irrigationPercentage = (county.croplandAcres !== null && county.croplandAcres > 0 && county.irrigatedAcres !== null)
     ? (county.irrigatedAcres / county.croplandAcres) * 100
     : null;
 
+  // Convert state abbreviation to full name if needed
+  const stateFull = STATE_ABBR_TO_FULL[county.stateName.toUpperCase()] || county.stateName;
+
   return {
     ...county,
-    id: `${county.stateName}-${county.countyName}`,
+    stateName: stateFull, // Override with full name
+    id: `${stateFull}-${county.countyName}`,
     croplandPercentage,
     irrigationPercentage,
     grassSeedAcres,
