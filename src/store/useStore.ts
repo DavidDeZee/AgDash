@@ -26,6 +26,8 @@ interface DashboardState {
   // Layer Visibility
   showPapeLocations: boolean;
   showNewHollandLocations: boolean;
+  showCaseIHLocations: boolean;
+  showKubotaLocations: boolean;
   // Regions
   regionMode: boolean;
 
@@ -51,6 +53,8 @@ interface DashboardState {
 
   togglePapeLocations: () => void;
   toggleNewHollandLocations: () => void;
+  toggleCaseIHLocations: () => void;
+  toggleKubotaLocations: () => void;
   setRegionMode: (enabled: boolean) => void;
 
   resetFilters: () => void;
@@ -71,6 +75,8 @@ export const useStore = create<DashboardState>((set) => ({
   heatmapStateFilter: null,
   showPapeLocations: false,
   showNewHollandLocations: false,
+  showCaseIHLocations: false,
+  showKubotaLocations: false,
   regionMode: true,
 
   // Actions
@@ -115,6 +121,8 @@ export const useStore = create<DashboardState>((set) => ({
 
   togglePapeLocations: () => set((state) => ({ showPapeLocations: !state.showPapeLocations })),
   toggleNewHollandLocations: () => set((state) => ({ showNewHollandLocations: !state.showNewHollandLocations })),
+  toggleCaseIHLocations: () => set((state) => ({ showCaseIHLocations: !state.showCaseIHLocations })),
+  toggleKubotaLocations: () => set((state) => ({ showKubotaLocations: !state.showKubotaLocations })),
 
   resetFilters: () =>
     set({

@@ -1,0 +1,709 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "N&S Oregon, Inc.",
+                "address": "36 NW A Street, Madras, OR 97741",
+                "type": "Case IH Dealer",
+                "phone": "(541) 475-2253"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.1300582,
+                    44.637498
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Morrow Cnty Grain",
+                "address": "350 Main Street, Lexington, OR 97839",
+                "type": "Case IH Dealer",
+                "phone": "(541) 989-8221"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.6889874,
+                    45.44889980000001
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "N&S Oregon, Inc.",
+                "address": "230 Sommerville Avenue, Harrisburg, OR 97446",
+                "type": "Case IH Dealer",
+                "phone": "(541) 995-2262"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.1715637,
+                    44.2640548
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "N&S Oregon, Inc.",
+                "address": "2929 No. Pacific Highway, Woodburn, OR 97071",
+                "type": "Case IH Dealer",
+                "phone": "(503) 981-0151"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.8267381,
+                    45.157347
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "N&S Oregon, Inc.",
+                "address": "9055 Rickreall Road, Rickreall, OR 97371",
+                "type": "Case IH Dealer",
+                "phone": "(503) 363-2332"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.2149662,
+                    44.9294291
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "N&S Oregon, Inc.",
+                "address": "185 W. Main Extension, Hillsboro, OR 97123",
+                "type": "Case IH Dealer",
+                "phone": "(503) 648-4178"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.0029756,
+                    45.5213949
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Burks Tractor Co LLC",
+                "address": "220 Farmway Road, Caldwell, ID 83605",
+                "type": "Case IH Dealer",
+                "phone": "(208) 466-7875"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.7124132,
+                    43.6680801
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "N&S North, Inc.",
+                "address": "827 North Tehama, Willows, CA 95988",
+                "type": "Case IH Dealer",
+                "phone": "(530) 934-3382"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.1940062,
+                    39.5307201
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Burks Tractor Co",
+                "address": "3140 Kimberly Rd., Twin Falls, ID 83301",
+                "type": "Case IH Dealer",
+                "phone": "(208) 733-5543"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -114.4204132,
+                    42.5462533
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "N&S North, Inc.",
+                "address": "1960 Hwy 20, Colusa, CA 95932",
+                "type": "Case IH Dealer",
+                "phone": "(530) 458-2166"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.0350816,
+                    39.1980103
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "N&S North, Inc.",
+                "address": "3056 Colusa Hwy, Yuba City, CA 95993",
+                "type": "Case IH Dealer",
+                "phone": "(530) 923-7675"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.6732488,
+                    39.1407104
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Farmers Equipment Co",
+                "address": "17893 State Route 20, Burlington, WA 98233-9623",
+                "type": "Case IH Dealer",
+                "phone": "(360) 757-6081"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.3610046,
+                    48.4651766
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Titan Application",
+                "address": "199 West 2Nd North, Burley, ID 83318",
+                "type": "Case IH Dealer",
+                "phone": "(208) 678-3589"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -113.7963068,
+                    42.5569912
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Titan Machinery Inc.",
+                "address": "913 South Oneida, Rupert, ID 83350",
+                "type": "Case IH Dealer",
+                "phone": "(208) 436-3191"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -113.6866151,
+                    42.6047156
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Farmers Equipment Co",
+                "address": "410 19Th Street, Lynden, WA 98264",
+                "type": "Case IH Dealer",
+                "phone": "(360) 354-4451"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.4792478,
+                    48.9416191
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "7580 Hwy 10 West, Missoula, MT 59808",
+                "type": "Case IH Dealer",
+                "phone": "(406) 543-7782"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -114.1250369,
+                    46.9427429
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Titan Machinery Inc.",
+                "address": "3102 Rockland Highway, American Falls, ID 83211",
+                "type": "Case IH Dealer",
+                "phone": "(208) 226-5209"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -112.8799936,
+                    42.746751
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "N & S Tractor",
+                "address": "1340 W Charter Way, Stockton, CA 95206",
+                "type": "Case IH Dealer",
+                "phone": "(209) 944-5500"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.3055821,
+                    37.9330316
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Titan Machinery Inc.",
+                "address": "404 W. Highway 39, Blackfoot, ID 83221",
+                "type": "Case IH Dealer",
+                "phone": "(208) 785-0008"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -112.3768551,
+                    43.1994495
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "3245 Highway 93 S, Kalispell, MT 59901",
+                "type": "Case IH Dealer",
+                "phone": "(406) 407-7230"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -114.2865126,
+                    48.1513058
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Titan Machinery Inc.",
+                "address": "5666 North Yellowstone Highway, Idaho Falls, ID 83401",
+                "type": "Case IH Dealer",
+                "phone": "(208) 523-5455"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.9631297,
+                    43.54661189999999
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Titan Machinery Inc.",
+                "address": "95 Airport Road, Rexburg, ID 83440",
+                "type": "Case IH Dealer",
+                "phone": "(208) 359-8000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.8091702,
+                    43.8279218
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "N & S Tractor",
+                "address": "1215 W. Glenwood Avenue, Turlock, CA 95380",
+                "type": "Case IH Dealer",
+                "phone": "(209) 634-1777"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.8605599,
+                    37.4776596
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "N & S Tractor Co.",
+                "address": "600 S State Highway 59, Merced, CA 95341-0910",
+                "type": "Case IH Dealer",
+                "phone": "(209) 383-5888"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.4997134,
+                    37.294617
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Valley Implement Co.",
+                "address": "213 West 800 North, Preston, ID 83263",
+                "type": "Case IH Dealer",
+                "phone": "(208) 852-0430"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.8829879,
+                    42.1100311
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "15 Hydraulic Lane, East Helena, MT 59635",
+                "type": "Case IH Dealer",
+                "phone": "(406) 393-0007"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.9155461,
+                    46.5896567
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "N & S Tractor",
+                "address": "2173 Blossom Street, Dos Palos, CA 93620",
+                "type": "Case IH Dealer",
+                "phone": "(209) 392-2161"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.6302814,
+                    36.985726
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "5900 Jackrabbit Lane, Belgrade, MT 59714",
+                "type": "Case IH Dealer",
+                "phone": "(406) 388-8500"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.1833395,
+                    45.75595
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "116 MT Highway 220, Choteau, MT 59422",
+                "type": "Case IH Dealer",
+                "phone": "(406) 201-8055"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -112.1640576,
+                    47.8153055
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Sonsray Machinery",
+                "address": "4342 East Absolut Ave., Fresno, CA 93725",
+                "type": "Case IH Dealer",
+                "phone": "(559) 834-2277"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.7118827,
+                    36.6526409
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Sonsray Machinery",
+                "address": "1081 Harkins Road, Salinas, CA 93901",
+                "type": "Case IH Dealer",
+                "phone": "(831) 240-0378"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.6273739,
+                    36.6512582
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "17 Liberty Ln, Great Falls, MT 59404",
+                "type": "Case IH Dealer",
+                "phone": "(406) 453-0010"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.4814027,
+                    47.548261
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Sonsray Machinery",
+                "address": "21276 Lassen Ave., Five Points, CA 93624",
+                "type": "Case IH Dealer",
+                "phone": "(559) 884-2431"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.1026727,
+                    36.4254595
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "4701 River Drive North, Great Falls, MT 59405",
+                "type": "Case IH Dealer",
+                "phone": "(406) 453-1453"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.2267015,
+                    47.5213177
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "142 US Highway 2, Ethridge, MT 59435",
+                "type": "Case IH Dealer",
+                "phone": "(406) 434-2222"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -112.1251867,
+                    48.558066
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Stratford Tractor",
+                "address": "20280 Main Street, Stratford, CA 93266",
+                "type": "Case IH Dealer",
+                "phone": "(559) 947-3301"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.8222876,
+                    36.1899233
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Century Equip Co Inc",
+                "address": "482 North Main Street, Cedar City, UT 84720",
+                "type": "Case IH Dealer",
+                "phone": "(435) 586-4406"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -113.0613733,
+                    37.6858269
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "90 Cottonwood Creek Road, Lewistown, MT 59457",
+                "type": "Case IH Dealer",
+                "phone": "(406) 538-8795"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -109.5040802,
+                    47.0543539
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Sonsray Machinery",
+                "address": "19474 Industry Parkway Dr., Bakersfield, CA 93308",
+                "type": "Case IH Dealer",
+                "phone": "(661) 327-1641"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.0778322,
+                    35.4427533
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "736 Lane 9 1/2, Powell, WY 82435",
+                "type": "Case IH Dealer",
+                "phone": "(307) 271-1112"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -108.7269495,
+                    44.74609
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Ag Equipment Inc.",
+                "address": "1843 West Highway 40, Roosevelt, UT 84066-9606",
+                "type": "Case IH Dealer",
+                "phone": "(435) 722-4488"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -110.024717,
+                    40.275499
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "5022 Laurel Road, Billings, MT 59101",
+                "type": "Case IH Dealer",
+                "phone": "(406) 252-8614"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -108.5401527,
+                    45.7625982
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "4180 US Highway 2 W, Havre, MT 59501",
+                "type": "Case IH Dealer",
+                "phone": "(406) 265-5887"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -109.7455214,
+                    48.5546495
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "4 Old Highway 10, Hysham, MT 59038",
+                "type": "Case IH Dealer",
+                "phone": "(406) 342-5571"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -107.2258423,
+                    46.2941267
+                ]
+            }
+        }
+    ]
+}

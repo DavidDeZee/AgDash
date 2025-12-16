@@ -1,0 +1,1557 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Nor Cal Tractor & Equipment",
+                "address": "2540 Gateway Dr, Anderson, CA 96007",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.2877352,
+                    40.45068819999999
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Trinity Diesel, Inc.",
+                "address": "5065 Boyd Rd A, Arcata, CA 95521",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -124.0725939,
+                    40.9094545
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Berchtold Equipment Company",
+                "address": "3000 Pegasus Drive, Bakersfield, CA 93308",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.0637947,
+                    35.4329546
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Industrial Power Products",
+                "address": "355 East Park Ave., Chico, CA 95928",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.8100032,
+                    39.71435290000001
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Eberhard Equipment",
+                "address": "86-100 Ave 54, Coachella, CA 92236",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.1635852,
+                    33.6573491
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Berchtold Equipment Company",
+                "address": "1407 S. Lexington St., Delano, CA 93215",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.2401821,
+                    35.7429588
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Kubota of San Diego",
+                "address": "1110 W Washington Ave, Escondido, CA 92025",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.1012358,
+                    33.1227359
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Green Valley Tractor, Inc.",
+                "address": "4135 Abernathy Rd, Fairfield, CA 94534",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.0921537,
+                    38.2419762
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pioneer Equipment Co.",
+                "address": "2545 S. Sarah St., Fresno, CA 93706",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.7777923,
+                    36.70899199999999
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Gold Country Tractors, Inc.",
+                "address": "418 East Main St., Grass Valley, CA 95945",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.0544869,
+                    39.2217596
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Hanford Equipment Company",
+                "address": "309 E. 7th Street, Hanford, CA 93230",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.6416753,
+                    36.3269048
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Al's Kubota Tr Lawnmower, & Saw Inc",
+                "address": "687 North San Jacinto St., Hemet, CA 92543",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.9591121,
+                    33.7579161
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "High Desert Tractor",
+                "address": "9262 C Ave., Hesperia, CA 92345",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.2978062,
+                    34.4192828
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Garton Tractor, Inc.",
+                "address": "700 South Hwy. 59, Merced, CA 95341",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.4994583,
+                    37.29509
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Garton Tractor, Inc.",
+                "address": "5933 Mchenry Ave, Modesto, CA 95356",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.9959498,
+                    37.7249679
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Gold Country Tractors, Inc.",
+                "address": "10230 Ophir Road, Newcastle, CA 95658",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.114249,
+                    38.8801967
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Garton Tractor, Inc.",
+                "address": "2101 L St, Newman, CA 95360",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.0160291,
+                    37.3062645
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Glenn B. Dorning, Inc.",
+                "address": "1744 E. Holt Blvd, Ontario, CA 91761",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.6149567,
+                    34.0631454
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Eberhard Equipment",
+                "address": "167 Lambert St, Suite C, Oxnard, CA 93036",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.1587662,
+                    34.2521646
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "High Desert Tractor",
+                "address": "37922 Sierra Highway, Palmdale, CA 93550",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.1146766,
+                    34.571079
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Coast Equipment Company",
+                "address": "2690 Ramada Dr., Paso Robles, CA 93446",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.6957882,
+                    35.5791528
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Farmers Tractor & Equipment Co.",
+                "address": "1132 S. Main St., Porterville, CA 93257",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.01622,
+                    36.04539990000001
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Inland Kubota, Inc.",
+                "address": "32200 Outer Hwy. 10, Redlands, CA 92373",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.1003645,
+                    34.0186851
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pioneer Equipment Co.",
+                "address": "953 G Street, Reedley, CA 93654",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.4523028,
+                    36.5975157
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Dolk Tractor Company",
+                "address": "242 North Front St., Rio Vista, CA 94571",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.6890827,
+                    38.1587148
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Sacramento for Tractors, Inc.",
+                "address": "3850 Power Inn Rd., Sacramento, CA 95826",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.40967,
+                    38.5400231
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Mission Valley Tractor & Equipment",
+                "address": "780 E. Brokaw Rd., San Jose, CA 95112",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.9053419,
+                    37.3808431
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Eberhard Equipment",
+                "address": "2506 S. Harbor Blvd., Santa Ana, CA 92704",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.9210319,
+                    33.7136028
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Berchtold Equipment Company",
+                "address": "1410 W. Betteravia Road, Santa Maria, CA 93455",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.4616033,
+                    34.9201653
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Garton Tractor, Inc.",
+                "address": "211 Cresco CT, Santa Rosa, CA 95407",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.7188918,
+                    38.3815287
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Garton Tractor, Inc.",
+                "address": "2924 French Camp Turnpike Rd, Stockton, CA 95206",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.2895389,
+                    37.9193487
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Kubota of Los Angeles",
+                "address": "11037 Penrose St., Sun Valley, CA 91352",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.3722432,
+                    34.2298933
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Kubota of Temecula",
+                "address": "28374 Felix Valdez Ave, Temecula, CA 92590",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.1548675,
+                    33.4972126
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Linder Equipment Co.",
+                "address": "311 E Kern A, Tulare, CA 93274",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.34412,
+                    36.2066771
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Garton Tractor, Inc.",
+                "address": "2400 N Golden State Blvd, Turlock, CA 95380",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.8683761,
+                    37.5153533
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Garton Tractor, Inc.",
+                "address": "285 Talmage Rd, Ukiah, CA 95482",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.2022232,
+                    39.1358261
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "C & N Tractors",
+                "address": "496 Salinas Rd, Watsonville, CA 95076",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.74816,
+                    36.8951814
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Holt AG Solutions",
+                "address": "411 S Tehama St, Willows, CA 95988",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.194283,
+                    39.5162757
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Holt AG Solutions",
+                "address": "95 W Kentucky Ave, Woodland, CA 95695",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.7881024,
+                    38.6930404
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Holt AG Solutions",
+                "address": "2950 Colusa Hwy., Yuba City, CA 95993",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.6709418,
+                    39.14055
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Boundary Tractor & Yamaha",
+                "address": "6632 Main St, Bonners Ferry, ID 83805",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.324935,
+                    48.6820836
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Burks Tractor Co. LLC",
+                "address": "220 Farmway Rd., Caldwell, ID 83605",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.7124132,
+                    43.6680801
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Mountain West Equipment LLC",
+                "address": "5039 Yellowstone Hwy, Chubbuck, ID 83202",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -112.466814,
+                    42.9253277
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Coeur D'Alene Tractor Co.",
+                "address": "1112 W Appleway Ave, Coeur D Alene, ID 83814",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.8012231,
+                    47.7005109
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Mountain West Equipment LLC",
+                "address": "2001 N Woodruff Avenue, Idaho Falls, ID 83401",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -112.0016884,
+                    43.51432579999999
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Adams Tractor of Lewiston",
+                "address": "2128 2nd Ave. N, Lewiston, ID 83501",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.0012344,
+                    46.4223856
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Idaho Tractor, Inc.",
+                "address": "2204 Caldwell Blvd., Nampa, ID 83651",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.6073729,
+                    43.6091984
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Mountain West Equipment LLC",
+                "address": "127 Airport Rd, Rexburg, ID 83440",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.8089768,
+                    43.8286911
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Burks Tractor Company, Inc.",
+                "address": "3140 Kimberly Rd., Twin Falls, ID 83301",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -114.4204132,
+                    42.5462533
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Floyd's Kubota, Inc",
+                "address": "310 Alaska Frontage Rd., Belgrade, MT 59714",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.179848,
+                    45.76502319999999
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Billings Kubota, Inc.",
+                "address": "5548 Holiday Ave., Billings, MT 59101",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -108.555278,
+                    45.74465170000001
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Johnson Distributing",
+                "address": "1021 3rd. St. N.W., Great Falls, MT 59404",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.3109679,
+                    47.5173216
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Kalispell Kubota",
+                "address": "2765 US Hwy 2 W, Kalispell, MT 59901",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -114.4155783,
+                    48.1813053
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Big Sky Kubota",
+                "address": "7550 Thornton Dr., Missoula, MT 59808",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -114.1258346,
+                    46.9433751
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Nevada Power Products, Inc.",
+                "address": "3660 Hwy. 50 East, Carson City, NV 89701",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.7263142,
+                    39.1798103
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Northern Nevada Equipment",
+                "address": "1343 W. Idaho St., Elko, NV 89801",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -115.7798926,
+                    40.8251735
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Apco Equipment Corporation",
+                "address": "3432 N. 5th. St., North Las Vegas, NV 89032",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -115.1332944,
+                    36.2220021
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Nevada Power Products, Inc.",
+                "address": "1160 Glendale Ave., Sparks, NV 89431",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.7571859,
+                    39.5283164
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Smith Valley Garage, Inc.",
+                "address": "2828 Hwy 208, Wellington, NV 89444",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.3775039,
+                    38.7572219
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Mason Valley Equipment",
+                "address": "890 West Bridge St., Yerington, NV 89447",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.1807011,
+                    38.9836949
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Mid-Valley Tractor Company",
+                "address": "90382 Hwy 99 N., Eugene, OR 97402",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.2259181,
+                    44.0431493
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Moen Machinery Company",
+                "address": "268 NE Hogan Dr., Gresham, OR 97030",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.4133383,
+                    45.4994968
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pacific Tractor & Implement, LLC",
+                "address": "1221 SW Baseline St., Hillsboro, OR 97123",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.0031062,
+                    45.5203767
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Malheur Machinery",
+                "address": "211 Highway 20 South, Hines, OR 97738",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.084183,
+                    43.5586465
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "C.M. & W.O. Sheppard, Inc.",
+                "address": "440 Riverside Drive, Hood River, OR 97031",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.514112,
+                    45.7127321
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Oregon Equipment Sales LLC",
+                "address": "19658 Hwy. 99 E., Hubbard, OR 97032",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.7766222,
+                    45.203756
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pelican Tractor",
+                "address": "5629 South 6th St, Klamath Falls, OR 97603",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.7196435,
+                    42.2067841
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pioneer West, Inc.",
+                "address": "64118 Mcdonald Lane, La Grande, OR 97850",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.99395,
+                    45.3981763
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Warner Mountain Equipment",
+                "address": "292 N P Street, Lakeview, OR 97630",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.3568418,
+                    42.1920601
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Oregon Equipment Sales LLC",
+                "address": "2700 NE Saint Joseph Rd, McMinnville, OR 97128",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.145465,
+                    45.2392838
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Central Equipment Co., Inc",
+                "address": "3008 Biddle Road, Medford, OR 97504",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.873839,
+                    42.3603999
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Farm Equipment Headquarters, Inc.",
+                "address": "731 Airport Rd, Pendleton, OR 97801",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.8409381,
+                    45.67897079999999
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Midstate Power Products",
+                "address": "3290 S. Highway 97, Redmond, OR 97756",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.187161,
+                    44.2467513
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Rickreall Farm Supply, Inc.",
+                "address": "130 Main St, Rickreall, OR 97371",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.2273117,
+                    44.9304364
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Umpqua Valley Tractor",
+                "address": "2165 NE Stephens St, Roseburg, OR 97470",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.3503679,
+                    43.2353082
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Sunset Equipment",
+                "address": "100  Port Ave., St. Helens, OR 97051",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.827051,
+                    45.8509429
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Linn Benton Tractor",
+                "address": "33599 Hwy. 99 E, Tangent, OR 97389",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.1091765,
+                    44.5582025
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Boyd's Implement Service, LLC",
+                "address": "2850 Latimer Rd N, Tillamook, OR 97141",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.837593,
+                    45.4825706
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Dan's Tractor, Inc.",
+                "address": "8012 N.E. 219th St., Battle Ground, WA 98604",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.5912723,
+                    45.7807814
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Scholten's Equipment",
+                "address": "9534 Green Road, Burlington, WA 98233",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.3356471,
+                    48.5071945
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Jennings Equipment, Inc",
+                "address": "244 Hamilton Rd, Chehalis, WA 98532",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.9174088,
+                    46.6128705
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Adams Tractor of Colville",
+                "address": "635 Hwy. 395 S., Colville, WA 99114",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.982104,
+                    48.5874157
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Valley Tractor & Equipment, Inc.",
+                "address": "4857 Contractors Drive, East Wenatchee, WA 98802",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.2957402,
+                    47.4957706
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Issaquah Honda Kubota",
+                "address": "1745 N.W. Mall Street, Issaquah, WA 98027",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.0636948,
+                    47.5447387
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Watkins Tractor Supply",
+                "address": "643 California Way, Longview, WA 98632",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.9342775,
+                    46.1189991
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Scholten's Equipment",
+                "address": "8223 Guide Meridian Road, Lynden, WA 98264",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.4859567,
+                    48.9397234
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Kitsap Tractor & Equipment",
+                "address": "13869 45th Ave NE, Marysville, WA 98271",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.1677478,
+                    48.1220189
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "J & I Power Equipment, Inc.",
+                "address": "3729 Pacific Ave. SE, Olympia, WA 98501",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.8411877,
+                    47.0401835
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Blueline Equipment Co.",
+                "address": "2080 N. Commercial Avenue, Pasco, WA 99301",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.072604,
+                    46.251191
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Jennings Equipment, Inc.",
+                "address": "1030 River Rd,, Puyallup, WA 98371",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.3078765,
+                    47.2019308
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Blueline Equipment Co.",
+                "address": "100 North Garnet Way, Quincy, WA 98848",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.854501,
+                    47.097337
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Tozier Bros., Inc.",
+                "address": "110 Mill Street, Shelton, WA 98584",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -123.1005578,
+                    47.2075042
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Kitsap Tractor & Equipment",
+                "address": "9145 Silverdale Way NW, Silverdale, WA 98383",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.6992967,
+                    47.6462669
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Adams Tractor of Spokane",
+                "address": "1602 E Trent Ave, Spokane, WA 99202",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.3868979,
+                    47.6617018
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Blueline Equipment Co.",
+                "address": "31501 Yakima Valley Hwy., Sunnyside, WA 98944",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.9587776,
+                    46.2987639
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Blueline Equipment Co.",
+                "address": "1605 E Mead Ave, Yakima, WA 98903",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.4798462,
+                    46.57846379999999
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "J & I Power Equipment, Inc.",
+                "address": "16510 106th Ave SE, Yelm, WA 98597",
+                "type": "Kubota Dealer",
+                "phone": "(555) 000-0000"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.5896082,
+                    46.9341405
+                ]
+            }
+        }
+    ]
+}

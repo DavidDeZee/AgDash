@@ -6,6 +6,8 @@ import Supercluster from 'supercluster';
 import type { EnhancedCountyData } from '../../types/ag';
 import papeLocationsData from '../../data/pape-locations.json';
 import newHollandLocationsData from '../../data/new-holland-locations.json';
+import caseIHLocationsData from '../../data/case-ih-locations.json';
+import kubotaLocationsData from '../../data/kubota-locations.json';
 import { useStore } from '../../store/useStore';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
@@ -505,7 +507,7 @@ function buildHeatmapColorExpression(metric: string, counties: EnhancedCountyDat
 
 // Map Legend Component
 function MapLegend() {
-  const { regionMode, showPapeLocations, showNewHollandLocations } = useStore();
+  const { regionMode, showPapeLocations, showNewHollandLocations, showCaseIHLocations, showKubotaLocations } = useStore();
 
   const regionOrder: (keyof typeof REGIONS)[] = [
     'PUGET_SOUND',
@@ -516,7 +518,7 @@ function MapLegend() {
     'SACRAMENTO',
   ];
 
-  if (!regionMode && !showPapeLocations && !showNewHollandLocations) return null;
+  if (!regionMode && !showPapeLocations && !showNewHollandLocations && !showCaseIHLocations && !showKubotaLocations) return null;
 
   return (
     <div className="absolute bottom-12 right-6 bg-card/95 backdrop-blur-sm border border-border rounded-md p-3 shadow-lg z-10 min-w-[140px]">
@@ -543,11 +545,11 @@ function MapLegend() {
         </>
       )}
 
-      {regionMode && (showPapeLocations || showNewHollandLocations) && (
+      {regionMode && (showPapeLocations || showNewHollandLocations || showCaseIHLocations || showKubotaLocations) && (
         <div className="my-2 border-t border-border/50" />
       )}
 
-      {(showPapeLocations || showNewHollandLocations) && (
+      {(showPapeLocations || showNewHollandLocations || showCaseIHLocations || showKubotaLocations) && (
         <>
           <h3 className="text-xs font-semibold mb-2 text-foreground">Dealerships</h3>
           {showPapeLocations && (
@@ -564,6 +566,22 @@ function MapLegend() {
                 className="w-3 h-3 rounded-full flex-shrink-0 bg-[#0057B8]"
               />
               <span className="text-[11px] text-foreground/90">New Holland</span>
+            </div>
+          )}
+          {showCaseIHLocations && (
+            <div className={`flex items-center gap-2 ${showPapeLocations || showNewHollandLocations ? 'mt-1' : ''}`}>
+              <div
+                className="w-3 h-3 rounded-full flex-shrink-0 bg-[#D80000]"
+              />
+              <span className="text-[11px] text-foreground/90">Case IH</span>
+            </div>
+          )}
+          {showKubotaLocations && (
+            <div className={`flex items-center gap-2 ${showPapeLocations || showNewHollandLocations || showCaseIHLocations ? 'mt-1' : ''}`}>
+              <div
+                className="w-3 h-3 rounded-full flex-shrink-0 bg-[#F39200]"
+              />
+              <span className="text-[11px] text-foreground/90">Kubota</span>
             </div>
           )}
         </>
@@ -595,11 +613,13 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
   // Get comparison counties from store
   // Get comparison counties from store
   // Get comparison counties from store
-  const { comparisonCounties, heatmapMode, showPapeLocations, showNewHollandLocations, sortField, regionMode } = useStore();
+  const { comparisonCounties, heatmapMode, showPapeLocations, showNewHollandLocations, showCaseIHLocations, showKubotaLocations, sortField, regionMode } = useStore();
 
   // Clustering state
   const [clusters, setClusters] = useState<any[]>([]);
   const [newHollandClusters, setNewHollandClusters] = useState<any[]>([]);
+  const [caseIHClusters, setCaseIHClusters] = useState<any[]>([]);
+  const [kubotaClusters, setKubotaClusters] = useState<any[]>([]);
 
   // Initialize Supercluster
   const supercluster = useMemo(() => {
@@ -620,6 +640,24 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
     return index;
   }, []);
 
+  const superclusterCaseIH = useMemo(() => {
+    const index = new Supercluster({
+      radius: 5,
+      maxZoom: 14,
+    });
+    index.load(caseIHLocationsData.features as any);
+    return index;
+  }, []);
+
+  const superclusterKubota = useMemo(() => {
+    const index = new Supercluster({
+      radius: 5,
+      maxZoom: 14,
+    });
+    index.load(kubotaLocationsData.features as any);
+    return index;
+  }, []);
+
   // Update clusters when map moves
   const updateClusters = useCallback(() => {
     if (!mapRef.current) return;
@@ -634,10 +672,12 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
     try {
       setClusters(supercluster.getClusters(newBounds, Math.floor(newZoom)));
       setNewHollandClusters(superclusterNewHolland.getClusters(newBounds, Math.floor(newZoom)));
+      setCaseIHClusters(superclusterCaseIH.getClusters(newBounds, Math.floor(newZoom)));
+      setKubotaClusters(superclusterKubota.getClusters(newBounds, Math.floor(newZoom)));
     } catch (e) {
       console.error("Error updating clusters", e);
     }
-  }, [supercluster, superclusterNewHolland]);
+  }, [supercluster, superclusterNewHolland, superclusterCaseIH, superclusterKubota]);
 
   // Initial cluster load 
   useEffect(() => {
@@ -806,7 +846,14 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
     let minDistance = Infinity;
 
     // We only check clusters that are rendered (in the clusters array)
-    for (const feature of clusters) {
+    const allActiveClusters = [
+      ...(showPapeLocations ? clusters : []),
+      ...(showNewHollandLocations ? newHollandClusters : []),
+      ...(showCaseIHLocations ? caseIHClusters : []),
+      ...(showKubotaLocations ? kubotaClusters : [])
+    ];
+
+    for (const feature of allActiveClusters) {
       const [lon, lat] = feature.geometry.coordinates;
       const featurePoint = map.project([lon, lat]);
       const dist = Math.sqrt(
@@ -848,7 +895,19 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
 
     if (isCluster) {
       // Update with new leaves (position might have shifted slightly)
-      const leaves = supercluster.getLeaves(cluster_id, 2000); // Increased limit
+
+      // Select appropriate supercluster
+      const sampleFeature = popupInfo.features[0];
+      let targetSupercluster = supercluster;
+      if (sampleFeature?.properties?.type === 'New Holland Dealer') {
+        targetSupercluster = superclusterNewHolland;
+      } else if (sampleFeature?.properties?.type === 'Case IH Dealer') {
+        targetSupercluster = superclusterCaseIH;
+      } else if (sampleFeature?.properties?.type === 'Kubota Dealer') {
+        targetSupercluster = superclusterKubota;
+      }
+
+      const leaves = targetSupercluster.getLeaves(cluster_id, 2000);
       setPopupInfo(prev => prev ? ({
         ...prev,
         longitude: newLon,
@@ -864,7 +923,7 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
         features: [closestFeature]
       }) : null);
     }
-  }, [clusters, supercluster]);
+  }, [clusters, newHollandClusters, caseIHClusters, kubotaClusters, supercluster, superclusterNewHolland, superclusterCaseIH, superclusterKubota, showPapeLocations, showNewHollandLocations, showCaseIHLocations, showKubotaLocations]);
 
   // Close popup logic for external clicks (sidebar, menus, etc.)
   useEffect(() => {
@@ -1273,6 +1332,52 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
           );
         })}
 
+        {/* Case IH MARKERS */}
+        {showCaseIHLocations && caseIHClusters.map((cluster) => {
+          const [longitude, latitude] = cluster.geometry.coordinates;
+
+          return (
+            <Marker
+              key={`cih-location-${cluster.id || cluster.properties.name}-${longitude}-${latitude}`}
+              longitude={longitude}
+              latitude={latitude}
+              anchor="center"
+            >
+              <div
+                className="w-2 h-2 bg-[#D80000] rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
+                onMouseEnter={(e) => {
+                  e.stopPropagation();
+                  handlePapeHoverEnter(cluster);
+                }}
+                onMouseLeave={handlePapeHoverLeave}
+              />
+            </Marker>
+          );
+        })}
+
+        {/* Kubota MARKERS */}
+        {showKubotaLocations && kubotaClusters.map((cluster) => {
+          const [longitude, latitude] = cluster.geometry.coordinates;
+
+          return (
+            <Marker
+              key={`kubota-location-${cluster.id || cluster.properties.name}-${longitude}-${latitude}`}
+              longitude={longitude}
+              latitude={latitude}
+              anchor="center"
+            >
+              <div
+                className="w-2 h-2 bg-[#F39200] rounded-full shadow-sm cursor-pointer hover:scale-150 transition-transform hover:z-50"
+                onMouseEnter={(e) => {
+                  e.stopPropagation();
+                  handlePapeHoverEnter(cluster);
+                }}
+                onMouseLeave={handlePapeHoverLeave}
+              />
+            </Marker>
+          );
+        })}
+
         {popupInfo && (
           <Popup
             longitude={popupInfo.longitude}
@@ -1308,9 +1413,18 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
                   const { city, state } = getCityStateFromAddress(address);
                   const phone = feature.properties.phone || '541-555-0100'; // Fallback if missing
                   const isNewHolland = feature.properties.type === 'New Holland Dealer';
-                  const themeColor = isNewHolland ? '#0057B8' : '#FFDE00';
-                  // Show name if New Holland, otherwise title
-                  const displayName = isNewHolland ? (feature.properties.name || 'NEW HOLLAND DEALER') : 'PAPÉ MACHINERY AGRICULTURE & TURF';
+                  const isCaseIH = feature.properties.type === 'Case IH Dealer';
+                  const isKubota = feature.properties.type === 'Kubota Dealer';
+
+                  let themeColor = '#FFDE00'; // Default Pape
+                  if (isNewHolland) themeColor = '#0057B8';
+                  if (isCaseIH) themeColor = '#D80000';
+                  if (isKubota) themeColor = '#F39200';
+
+                  let displayName = 'PAPÉ MACHINERY AGRICULTURE & TURF';
+                  if (isNewHolland) displayName = feature.properties.name || 'NEW HOLLAND DEALER';
+                  if (isCaseIH) displayName = feature.properties.name || 'CASE IH DEALER';
+                  if (isKubota) displayName = feature.properties.name || 'KUBOTA DEALER';
 
                   return (
                     <div key={index} className={`flex flex-col gap-1 ${index > 0 ? `mt-4 border-t pt-3` : ''}`} style={{ borderColor: index > 0 ? `${themeColor}4D` : 'transparent' }}>
@@ -1368,7 +1482,7 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
       </div>
 
       {/* Map Legend */}
-      {(regionMode || showPapeLocations || showNewHollandLocations) && <MapLegend />}
+      {(regionMode || showPapeLocations || showNewHollandLocations || showCaseIHLocations) && <MapLegend />}
 
       {/* Hover tooltip - ONLY for counties now, hidden when Pape popup is open */}
       {hoverInfo && !popupInfo && (

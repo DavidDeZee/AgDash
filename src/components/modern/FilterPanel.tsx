@@ -28,6 +28,10 @@ export function FilterPanel({ allCounties, onOpenRankingModal }: FilterPanelProp
     togglePapeLocations,
     showNewHollandLocations,
     toggleNewHollandLocations,
+    showCaseIHLocations,
+    toggleCaseIHLocations,
+    showKubotaLocations,
+    toggleKubotaLocations,
   } = useStore();
 
   const availableStates = useMemo(() => getUniqueStates(allCounties), [allCounties]);
@@ -92,13 +96,15 @@ export function FilterPanel({ allCounties, onOpenRankingModal }: FilterPanelProp
   };
 
   // Dealerships state
-  const [dealershipsExpanded, setDealershipsExpanded] = useState(() => showPapeLocations || showNewHollandLocations);
+  const [dealershipsExpanded, setDealershipsExpanded] = useState(() => showPapeLocations || showNewHollandLocations || showCaseIHLocations || showKubotaLocations);
 
   const handleDealershipsToggle = () => {
     if (dealershipsExpanded) {
       // Turn off all
       if (showPapeLocations) togglePapeLocations();
       if (showNewHollandLocations) toggleNewHollandLocations();
+      if (showCaseIHLocations) toggleCaseIHLocations();
+      if (showKubotaLocations) toggleKubotaLocations();
       setDealershipsExpanded(false);
     } else {
       // Turn on only Papé by default when expanding
@@ -289,6 +295,42 @@ export function FilterPanel({ allCounties, onOpenRankingModal }: FilterPanelProp
                 >
                   <span
                     className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${showNewHollandLocations ? 'translate-x-5' : 'translate-x-1'
+                      }`}
+                  />
+                </button>
+              </div>
+
+              {/* Case IH Dealers */}
+              <div className="flex items-center justify-between group">
+                <div className="flex items-center gap-2">
+                  <div className={`h-2 w-2 rounded-full ${showCaseIHLocations ? 'bg-red-600' : 'bg-muted'}`} />
+                  <span className="text-sm font-medium">Case IH Dealers</span>
+                </div>
+                <button
+                  onClick={toggleCaseIHLocations}
+                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-1 ${showCaseIHLocations ? 'bg-red-600' : 'bg-input'
+                    }`}
+                >
+                  <span
+                    className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${showCaseIHLocations ? 'translate-x-5' : 'translate-x-1'
+                      }`}
+                  />
+                </button>
+              </div>
+
+              {/* Kubota Dealers */}
+              <div className="flex items-center justify-between group">
+                <div className="flex items-center gap-2">
+                  <div className={`h-2 w-2 rounded-full ${showKubotaLocations ? 'bg-orange-500' : 'bg-muted'}`} />
+                  <span className="text-sm font-medium">Kubota Dealers</span>
+                </div>
+                <button
+                  onClick={toggleKubotaLocations}
+                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 ${showKubotaLocations ? 'bg-orange-500' : 'bg-input'
+                    }`}
+                >
+                  <span
+                    className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${showKubotaLocations ? 'translate-x-5' : 'translate-x-1'
                       }`}
                   />
                 </button>
