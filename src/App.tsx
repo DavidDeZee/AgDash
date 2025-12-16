@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { useAgData } from './hooks/useAgData';
 import { usePapeData } from './hooks/usePapeData';
 import { useMobileDetection } from './hooks/useMobileDetection';
+import { Button } from './components/ui/Button';
 import type { EnhancedCountyData } from './types/ag';
 import { useStore } from './store/useStore';
 import { MapView } from './components/modern/MapView';
@@ -18,7 +19,7 @@ import { parseQuery } from './utils/queryParser';
 import papeLogo from './assets/pape-logo.svg';
 // import { BarChart3 } from 'lucide-react';
 
-import { Settings } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { AdminPanel } from './components/admin/AdminPanel';
 
 export default function App() {
@@ -185,13 +186,15 @@ export default function App() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <button
+            <Button
+              variant="outline"
+              size="default"
               onClick={() => setIsAdminOpen(true)}
-              className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full transition-colors"
-              title="Upload Data (Admin)"
+              className="gap-2"
             >
-              <Settings className="h-5 w-5" />
-            </button>
+              <Upload className="h-4 w-4" />
+              Upload Data
+            </Button>
             <SaveView />
           </div>
         </header>
