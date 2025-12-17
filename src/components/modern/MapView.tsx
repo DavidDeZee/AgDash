@@ -637,13 +637,68 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
   const [kubotaClusters, setKubotaClusters] = useState<any[]>([]);
   const [kiotiClusters, setKiotiClusters] = useState<any[]>([]);
 
+  // Helper function to offset overlapping locations
+  // We shift the location slightly (approx 10-15m) if it overlaps with a higher priority brand
+  const offsetLocations = (
+    features: any[],
+    higherPriorityFeatureLists: any[][]
+  ) => {
+    // collected occupied coordinates from higher priority lists
+    const occupied = new Set<string>();
+
+    higherPriorityFeatureLists.forEach(list => {
+      list.forEach(f => {
+        const [lon, lat] = f.geometry.coordinates;
+        occupied.add(`${lon},${lat}`);
+      });
+    });
+
+    return features.map(f => {
+      const [lon, lat] = f.geometry.coordinates;
+      const key = `${lon},${lat}`;
+
+      if (occupied.has(key)) {
+        // Offset by ~0.0001 degrees (approx 11 meters)
+        // We can shift right/up slightly
+        return {
+          ...f,
+          geometry: {
+            ...f.geometry,
+            coordinates: [lon + 0.0001, lat + 0.0001]
+          }
+        };
+      }
+      return f;
+    });
+  };
+
+  // Process dealership data with offsets
+  // Priority: Pape > New Holland > Case IH > Kubota > Kioti
+  const processedPape = papeLocationsData.features;
+
+  const processedNewHolland = useMemo(() =>
+    offsetLocations(newHollandLocationsData.features, [processedPape]),
+    []);
+
+  const processedCaseIH = useMemo(() =>
+    offsetLocations(caseIHLocationsData.features, [processedPape, processedNewHolland]),
+    [processedNewHolland]);
+
+  const processedKubota = useMemo(() =>
+    offsetLocations(kubotaLocationsData.features, [processedPape, processedNewHolland, processedCaseIH]),
+    [processedNewHolland, processedCaseIH]);
+
+  const processedKioti = useMemo(() =>
+    offsetLocations(kiotiLocationsData.features, [processedPape, processedNewHolland, processedCaseIH, processedKubota]),
+    [processedNewHolland, processedCaseIH, processedKubota]);
+
   // Initialize Supercluster
   const supercluster = useMemo(() => {
     const index = new Supercluster({
       radius: 5,
       maxZoom: 14,
     });
-    index.load(papeLocationsData.features as any);
+    index.load(processedPape as any);
     return index;
   }, []);
 
@@ -652,36 +707,36 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
       radius: 5,
       maxZoom: 14,
     });
-    index.load(newHollandLocationsData.features as any);
+    index.load(processedNewHolland as any);
     return index;
-  }, []);
+  }, [processedNewHolland]);
 
   const superclusterCaseIH = useMemo(() => {
     const index = new Supercluster({
       radius: 5,
       maxZoom: 14,
     });
-    index.load(caseIHLocationsData.features as any);
+    index.load(processedCaseIH as any);
     return index;
-  }, []);
+  }, [processedCaseIH]);
 
   const superclusterKubota = useMemo(() => {
     const index = new Supercluster({
       radius: 5,
       maxZoom: 14,
     });
-    index.load(kubotaLocationsData.features as any);
+    index.load(processedKubota as any);
     return index;
-  }, []);
+  }, [processedKubota]);
 
   const superclusterKioti = useMemo(() => {
     const index = new Supercluster({
       radius: 5,
       maxZoom: 14,
     });
-    index.load(kiotiLocationsData.features as any);
+    index.load(processedKioti as any);
     return index;
-  }, []);
+  }, [processedKioti]);
 
   // Update clusters when map moves
   const updateClusters = useCallback(() => {

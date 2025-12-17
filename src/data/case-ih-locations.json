@@ -1060,22 +1060,6 @@
         {
             "type": "Feature",
             "properties": {
-                "name": "Sonsray Machinery",
-                "address": "6565 E. 30th Street, Yuma, AZ 85365",
-                "type": "Case IH Dealer",
-                "phone": ""
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    -114.5200411,
-                    32.6727905
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
                 "name": "Torgerson's, LLC",
                 "address": "54321 Us Hwy 2 East, Glasgow, MT 59230",
                 "type": "Case IH Dealer",
