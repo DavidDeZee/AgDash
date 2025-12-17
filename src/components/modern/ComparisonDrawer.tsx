@@ -5,6 +5,7 @@ import type { EnhancedCountyData } from '../../types/ag';
 import type { PapeDataMap } from '../../hooks/usePapeData';
 import { formatNumber, formatAcres, formatCurrencyMillions } from '../../lib/format';
 import { useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ComparisonDrawerProps {
   counties: EnhancedCountyData[];
@@ -171,123 +172,139 @@ export function ComparisonDrawer({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4">
-          {activeTab === 'public' ? (
-            /* Public Data Comparison */
-            <div className="space-y-4">
-              {comparisonMetrics.map((metric) => (
-                <div key={metric.key} className="space-y-2">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    {metric.label}
-                  </p>
-                  <div className="space-y-1.5">
-                    {counties.map((county, index) => {
-                      const value = county[metric.key] as number | null;
-                      const percentage = value !== null ? (value / maxValues[metric.key]) * 100 : 0;
-                      const colors = ['bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-purple-500', 'bg-rose-500'];
+        <div className="flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-secondary scrollbar-track-transparent">
+          <AnimatePresence mode="wait">
+            {activeTab === 'public' ? (
+              /* Public Data Comparison */
+              <motion.div
+                key="public"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-4"
+              >
+                {comparisonMetrics.map((metric) => (
+                  <div key={metric.key} className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      {metric.label}
+                    </p>
+                    <div className="space-y-1.5">
+                      {counties.map((county, index) => {
+                        const value = county[metric.key] as number | null;
+                        const percentage = value !== null ? (value / maxValues[metric.key]) * 100 : 0;
+                        const colors = ['bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-purple-500', 'bg-rose-500'];
 
-                      return (
-                        <div key={county.id} className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${colors[index]} flex-shrink-0`} />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2 mb-0.5">
-                              <span className="text-xs truncate">{county.countyName}</span>
-                              <span className="text-xs font-medium whitespace-nowrap">
-                                {value !== null ? metric.format(value) : 'N/A'}
-                              </span>
-                            </div>
-                            <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                              <div
-                                className={`h-full ${colors[index]} transition-all duration-300`}
-                                style={{ width: `${percentage}%` }}
-                              />
+                        return (
+                          <div key={county.id} className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${colors[index]} flex-shrink-0`} />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-2 mb-0.5">
+                                <span className="text-xs truncate">{county.countyName}</span>
+                                <span className="text-xs font-medium whitespace-nowrap">
+                                  {value !== null ? metric.format(value) : 'N/A'}
+                                </span>
+                              </div>
+                              <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full ${colors[index]} transition-all duration-300`}
+                                  style={{ width: `${percentage}%` }}
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-              {comparisonMetrics.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  No overlapping data found for selected counties.
-                </div>
-              )}
-            </div>
-          ) : (
-            /* Internal Data Comparison */
-            <div className="space-y-8">
-              {internalComparison && internalComparison.length > 0 ? (
-                internalComparison.map((group) => (
-                  <div key={group.category} className="space-y-4">
-                    <div className="flex items-center gap-2 pb-2 border-b border-border/50">
-                      <Table className="h-4 w-4 text-primary" />
-                      <h4 className="text-sm font-semibold">{group.category}</h4>
+                        );
+                      })}
                     </div>
+                  </div>
+                ))}
+                {comparisonMetrics.length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No overlapping data found for selected counties.
+                  </div>
+                )}
+              </motion.div>
+            ) : (
+              /* Internal Data Comparison */
+              <motion.div
+                key="pape"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-8"
+              >
+                {internalComparison && internalComparison.length > 0 ? (
+                  internalComparison.map((group) => (
+                    <div key={group.category} className="space-y-4">
+                      <div className="flex items-center gap-2 pb-2 border-b border-border/50">
+                        <Table className="h-4 w-4 text-primary" />
+                        <h4 className="text-sm font-semibold">{group.category}</h4>
+                      </div>
 
-                    <div className="space-y-6 pl-2 border-l-2 border-border/50">
-                      {group.metrics.map((metric) => (
-                        <div key={metric.key} className="space-y-2">
-                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                            {metric.label}
-                          </p>
-                          <div className="space-y-1.5">
-                            {counties.map((county, index) => {
-                              const item = papeData[county.id]?.find(d => d.category === group.category);
-                              // We use the raw string value for display, but parsed for bar width
-                              const rawVal = item?.[metric.key as keyof typeof item] as string;
-                              const valNum = parsePapeValue(rawVal);
-                              const percentage = valNum !== null && group.maxes[metric.key]
-                                ? (valNum / group.maxes[metric.key]) * 100
-                                : 0;
+                      <div className="space-y-6 pl-2 border-l-2 border-border/50">
+                        {group.metrics.map((metric) => (
+                          <div key={metric.key} className="space-y-2">
+                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                              {metric.label}
+                            </p>
+                            <div className="space-y-1.5">
+                              {counties.map((county, index) => {
+                                const item = papeData[county.id]?.find(d => d.category === group.category);
+                                // We use the raw string value for display, but parsed for bar width
+                                const rawVal = item?.[metric.key as keyof typeof item] as string;
+                                const valNum = parsePapeValue(rawVal);
+                                const percentage = valNum !== null && group.maxes[metric.key]
+                                  ? (valNum / group.maxes[metric.key]) * 100
+                                  : 0;
 
-                              const colors = ['bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-purple-500', 'bg-rose-500'];
-                              const displayVal = (rawVal && rawVal !== 'N/A')
-                                ? rawVal.endsWith('%') || rawVal.startsWith('$') ? rawVal :
-                                  // Add formatting if missing? PapeData usually has formatted strings. 
-                                  // Based on usePapeData fmt: it adds commas but maybe not $ or %.
-                                  // Let's assume rawVal is display-ready or close to it.
-                                  // Actually usePapeData fmt result: '1,234.5678'. No $. No %.
-                                  // So we should format it for display if needed.
-                                  // For dollars: add $. For percent: add %.
-                                  (metric.key.includes('Dollars') ? `$${rawVal}` :
-                                    metric.key.includes('Percent') || metric.key.includes('Adoption') || metric.key.includes('Breadth') || metric.key.includes('Depth') ? `${rawVal}%` : rawVal)
-                                : 'N/A';
+                                const colors = ['bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-purple-500', 'bg-rose-500'];
+                                const displayVal = (rawVal && rawVal !== 'N/A')
+                                  ? rawVal.endsWith('%') || rawVal.startsWith('$') ? rawVal :
+                                    // Add formatting if missing? PapeData usually has formatted strings. 
+                                    // Based on usePapeData fmt: it adds commas but maybe not $ or %.
+                                    // Let's assume rawVal is display-ready or close to it.
+                                    // Actually usePapeData fmt result: '1,234.5678'. No $. No %.
+                                    // So we should format it for display if needed.
+                                    // For dollars: add $. For percent: add %.
+                                    (metric.key.includes('Dollars') ? `$${rawVal}` :
+                                      metric.key.includes('Percent') || metric.key.includes('Adoption') || metric.key.includes('Breadth') || metric.key.includes('Depth') ? `${rawVal}%` : rawVal)
+                                  : 'N/A';
 
-                              return (
-                                <div key={county.id} className="flex items-center gap-2">
-                                  <div className={`w-2 h-2 rounded-full ${colors[index]} flex-shrink-0`} />
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between gap-2 mb-0.5">
-                                      <span className="text-xs truncate">{county.countyName}</span>
-                                      <span className="text-xs font-medium whitespace-nowrap">
-                                        {displayVal}
-                                      </span>
-                                    </div>
-                                    <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                                      <div
-                                        className={`h-full ${colors[index]} transition-all duration-300`}
-                                        style={{ width: `${percentage}%` }}
-                                      />
+                                return (
+                                  <div key={county.id} className="flex items-center gap-2">
+                                    <div className={`w-2 h-2 rounded-full ${colors[index]} flex-shrink-0`} />
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center justify-between gap-2 mb-0.5">
+                                        <span className="text-xs truncate">{county.countyName}</span>
+                                        <span className="text-xs font-medium whitespace-nowrap">
+                                          {displayVal}
+                                        </span>
+                                      </div>
+                                      <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                                        <div
+                                          className={`h-full ${colors[index]} transition-all duration-300`}
+                                          style={{ width: `${percentage}%` }}
+                                        />
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              );
-                            })}
+                                );
+                              })}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No overlapping internal data found for selected counties.
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  No overlapping internal data found for selected counties.
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </Card>
     </div>
