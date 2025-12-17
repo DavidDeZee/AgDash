@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { X, Check, RotateCcw, ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
+import { X, Check, RotateCcw, ChevronDown, ChevronUp, Plus, Trash2, ChevronRight, ArrowLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../../store/useStore';
 import { Button } from '../ui/Button';
 import type { SortField } from '../../types/ag';
@@ -7,24 +8,43 @@ import { STATE_TO_FIPS } from '../../utils/dataUtils';
 import { getCountyRegion } from './MapView';
 
 import type { EnhancedCountyData } from '../../types/ag';
+import type { PapeDataMap } from '../../hooks/usePapeData';
 
 interface RankingConfigurationModalProps {
     isOpen: boolean;
     onClose: () => void;
     availableStates: string[];
     allCounties: EnhancedCountyData[];
+    papeData: PapeDataMap;
 }
 
-type MetricCategory = 'Generals' | 'Farm Demographics' | 'Financials' | 'Crops' | 'Livestock';
+type MetricCategory = 'Generals' | 'Farm Demographics' | 'Financials' | 'Crops' | 'Livestock' | 'Internal Data';
 
 const METRIC_CATEGORIES: Record<MetricCategory, SortField[]> = {
     'Generals': ['croplandAcres', 'irrigatedAcres', 'harvestedCroplandAcres'],
     'Farm Demographics': ['farms', 'farms1to9Acres', 'farms10to49Acres', 'farms50to69Acres', 'farms70to99Acres', 'farms100to139Acres', 'farms140to179Acres', 'farms180to499Acres', 'farms500to999Acres', 'farms1000to1999Acres', 'farms2000PlusAcres'],
     'Financials': ['marketValueTotalDollars', 'cropsSalesDollars', 'livestockSalesDollars'],
     'Crops': ['applesAcres', 'wheatAcres', 'riceAcres', 'hazelnutsAcres', 'grassSeedAcres', 'cornAcres', 'cornSilageAcres', 'hayAcres', 'haylageAcres'],
-    'Livestock': ['beefCattleHead', 'dairyCattleHead']
+    'Livestock': ['beefCattleHead', 'dairyCattleHead'],
+    'Internal Data': [] // Special case handled with drill-down
 };
 
+// Metric Groups
+const INTERNAL_METRIC_GROUPS = {
+    DEFAULT: ['IND', 'DLR', 'Market Share'],
+    PAES: ['PAES %', 'EA Breadth', 'HEA Depth', 'Tech Adoption']
+};
+
+const PREFERRED_CATEGORY_ORDER = [
+    '< 50 EHP',
+    '50 < 100 EHP',
+    'MID HAY',
+    'LARGE AG',
+    'CCE',
+    'PAES'
+];
+
+// Start of Metric Category
 interface MetricOption {
     value: SortField;
     label: string;
@@ -70,6 +90,7 @@ export function RankingConfigurationModal({
     onClose,
     availableStates,
     allCounties,
+    papeData
 }: RankingConfigurationModalProps) {
     const {
         sortField,
@@ -86,6 +107,7 @@ export function RankingConfigurationModal({
     // Determine initial category based on sortField
     const getCategoryForField = (field: SortField): MetricCategory => {
         const option = METRIC_OPTIONS.find(opt => opt.value === field);
+        if (field.startsWith('internal|')) return 'Internal Data' as any;
         return option ? option.category : 'Generals';
     };
 
@@ -97,17 +119,74 @@ export function RankingConfigurationModal({
     const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
     const [selectedMetricToAdd, setSelectedMetricToAdd] = useState<string>('');
 
+    // Derive available internal categories from data
+    const internalCategories = useMemo(() => {
+        const cats = new Set<string>();
+        Object.values(papeData).forEach(items => {
+            if (Array.isArray(items)) {
+                items.forEach(item => {
+                    if (item.category) cats.add(item.category);
+                });
+            }
+        });
+
+        // Sort based on preferred order, then alphabetical
+        return Array.from(cats).sort((a, b) => {
+            const idxA = PREFERRED_CATEGORY_ORDER.findIndex(p => a.includes(p) || p.includes(a)); // Fuzzy match for ordering
+            const idxB = PREFERRED_CATEGORY_ORDER.findIndex(p => b.includes(p) || p.includes(b));
+
+            if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+            if (idxA !== -1) return -1;
+            if (idxB !== -1) return 1;
+            return a.localeCompare(b);
+        });
+    }, [papeData]);
+
+    // Helper to get metrics for a category
+    const getMetricsForCategory = (category: string) => {
+        if (category && category.toUpperCase().includes('PAES')) {
+            return INTERNAL_METRIC_GROUPS.PAES;
+        }
+        return INTERNAL_METRIC_GROUPS.DEFAULT;
+    };
+
     // Compute valid states for the current metric
     const validStates = useMemo(() => {
         const states = new Set<string>();
         allCounties.forEach(county => {
-            const val = county[localSortField];
-            if (typeof val === 'number' && val > 0) {
+            let val: number | null | undefined;
+
+            if (localSortField.startsWith('internal|') && papeData) {
+                // Handle internal data lookup
+                const parts = localSortField.split('|');
+                if (parts.length >= 3) {
+                    const category = parts[1];
+                    const key = parts[2];
+                    const countyData = papeData[county.id];
+
+                    if (countyData) {
+                        const item = countyData.find(d => d.category === category);
+                        if (item) {
+                            const rawVal = item[key as keyof typeof item];
+                            // Parse value if string (remove $, %, etc)
+                            if (typeof rawVal === 'number') {
+                                val = rawVal;
+                            } else if (typeof rawVal === 'string' && rawVal !== 'N/A') {
+                                val = parseFloat(rawVal.replace(/[$,%]/g, ''));
+                            }
+                        }
+                    }
+                }
+            } else {
+                val = county[localSortField as keyof EnhancedCountyData] as number;
+            }
+
+            if (typeof val === 'number' && !isNaN(val) && val > 0) {
                 states.add(county.stateName);
             }
         });
         return Array.from(states).sort();
-    }, [allCounties, localSortField]);
+    }, [allCounties, localSortField, papeData]);
 
     // Determines which states to show: intersection of availableStates and validStates
     // (availableStates usually has all of them, but good to be safe if parent passes a subset)
@@ -151,6 +230,10 @@ export function RankingConfigurationModal({
 
         // 2. Check which metrics have data (value > 0) in the filtered set
         const metrics = new Set<string>();
+
+        // Always enable internal metrics if internal data is selected? 
+        // Or checking availability would be expensive. Let's enable them by default for now.
+        // We will just process public metrics here.
         METRIC_OPTIONS.forEach(metric => {
             // Always include Generals category metrics
             if (metric.category === 'Generals') {
@@ -169,6 +252,35 @@ export function RankingConfigurationModal({
         return metrics;
     }, [allCounties, localSelectedStates, localSelectedLocations]);
 
+    // Internal Data Navigation State
+    const [internalView, setInternalView] = useState<'categories' | 'metrics'>('categories');
+    const [selectedInternalCategory, setSelectedInternalCategory] = useState<string | null>(null);
+
+    // Determines if we are in the "drill-down" mode for Internal Data
+    const isInternalDataMode = selectedCategory === 'Internal Data';
+
+    // Helper to select an internal metric
+    const handleInternalMetricSelect = (metric: string) => {
+        // Construct composite key: internal|CATEGORY|METRIC_KEY
+        // We need to map the readable label back to a key if needed, or just use the label as key for now since they match in the source code generally?
+        // In MapView we handle "indDollars", "sharePercentage". 
+        // Let's map the label to the likely key.
+        let key = '';
+        switch (metric) {
+            case 'IND': key = 'indDollars'; break;
+            case 'DLR': key = 'dlrDollars'; break;
+            case 'Market Share': key = 'sharePercentage'; break;
+            case 'PAES %': key = 'paesPercent'; break;
+            case 'EA Breadth': key = 'eaBreadth'; break;
+            case 'HEA Depth': key = 'heaDepth'; break;
+            case 'Tech Adoption': key = 'techAdoption'; break;
+            default: key = metric.replace(/ /g, '');
+        }
+
+        const compositeKey = `internal|${selectedInternalCategory}|${key}`;
+        setLocalSortField(compositeKey as SortField);
+    };
+
     // Sync local state with store when modal opens
     useEffect(() => {
         if (isOpen) {
@@ -176,7 +288,20 @@ export function RankingConfigurationModal({
             setLocalSelectedStates(selectedStates);
             setLocalSelectedLocations(selectedLocations);
             setLocalMetricRanges(metricRanges);
-            setSelectedCategory(getCategoryForField(sortField));
+            setLocalMetricRanges(metricRanges);
+            const cat = getCategoryForField(sortField);
+            setSelectedCategory(cat);
+            if (cat === 'Internal Data') {
+                // If opening with existing internal metric, try to restore state
+                // sortField format: internal|CATEGORY|KEY
+                if (sortField.startsWith('internal|')) {
+                    const parts = sortField.split('|');
+                    if (parts.length >= 3) {
+                        setSelectedInternalCategory(parts[1]);
+                        setInternalView('metrics');
+                    }
+                }
+            }
         }
     }, [isOpen, sortField, selectedStates, selectedLocations, metricRanges]);
 
@@ -333,66 +458,182 @@ export function RankingConfigurationModal({
                                         )}
                                     </button>
 
-                                    {isCategoryDropdownOpen && (
-                                        <>
-                                            <div
-                                                className="fixed inset-0 z-10"
-                                                onClick={() => setIsCategoryDropdownOpen(false)}
-                                            />
-                                            <div className="absolute z-20 top-full left-0 right-0 mt-2 rounded-lg border border-border bg-popover shadow-lg animate-in fade-in zoom-in-95 duration-200">
-                                                <div className="p-1">
-                                                    {Object.keys(METRIC_CATEGORIES).map((category) => (
-                                                        <div
-                                                            key={category}
-                                                            className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors ${selectedCategory === category
-                                                                ? 'bg-primary/10 text-primary'
-                                                                : 'hover:bg-secondary'
-                                                                }`}
-                                                            onClick={() => {
-                                                                setSelectedCategory(category as MetricCategory);
-                                                                setIsCategoryDropdownOpen(false);
-                                                                // Reset metric dropdown state if needed, but we keep the current metric until they change it
-                                                                // Or we could auto-select the first one in the new category:
-                                                                // const firstMetric = METRIC_OPTIONS.find(m => m.category === category);
-                                                                // if (firstMetric) setLocalSortField(firstMetric.value);
-                                                            }}
-                                                        >
-                                                            <span className="font-medium text-sm">{category}</span>
-                                                            {selectedCategory === category && (
-                                                                <Check className="h-4 w-4" />
-                                                            )}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </>
-                                    )}
+                                    <AnimatePresence>
+                                        {isCategoryDropdownOpen && (
+                                            <>
+                                                <div
+                                                    className="fixed inset-0 z-10"
+                                                    onClick={() => setIsCategoryDropdownOpen(false)}
+                                                />
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: -10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -10 }}
+                                                    transition={{ duration: 0.2 }}
+                                                    className="absolute z-20 top-full left-0 right-0 mt-2 rounded-lg border border-border bg-popover shadow-lg"
+                                                >
+                                                    <div className="p-1">
+                                                        {Object.keys(METRIC_CATEGORIES).map((category) => (
+                                                            <div
+                                                                key={category}
+                                                                className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors ${selectedCategory === category
+                                                                    ? 'bg-primary/10 text-primary'
+                                                                    : 'hover:bg-secondary'
+                                                                    }`}
+                                                                onClick={() => {
+                                                                    setSelectedCategory(category as MetricCategory);
+                                                                    setIsCategoryDropdownOpen(false);
+                                                                    if (category === 'Internal Data') {
+                                                                        setInternalView('categories');
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="font-medium text-sm">{category}</span>
+                                                                </div>
+                                                                {selectedCategory === category && (
+                                                                    <Check className="h-4 w-4" />
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </motion.div>
+                                            </>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
 
-                                {/* Metric List (Filtered by Category) */}
-                                <div className={`border border-border rounded-lg bg-card overflow-hidden flex flex-col ${selectedCategory === 'Crops' ? 'max-h-[500px]' : 'max-h-[300px]'}`}>
-                                    <div className="p-1 overflow-y-auto flex-1 custom-scrollbar">
-                                        {filteredMetrics.map((option) => (
-                                            <div
-                                                key={option.value}
-                                                className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors mb-1 last:mb-0 ${localSortField === option.value
-                                                    ? 'bg-primary/10 text-primary border border-primary/20'
-                                                    : 'hover:bg-secondary border border-transparent'
-                                                    }`}
-                                                onClick={() => setLocalSortField(option.value)}
-                                            >
-                                                <span className="font-medium text-sm">{option.label}</span>
-                                                {localSortField === option.value && (
-                                                    <Check className="h-4 w-4" />
+
+                                {/* Metric List / Drill-down Area */}
+                                <div className="border border-border rounded-lg bg-card overflow-hidden flex flex-col relative h-[350px]">
+
+                                    {/* Standard Public Metrics View */}
+                                    {!isInternalDataMode && (
+                                        <div className="absolute inset-0 p-1 overflow-y-auto custom-scrollbar animate-in fade-in slide-in-from-left-4 duration-300">
+                                            {filteredMetrics.map((option) => (
+                                                <div
+                                                    key={option.value}
+                                                    className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors mb-1 last:mb-0 ${localSortField === option.value
+                                                        ? 'bg-primary/10 text-primary border border-primary/20'
+                                                        : 'hover:bg-secondary border border-transparent'
+                                                        }`}
+                                                    onClick={() => setLocalSortField(option.value)}
+                                                >
+                                                    <span className="font-medium text-sm">{option.label}</span>
+                                                    {localSortField === option.value && (
+                                                        <Check className="h-4 w-4" />
+                                                    )}
+                                                </div>
+                                            ))}
+                                            {filteredMetrics.length === 0 && (
+                                                <div className="p-4 text-sm text-muted-foreground text-center">
+                                                    No metrics available in this category
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Internal Data Drill-down View */}
+                                    {isInternalDataMode && (
+                                        <div className="absolute inset-0 flex flex-col">
+                                            {/* Drill-down Header - Only show when a category is selected (drill down active) */}
+                                            {internalView === 'metrics' && (
+                                                <div className="flex items-center gap-2 p-3 border-b border-border bg-secondary/10 shrink-0">
+                                                    <button
+                                                        onClick={() => setInternalView('categories')}
+                                                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+                                                    >
+                                                        <ArrowLeft className="h-3 w-3" /> Back
+                                                    </button>
+                                                    <span className="text-sm font-semibold flex-1 text-center truncate">
+                                                        {selectedInternalCategory}
+                                                    </span>
+                                                    <div className="w-10" /> {/* Spacer to balance Back button approx width */}
+                                                </div>
+                                            )}
+
+                                            {/* Sub-categories List */}
+                                            <AnimatePresence mode="wait">
+                                                {internalView === 'categories' && (
+                                                    <motion.div
+                                                        key="categories"
+                                                        initial={{ opacity: 0, x: -20 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        exit={{ opacity: 0, x: -20 }}
+                                                        transition={{ duration: 0.2 }}
+                                                        className="flex-1 p-1 overflow-y-auto custom-scrollbar"
+                                                    >
+                                                        {internalCategories.length > 0 ? (
+                                                            internalCategories.map((subCat) => (
+                                                                <div
+                                                                    key={subCat}
+                                                                    className="flex items-center justify-between p-3 rounded-md cursor-pointer hover:bg-secondary mb-1 transition-colors group"
+                                                                    onClick={() => {
+                                                                        setSelectedInternalCategory(subCat);
+                                                                        setInternalView('metrics');
+                                                                    }}
+                                                                >
+                                                                    <span className="font-medium text-sm">{subCat}</span>
+                                                                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="p-4 text-center text-muted-foreground text-sm">
+                                                                No internal data loaded.
+                                                            </div>
+                                                        )}
+                                                    </motion.div>
                                                 )}
-                                            </div>
-                                        ))}
-                                        {filteredMetrics.length === 0 && (
-                                            <div className="p-4 text-sm text-muted-foreground text-center">
-                                                No metrics available in this category
-                                            </div>
-                                        )}
-                                    </div>
+
+                                                {/* Final Metrics List */}
+                                                {internalView === 'metrics' && selectedInternalCategory && (
+                                                    <motion.div
+                                                        key="metrics"
+                                                        initial={{ opacity: 0, x: 20 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        exit={{ opacity: 0, x: 20 }}
+                                                        transition={{ duration: 0.2 }}
+                                                        className="flex-1 p-1 overflow-y-auto custom-scrollbar"
+                                                    >
+                                                        {getMetricsForCategory(selectedInternalCategory).map((metric) => {
+                                                            // Check if this specific internal metric is selected
+                                                            // Key construction logic must match
+                                                            let key = '';
+                                                            switch (metric) {
+                                                                case 'IND': key = 'indDollars'; break;
+                                                                case 'DLR': key = 'dlrDollars'; break;
+                                                                case 'Market Share': key = 'sharePercentage'; break;
+                                                                case 'PAES %': key = 'paesPercent'; break;
+                                                                case 'EA Breadth': key = 'eaBreadth'; break;
+                                                                case 'HEA Depth': key = 'heaDepth'; break;
+                                                                case 'Tech Adoption': key = 'techAdoption'; break;
+                                                                default: key = metric.replace(/ /g, '');
+                                                            }
+                                                            const compositeKey = `internal|${selectedInternalCategory}|${key}`;
+                                                            const isSelected = localSortField === compositeKey;
+
+                                                            return (
+                                                                <div
+                                                                    key={metric}
+                                                                    className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors mb-1 last:mb-0 ${isSelected
+                                                                        ? 'bg-primary/10 text-primary border border-primary/20'
+                                                                        : 'hover:bg-secondary border border-transparent'
+                                                                        }`}
+                                                                    onClick={() => handleInternalMetricSelect(metric)}
+                                                                >
+                                                                    <span className="font-medium text-sm">{metric}</span>
+                                                                    {isSelected && (
+                                                                        <Check className="h-4 w-4" />
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    )}
+
                                 </div>
                             </div>
                         </div>
@@ -508,120 +749,223 @@ export function RankingConfigurationModal({
                         {isAdvancedOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                     </button>
 
-                    {isAdvancedOpen && (
-                        <div className="p-4 bg-secondary/5 space-y-4 animate-in slide-in-from-top-2 duration-200">
-                            {/* Add new filter */}
-                            <div className="flex gap-2">
-                                <div className="flex-1 relative">
-                                    <button
-                                        onClick={() => setIsAddMetricDropdownOpen(!isAddMetricDropdownOpen)}
-                                        className="w-full flex items-center justify-between h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                                    >
-                                        <span className={!selectedMetricToAdd ? "text-muted-foreground" : ""}>
-                                            {selectedMetricToAdd
-                                                ? METRIC_OPTIONS.find(o => o.value === selectedMetricToAdd)?.label
-                                                : "Select a metric to filter..."}
-                                        </span>
-                                        {isAddMetricDropdownOpen ? (
-                                            <ChevronUp className="h-4 w-4 opacity-50" />
-                                        ) : (
-                                            <ChevronDown className="h-4 w-4 opacity-50" />
-                                        )}
-                                    </button>
-
-                                    {isAddMetricDropdownOpen && (
-                                        <>
-                                            <div
-                                                className="fixed inset-0 z-10"
-                                                onClick={() => setIsAddMetricDropdownOpen(false)}
-                                            />
-                                            <div className="absolute z-20 bottom-full left-0 right-0 mb-1 max-h-[300px] overflow-y-auto rounded-md border border-border bg-popover shadow-md animate-in fade-in zoom-in-95 duration-200">
-                                                <div className="p-1">
-                                                    {Object.keys(METRIC_CATEGORIES).map((category) => (
-                                                        <div key={category}>
-                                                            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-                                                                {category}
-                                                            </div>
-                                                            {METRIC_OPTIONS
-                                                                .filter(opt => opt.category === category && !localMetricRanges[opt.value] && availableMetrics.has(opt.value))
-                                                                .map((option) => (
-                                                                    <div
-                                                                        key={option.value}
-                                                                        className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground ${selectedMetricToAdd === option.value ? "bg-accent text-accent-foreground" : ""
-                                                                            }`}
-                                                                        onClick={() => {
-                                                                            setSelectedMetricToAdd(option.value);
-                                                                            setIsAddMetricDropdownOpen(false);
-                                                                        }}
-                                                                    >
-                                                                        {option.label}
-                                                                        {selectedMetricToAdd === option.value && (
-                                                                            <Check className="ml-auto h-4 w-4" />
-                                                                        )}
-                                                                    </div>
-                                                                ))}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
-                                <Button
-                                    size="sm"
-                                    onClick={addMetricFilter}
-                                    disabled={!selectedMetricToAdd}
-                                >
-                                    <Plus className="h-4 w-4 mr-1" />
-                                    Add
-                                </Button>
-                            </div>
-
-                            {/* Active filters list */}
-                            <div className="space-y-3">
-                                {Object.entries(localMetricRanges).map(([metric, range]) => {
-                                    const label = METRIC_OPTIONS.find(opt => opt.value === metric)?.label || metric;
-                                    return (
-                                        <div key={metric} className="bg-card border border-border rounded-lg p-3 flex items-center gap-3">
-                                            <div className="flex-1">
-                                                <div className="text-sm font-medium mb-2">{label}</div>
-                                                <div className="flex items-center gap-2">
-                                                    <input
-                                                        type="number"
-                                                        placeholder="Min"
-                                                        className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                                                        value={range[0] ?? ''}
-                                                        onChange={(e) => updateMetricRange(metric, 0, e.target.value)}
-                                                    />
-                                                    <span className="text-muted-foreground text-xs">to</span>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="Max"
-                                                        className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                                                        value={range[1] ?? ''}
-                                                        onChange={(e) => updateMetricRange(metric, 1, e.target.value)}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => removeMetricFilter(metric)}
-                                                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                    <AnimatePresence>
+                        {isAdvancedOpen && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0, overflow: 'hidden' }}
+                                animate={{
+                                    height: 'auto',
+                                    opacity: 1,
+                                    transitionEnd: {
+                                        overflow: 'visible'
+                                    }
+                                }}
+                                exit={{ height: 0, opacity: 0, overflow: 'hidden' }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <div className="p-4 bg-secondary/5 space-y-4 border-t border-border">
+                                    {/* Add new filter */}
+                                    <div className="flex gap-2">
+                                        <div className="flex-1 relative">
+                                            <button
+                                                onClick={() => setIsAddMetricDropdownOpen(!isAddMetricDropdownOpen)}
+                                                className="w-full flex items-center justify-between h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                                             >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
+                                                <span className={!selectedMetricToAdd ? "text-muted-foreground" : ""}>
+                                                    {selectedMetricToAdd
+                                                        ? (selectedMetricToAdd.startsWith('internal|')
+                                                            ? (() => {
+                                                                const parts = selectedMetricToAdd.split('|');
+                                                                if (parts.length < 3) return selectedMetricToAdd;
+                                                                const key = parts[2];
+                                                                const friendlyMap: Record<string, string> = {
+                                                                    'indDollars': 'IND',
+                                                                    'dlrDollars': 'DLR',
+                                                                    'sharePercentage': 'Market Share',
+                                                                    'paesPercent': 'PAES %',
+                                                                    'eaBreadth': 'EA Breadth',
+                                                                    'heaDepth': 'HEA Depth',
+                                                                    'techAdoption': 'Tech Adoption'
+                                                                };
+                                                                const friendlyKey = friendlyMap[key] || key;
+                                                                return `${parts[1]} - ${friendlyKey}`;
+                                                            })()
+                                                            : METRIC_OPTIONS.find(o => o.value === selectedMetricToAdd)?.label)
+                                                        : "Select a metric to filter..."}
+                                                </span>
+                                                {isAddMetricDropdownOpen ? (
+                                                    <ChevronUp className="h-4 w-4 opacity-50" />
+                                                ) : (
+                                                    <ChevronDown className="h-4 w-4 opacity-50" />
+                                                )}
+                                            </button>
+
+                                            <AnimatePresence>
+                                                {isAddMetricDropdownOpen && (
+                                                    <>
+                                                        <div
+                                                            className="fixed inset-0 z-10"
+                                                            onClick={() => setIsAddMetricDropdownOpen(false)}
+                                                        />
+                                                        <motion.div
+                                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                            transition={{ duration: 0.2 }}
+                                                            className="absolute z-20 bottom-full left-0 right-0 mb-1 max-h-[300px] overflow-y-auto rounded-md border border-border bg-popover shadow-md"
+                                                        >
+                                                            <div className="p-1">
+                                                                {Object.keys(METRIC_CATEGORIES).map((category) => {
+                                                                    if (category === 'Internal Data') return null;
+                                                                    return (
+                                                                        <div key={category}>
+                                                                            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground sticky top-0 bg-popover/95 backdrop-blur-sm">
+                                                                                {category}
+                                                                            </div>
+                                                                            {METRIC_OPTIONS
+                                                                                .filter(opt => opt.category === category && !localMetricRanges[opt.value] && availableMetrics.has(opt.value))
+                                                                                .map((option) => (
+                                                                                    <div
+                                                                                        key={option.value}
+                                                                                        className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground ${selectedMetricToAdd === option.value ? "bg-accent text-accent-foreground" : ""
+                                                                                            }`}
+                                                                                        onClick={() => {
+                                                                                            setSelectedMetricToAdd(option.value);
+                                                                                            setIsAddMetricDropdownOpen(false);
+                                                                                        }}
+                                                                                    >
+                                                                                        {option.label}
+                                                                                        {selectedMetricToAdd === option.value && (
+                                                                                            <Check className="ml-auto h-4 w-4" />
+                                                                                        )}
+                                                                                    </div>
+                                                                                ))}
+                                                                        </div>
+                                                                    );
+                                                                })}
+
+                                                                {internalCategories.length > 0 && (
+                                                                    <div key="Internal Data">
+                                                                        <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground sticky top-0 bg-popover/95 backdrop-blur-sm">
+                                                                            Internal Data
+                                                                        </div>
+                                                                        {internalCategories.map(cat => {
+                                                                            const metrics = getMetricsForCategory(cat);
+                                                                            return metrics.map(metric => {
+                                                                                let key = '';
+                                                                                switch (metric) {
+                                                                                    case 'IND': key = 'indDollars'; break;
+                                                                                    case 'DLR': key = 'dlrDollars'; break;
+                                                                                    case 'Market Share': key = 'sharePercentage'; break;
+                                                                                    case 'PAES %': key = 'paesPercent'; break;
+                                                                                    case 'EA Breadth': key = 'eaBreadth'; break;
+                                                                                    case 'HEA Depth': key = 'heaDepth'; break;
+                                                                                    case 'Tech Adoption': key = 'techAdoption'; break;
+                                                                                    default: key = metric.replace(/ /g, '');
+                                                                                }
+                                                                                const compositeKey = `internal|${cat}|${key}`;
+                                                                                if (localMetricRanges[compositeKey]) return null;
+
+                                                                                return (
+                                                                                    <div
+                                                                                        key={compositeKey}
+                                                                                        className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground ${selectedMetricToAdd === compositeKey ? "bg-accent text-accent-foreground" : ""
+                                                                                            }`}
+                                                                                        onClick={() => {
+                                                                                            setSelectedMetricToAdd(compositeKey);
+                                                                                            setIsAddMetricDropdownOpen(false);
+                                                                                        }}
+                                                                                    >
+                                                                                        {cat} - {metric}
+                                                                                        {selectedMetricToAdd === compositeKey && (
+                                                                                            <Check className="ml-auto h-4 w-4" />
+                                                                                        )}
+                                                                                    </div>
+                                                                                );
+                                                                            });
+                                                                        })}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </motion.div>
+                                                    </>
+                                                )}
+                                            </AnimatePresence>
                                         </div>
-                                    );
-                                })}
-                                {Object.keys(localMetricRanges).length === 0 && (
-                                    <p className="text-sm text-muted-foreground text-center py-2">
-                                        No active filters. Add a metric above to start filtering.
-                                    </p>
-                                )}
-                            </div>
-                        </div>
-                    )}
+                                        <Button
+                                            size="sm"
+                                            onClick={addMetricFilter}
+                                            disabled={!selectedMetricToAdd}
+                                        >
+                                            <Plus className="h-4 w-4 mr-1" />
+                                            Add
+                                        </Button>
+                                    </div>
+
+                                    {/* Active filters list */}
+                                    <div className="space-y-3">
+                                        {Object.entries(localMetricRanges).map(([metric, range]) => {
+                                            let label = METRIC_OPTIONS.find(opt => opt.value === metric)?.label || metric;
+                                            if (metric.startsWith('internal|')) {
+                                                const parts = metric.split('|');
+                                                if (parts.length >= 3) {
+                                                    const key = parts[2];
+                                                    const friendlyMap: Record<string, string> = {
+                                                        'indDollars': 'IND',
+                                                        'dlrDollars': 'DLR',
+                                                        'sharePercentage': 'Market Share',
+                                                        'paesPercent': 'PAES %',
+                                                        'eaBreadth': 'EA Breadth',
+                                                        'heaDepth': 'HEA Depth',
+                                                        'techAdoption': 'Tech Adoption'
+                                                    };
+                                                    const friendlyKey = friendlyMap[key] || key;
+                                                    label = `${parts[1]} - ${friendlyKey}`;
+                                                }
+                                            }
+                                            return (
+                                                <div key={metric} className="bg-card border border-border rounded-lg p-3 flex items-center gap-3">
+                                                    <div className="flex-1">
+                                                        <div className="text-sm font-medium mb-2">{label}</div>
+                                                        <div className="flex items-center gap-2">
+                                                            <input
+                                                                type="number"
+                                                                placeholder="Min"
+                                                                className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                                                value={range[0] ?? ''}
+                                                                onChange={(e) => updateMetricRange(metric, 0, e.target.value)}
+                                                            />
+                                                            <span className="text-muted-foreground text-xs">to</span>
+                                                            <input
+                                                                type="number"
+                                                                placeholder="Max"
+                                                                className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                                                value={range[1] ?? ''}
+                                                                onChange={(e) => updateMetricRange(metric, 1, e.target.value)}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => removeMetricFilter(metric)}
+                                                        className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            );
+                                        })}
+                                        {Object.keys(localMetricRanges).length === 0 && (
+                                            <p className="text-sm text-muted-foreground text-center py-2">
+                                                No active filters. Add a metric above to start filtering.
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {/* Footer */}

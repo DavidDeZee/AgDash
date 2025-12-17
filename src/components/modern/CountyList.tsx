@@ -5,6 +5,7 @@ import { MapPin, Filter, ArrowUp, ArrowDown, RotateCcw } from 'lucide-react';
 import type { SortField } from '../../types/ag';
 import { METRIC_OPTIONS } from './RankingConfigurationModal';
 import { useStore } from '../../store/useStore';
+import type { PapeDataMap } from '../../hooks/usePapeData';
 
 interface CountyListProps {
   counties: EnhancedCountyData[];
@@ -12,6 +13,7 @@ interface CountyListProps {
   onCountySelect: (county: EnhancedCountyData) => void;
   onConfigure: () => void;
   sortField: SortField;
+  papeData?: PapeDataMap;
 }
 
 export function CountyList({
@@ -20,6 +22,7 @@ export function CountyList({
   onCountySelect,
   onConfigure,
   sortField,
+  papeData
 }: CountyListProps) {
   const {
     sortDirection,
@@ -31,7 +34,100 @@ export function CountyList({
     resetFilters
   } = useStore();
 
+  const getFriendlyName = (key: string) => {
+    switch (key) {
+      case 'indDollars': return 'IND';
+      case 'dlrDollars': return 'DLR';
+      case 'sharePercentage': return 'Market Share';
+      case 'paesPercent': return 'PAES %';
+      case 'eaBreadth': return 'EA Breadth';
+      case 'heaDepth': return 'HEA Depth';
+      case 'techAdoption': return 'Tech Adoption';
+      default: return key;
+    }
+  };
+
+  const getMetricDisplayContext = () => {
+    if (sortField.startsWith('internal|')) {
+      const parts = sortField.split('|');
+      if (parts.length >= 3) {
+        const category = parts[1];
+        const key = parts[2];
+        const friendlyName = getFriendlyName(key);
+        // Ensure category name is nicely formatted (it usually is from the source)
+        return {
+          // Title for top of panel: "CATEGORY - Metric Name"
+          title: `${category} - ${friendlyName}`,
+          // Label for the specific value row: "Metric Name"
+          label: friendlyName,
+          isInternal: true
+        };
+      }
+      return { title: 'Internal Value', label: 'Value', isInternal: true };
+    }
+    const publicLabel = METRIC_OPTIONS.find(opt => opt.value === sortField)?.label || 'Value';
+    return {
+      title: publicLabel, // Public metrics usually just use the label as title
+      label: publicLabel,
+      isInternal: false
+    };
+  };
+
+  const getDisplayValue = (county: EnhancedCountyData) => {
+    if (sortField.startsWith('internal|') && papeData) {
+      const parts = sortField.split('|');
+      if (parts.length >= 3) {
+        const category = parts[1];
+        const key = parts[2];
+        const countyData = papeData[county.id];
+        if (countyData) {
+          const item = countyData.find(d => d.category === category);
+          if (item) {
+            const rawVal = item[key as keyof typeof item];
+            // Format logic
+            if (typeof rawVal === 'number') {
+              if (key.includes('Dollars')) return formatCurrency(rawVal);
+              if (key.includes('Percent') || key.includes('Share') || key.includes('Rate') || key === 'paesPercent' || key === 'techAdoption' || key === 'eaBreadth' || key === 'heaDepth') {
+                return `${rawVal}%`;
+              }
+              return formatNumber(rawVal);
+            }
+            if (typeof rawVal === 'string') {
+              // Check if it should be a percent but isn't
+              const isPercentMetric = key.includes('Percent') || key.includes('Share') || key === 'eaBreadth' || key === 'heaDepth' || key === 'techAdoption';
+              if (isPercentMetric && rawVal !== 'N/A' && !rawVal.includes('%')) {
+                return `${rawVal}%`;
+              }
+              return rawVal;
+            }
+          }
+        }
+        return 'N/A';
+      }
+    }
+
+    // Standard Metrics
+    const val = county[sortField as keyof EnhancedCountyData] as number | null;
+    if (val === null || val === undefined) return 'N/A';
+
+    if (sortField === 'croplandAcres' || sortField === 'irrigatedAcres' || sortField === 'harvestedCroplandAcres') {
+      return formatAcres(val);
+    }
+    if (sortField === 'marketValueTotalDollars' || sortField === 'cropsSalesDollars' || sortField === 'livestockSalesDollars') {
+      return formatCurrency(val);
+    }
+    return formatNumber(val);
+  };
+
+  const metricContext = getMetricDisplayContext();
+
+  // ... (omitting intermediate code, jumping to render)
+  // I need to use replace appropriately. The file is small enough I can probably replace the interface and the helper, and then the render block.
+  // Let's replace the top part first to add props/imports and helpers.
+
   if (counties.length === 0) {
+    // ...
+
     return (
       <Card className="p-8 text-center">
         <p className="text-muted-foreground">No counties match your filters.</p>
@@ -77,13 +173,14 @@ export function CountyList({
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-sm font-semibold text-foreground">
-            {METRIC_OPTIONS.find(opt => opt.value === sortField)?.label || 'County Rankings'}
+            {metricContext.title}
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
             {getFilterSummary()} • {counties.length} results
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {/* ... buttons ... */}
           <button
             onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}
             className="p-1.5 rounded-md hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
@@ -138,14 +235,10 @@ export function CountyList({
               </div>
               <div className="text-right">
                 <div className="text-xs text-muted-foreground">
-                  {METRIC_OPTIONS.find(opt => opt.value === sortField)?.label || 'Value'}
+                  {metricContext.label}
                 </div>
                 <div className="font-bold text-primary">
-                  {sortField === 'croplandAcres' || sortField === 'irrigatedAcres' || sortField === 'harvestedCroplandAcres'
-                    ? formatAcres((county[sortField] as number) || 0)
-                    : sortField === 'marketValueTotalDollars' || sortField === 'cropsSalesDollars' || sortField === 'livestockSalesDollars'
-                      ? formatCurrency((county[sortField] as number) || 0)
-                      : formatNumber((county[sortField] as number) || 0)}
+                  {getDisplayValue(county)}
                 </div>
               </div>
             </div>

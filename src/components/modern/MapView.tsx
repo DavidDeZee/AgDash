@@ -18,6 +18,7 @@ interface MapViewProps {
   onCountyClick?: (county: EnhancedCountyData) => void;
   counties?: EnhancedCountyData[];
   filteredCounties?: EnhancedCountyData[];
+  papeData?: any; // Using any to avoid circular deps or complex importing if types are tricky, but preferably use PapeDataMap
 }
 
 interface HoverInfo {
@@ -468,7 +469,71 @@ function buildFilteredOpacityExpression(
 }
 
 // Build Heatmap Color Expression using feature-state
-function buildHeatmapColorExpression(metric: string, counties: EnhancedCountyData[]) {
+function buildHeatmapColorExpression(metric: string, counties: EnhancedCountyData[], papeData?: any) {
+  // Check if this is an internal metric
+  if (metric.startsWith('internal|')) {
+    // Format: internal|CATEGORY|metricKey
+    // We need to calculate global min/max for this internal metric across all counties found in papeData
+    if (!papeData) return 'rgba(0,0,0,0)';
+
+    const parts = metric.split('|');
+    if (parts.length < 3) return 'rgba(0,0,0,0)';
+
+    // category is parts[1], key is parts[2]
+    // However, our internal data structure is flattening differently in the modal vs here.
+    // Let's assume the metric key in papeData items is what we need. 
+    // Wait, papeData is Map<countyId, Array<CategoryItem>>.
+    // We need to iterate all counties to find min/max for this specific key.
+
+    const targetKey = parts[2]; // e.g. "indDollars", "sharePercentage"
+    const targetCategory = parts[1]; // e.g. "MID HAY"
+
+    let min = Infinity;
+    let max = -Infinity;
+    let count = 0;
+
+    // Iterate only over the filtered counties to calculate min/max
+    counties.forEach((county) => {
+      const items = papeData[county.id];
+      if (items && Array.isArray(items)) {
+        const item = items.find((i: any) => i.category === targetCategory);
+        if (item) {
+          let val: number | null = null;
+          const raw = item[targetKey];
+
+          if (typeof raw === 'number') {
+            val = raw;
+          } else if (typeof raw === 'string') {
+            // Remove $, %, ,
+            const clean = raw.replace(/[$,%]/g, '');
+            if (clean && !isNaN(parseFloat(clean))) {
+              val = parseFloat(clean);
+            }
+          }
+
+          if (val !== null) {
+            if (val < min) min = val;
+            if (val > max) max = val;
+            count++;
+          }
+        }
+      }
+    });
+
+    if (count === 0) return 'rgba(0,0,0,0)';
+    if (min === max) max = min + 1; // Avoid divide by zero range
+
+    // Green scale for internal data generally? Or maybe Blue?
+    // Let's go with a distinct scale: Blue-Purple
+    return [
+      'interpolate',
+      ['linear'],
+      ['feature-state', 'heatmapValue'],
+      min, 'rgba(237, 248, 251, 0.8)', // Light blue/cyan
+      max, 'rgba(129, 15, 124, 0.9)'   // Dark purple
+    ];
+  }
+
   // 1. Calculate min/max for the metric globally for the interpolation range
   const values = counties
     .map(c => c[metric as keyof EnhancedCountyData] as number)
@@ -613,7 +678,7 @@ interface PopupInfo {
   anchor?: 'top' | 'bottom';
 }
 
-export function MapView({ counties = [], filteredCounties, onCountyClick }: MapViewProps) {
+export function MapView({ counties = [], filteredCounties, onCountyClick, papeData }: MapViewProps) {
   const mapRef = useRef<MapRef>(null);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
@@ -825,7 +890,37 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
           );
 
           if (county) {
-            const val = county[metric as keyof EnhancedCountyData] as number | null;
+            let val: number | null = null;
+
+            if (metric.startsWith('internal|') && papeData) {
+              // Handle internal data lookup
+              const parts = metric.split('|');
+              if (parts.length >= 3) {
+                const targetCategory = parts[1];
+                const targetKey = parts[2];
+                const countyId = county.id;
+                const items = papeData[countyId];
+
+                if (items && Array.isArray(items)) {
+                  const item = items.find((i: any) => i.category === targetCategory);
+                  if (item) {
+                    const raw = item[targetKey];
+                    if (typeof raw === 'number') {
+                      val = raw;
+                    } else if (typeof raw === 'string') {
+                      const clean = raw.replace(/[$,%]/g, '');
+                      if (clean && !isNaN(parseFloat(clean))) {
+                        val = parseFloat(clean);
+                      }
+                    }
+                  }
+                }
+              }
+            } else {
+              // Standard public data lookup
+              val = county[metric as keyof EnhancedCountyData] as number | null;
+            }
+
             // Set state
             if (val !== null && val !== undefined && typeof val === 'number' && !isNaN(val)) {
               map.setFeatureState(
@@ -1165,7 +1260,7 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
       // Pass the filtered subset to the color generator to ensure the color scale adapts to the visible data range
       const targetCounties = filteredCounties !== undefined ? filteredCounties : counties;
 
-      fillColorExpression = buildHeatmapColorExpression(sortField, targetCounties);
+      fillColorExpression = buildHeatmapColorExpression(sortField, targetCounties, papeData);
       fillOpacityExpression = buildFilteredOpacityExpression(filteredCountySet, FIPS_TO_STATE, true);
     } else {
       // If region mode is OFF, we hide the region colors regardless of filter state.
@@ -1188,7 +1283,7 @@ export function MapView({ counties = [], filteredCounties, onCountyClick }: MapV
         'fill-opacity': fillOpacityExpression as any,
       },
     };
-  }, [filteredCountySet, heatmapMode, sortField, counties, filteredCounties, regionMode]);
+  }, [filteredCountySet, heatmapMode, sortField, counties, filteredCounties, regionMode, papeData]);
 
   // Base outline layer - just gray borders for all counties
   const countyOutlineLayer = useMemo(() => ({

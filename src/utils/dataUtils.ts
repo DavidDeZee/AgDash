@@ -1,3 +1,4 @@
+
 // src/utils/dataUtils.ts
 import type {
   EnhancedCountyData,
@@ -5,6 +6,7 @@ import type {
   SortConfig,
   SortField,
 } from '../types/ag';
+import type { PapeDataMap } from '../hooks/usePapeData';
 import { getCountyRegion } from '../components/modern/MapView';
 
 // Reverse mapping from state name to FIPS code
@@ -20,54 +22,76 @@ export const STATE_TO_FIPS: Record<string, string> = {
  */
 export function filterCounties(
   counties: EnhancedCountyData[],
-  filters: FilterOptions
+  filters: FilterOptions,
+  papeData?: PapeDataMap
 ): EnhancedCountyData[] {
-  return counties.filter((county) => {
-    // Search query filter (text search in county name and state)
-    if (filters.searchQuery && filters.searchQuery.trim()) {
-      const searchLower = filters.searchQuery.toLowerCase().trim();
-      const countyMatch = county.countyName.toLowerCase().includes(searchLower);
-      const stateMatch = county.stateName.toLowerCase().includes(searchLower);
-
-      if (!countyMatch && !stateMatch) {
-        return false;
-      }
-    }
-
-    // State filter
+  return counties.filter(county => {
+    // 1. State Filter
     if (filters.states.length > 0 && !filters.states.includes(county.stateName)) {
       return false;
     }
 
-    // Location/Region filter
+    // 2. Region Filter (if locations are selected)
     if (filters.locations.length > 0) {
       const stateFips = STATE_TO_FIPS[county.stateName.toUpperCase()];
       if (stateFips) {
         const region = getCountyRegion(county.countyName, stateFips);
-
         if (!region || !filters.locations.includes(region)) {
           return false;
         }
-      } else {
-        // If state not found in mapping, exclude this county
-        return false;
       }
     }
 
-    // Metric filters
-    for (const [metric, range] of Object.entries(filters.metricRanges)) {
-      const value = county[metric as keyof EnhancedCountyData];
+    // 3. Metric Ranges
+    if (filters.metricRanges) {
+      for (const [metric, range] of Object.entries(filters.metricRanges)) {
+        if (!range || (range[0] === null && range[1] === null)) continue;
 
-      // If value is null (not available), we should probably exclude it if a filter is set
-      // Or should we treat it as 0? Let's exclude for now as "not matching range" implies we need a value.
-      if (value === null || typeof value !== 'number') {
-        // However, if we filter by a range, we expect data to be present.
-        return false;
+        let value: number | undefined;
+
+        if (metric.startsWith('internal|')) {
+          if (!papeData) return false; // Cannot filter by internal data if missing
+
+          const parts = metric.split('|');
+          if (parts.length >= 3) {
+            const cat = parts[1];
+            const key = parts[2];
+            const countyData = papeData[county.id];
+
+            if (countyData) {
+              const item = countyData.find(d => d.category === cat);
+              if (item) {
+                const rawVal = item[key as keyof typeof item];
+                if (typeof rawVal === 'number') {
+                  value = rawVal;
+                } else if (typeof rawVal === 'string' && rawVal !== 'N/A') {
+                  value = parseFloat(rawVal.replace(/[$,%]/g, ''));
+                }
+              }
+            }
+          }
+        } else {
+          value = county[metric as keyof EnhancedCountyData] as number | undefined;
+        }
+
+        if (value === undefined || value === null || isNaN(value)) {
+          // Decide behavior for missing data: strict filtering means we exclude it
+          return false;
+        }
+
+        const [min, max] = range;
+        if (min !== null && value < min) return false;
+        if (max !== null && value > max) return false;
       }
+    }
 
-      const [min, max] = range;
-      if (min !== null && value < min) return false;
-      if (max !== null && value > max) return false;
+    // 4. Search Query
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      return (
+        county.countyName.toLowerCase().includes(query) ||
+        county.stateName.toLowerCase().includes(query)
+      );
     }
 
     return true;
@@ -79,11 +103,41 @@ export function filterCounties(
  */
 export function sortCounties(
   counties: EnhancedCountyData[],
-  sortConfig: SortConfig
+  sortConfig: SortConfig,
+  papeData?: PapeDataMap
 ): EnhancedCountyData[] {
   return [...counties].sort((a, b) => {
-    const aValue = a[sortConfig.field];
-    const bValue = b[sortConfig.field];
+    let aValue: any;
+    let bValue: any;
+
+    // Handle internal data lookup
+    if (sortConfig.field.startsWith('internal|') && papeData) {
+      const parts = sortConfig.field.split('|');
+      if (parts.length >= 3) {
+        const category = parts[1];
+        const key = parts[2];
+
+        const getVal = (countyId: string) => {
+          const countyData = papeData[countyId];
+          if (!countyData) return null;
+          const item = countyData.find(d => d.category === category);
+          if (!item) return null;
+          const rawVal = item[key as keyof typeof item];
+
+          if (typeof rawVal === 'number') return rawVal;
+          if (typeof rawVal === 'string' && rawVal !== 'N/A') {
+            return parseFloat(rawVal.replace(/[$,%]/g, ''));
+          }
+          return null;
+        };
+
+        aValue = getVal(a.id);
+        bValue = getVal(b.id);
+      }
+    } else {
+      aValue = a[sortConfig.field as keyof EnhancedCountyData];
+      bValue = b[sortConfig.field as keyof EnhancedCountyData];
+    }
 
     // Handle string comparison for county names
     if (typeof aValue === 'string' && typeof bValue === 'string') {
@@ -92,13 +146,6 @@ export function sortCounties(
     }
 
     // Handle number comparison with nulls
-    // We treat null as -Infinity for desc sort (bottom) and +Infinity for asc sort? 
-    // Usually missing data goes to bottom logic:
-    // Asc: 0, 1, 2, NULL
-    // Desc: 2, 1, 0, NULL
-    // So let's treat null as -Infinity effectively for value comparison purposes relative to valid numbers?
-    // Actually, simple approach:
-
     if (aValue === null && bValue === null) return 0;
     if (aValue === null) return 1; // Put nulls at the end
     if (bValue === null) return -1; // Put nulls at the end
