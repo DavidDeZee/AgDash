@@ -656,6 +656,454 @@
                     46.2941267
                 ]
             }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Morrow Cnty Grain",
+                "address": "71025 Old Highway 97, Wasco, OR 97065",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.7103882,
+                    45.6025539
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Smith Valley Garage",
+                "address": "890 West Bridge Street, Yerington, NV 89447",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.1807011,
+                    38.9836949
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Smith Valley Garage",
+                "address": "2828 Highway 208, Wellington, NV 89444",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.3775039,
+                    38.7572219
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Farmers Equipment Co",
+                "address": "17893 State Route 20, Burlington, WA 98233",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.3610046,
+                    48.4651766
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Central Machinery",
+                "address": "207 West South Hill Road, Sunnyside, WA 98944",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -120.0225262,
+                    46.3088941
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Central Machinery",
+                "address": "1802 E. James St., Pasco, WA 99301",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.07889,
+                    46.2475566
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Jti Colfax",
+                "address": "304 N 9th Ave, Walla Walla, WA 99362",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.3494562,
+                    46.0662034
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Farm & Home Supply",
+                "address": "643 Main Street, Pomeroy, WA 99347",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.6024863,
+                    46.475018
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Odessa Trading Co",
+                "address": "112 So. Division, Odessa, WA 99159",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.6911323,
+                    47.3326933
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Jti Colfax",
+                "address": "425 Walla Walla Hwy, Colfax, WA 99111",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.3702979,
+                    46.8905726
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Central Machinery",
+                "address": "1201 E. Yonezawa Blvd., Moses Lake, WA 98837",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.2540278,
+                    47.1040871
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Jti Colfax",
+                "address": "950 E. Broadway Avenue, Moses Lake, WA 98837",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.2668847,
+                    47.1375982
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Odessa Trading Co",
+                "address": "36959 Road J.5 North East, Coulee City, WA 99115",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.2619492,
+                    47.62588479999999
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Valley Implement Co.",
+                "address": "107 N. Main Street, Grace, ID 83241",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.7308765,
+                    42.5779277
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "622 Broadway, Denton, MT 59430",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -109.947896,
+                    47.3192192
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "1728 Old Hardin Road, Billings, MT 59101",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -108.4405822,
+                    45.80086420000001
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Musselshell Valley",
+                "address": "418 Main Street, Roundup, MT 59072",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -108.5414647,
+                    46.4455182
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Tri-County Impl Inc",
+                "address": "2429 W Holly Street, Sidney, MT 59270",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -104.1862229,
+                    47.7182335
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Border Plains Equip.",
+                "address": "340 Highway 5 East, Scobey, MT 59263",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -105.3456216,
+                    48.7998768
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Border Plains Equip.",
+                "address": "54240 Us Highway 2, Glasgow, MT 59230",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -106.6253227,
+                    48.1947967
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Wilkinson Intl, Inc.",
+                "address": "1207 E. Kentucky Ave., Woodland, CA 95776",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.763642,
+                    38.6924076
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Linder Equipment Co.",
+                "address": "311 East Kern Avenue, Tulare, CA 93274",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.34412,
+                    36.2066771
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Exeter Mercantile Co",
+                "address": "100 South D St., Exeter, CA 93221",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -119.1397837,
+                    36.2962321
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Sonsray Machinery",
+                "address": "10950 South Norwalk Blvd, Santa Fe Springs, CA 90670",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.0720637,
+                    33.932114
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Sonsray Machinery",
+                "address": "23935 Madison St., Torrance, CA 90505",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.3493106,
+                    33.8073477
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Sonsray Machinery",
+                "address": "6565 E. 30th Street, Yuma, AZ 85365",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -114.5200411,
+                    32.6727905
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "54321 Us Hwy 2 East, Glasgow, MT 59230",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -106.6046888,
+                    48.1908154
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Torgerson's, LLC",
+                "address": "117 Pleasant Street, Miles City, MT 59301",
+                "type": "Case IH Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -105.8564316,
+                    46.4057624
+                ]
+            }
         }
     ]
 }

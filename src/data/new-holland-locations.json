@@ -912,6 +912,406 @@
                     46.2941267
                 ]
             }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "St. John Hdwe & Impl",
+                "address": "3 Front Street, Saint John, WA 99171",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.5811399,
+                    47.09170049999999
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "St. John Hdwe & Impl",
+                "address": "904 S. Hayford Rd., Airway Heights, WA 99001",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.562281,
+                    47.64684459999999
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "St. John Hdwe & Impl",
+                "address": "102 N. 1st, Fairfield, WA 99012",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.174223,
+                    47.3868205
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "St. John Hdwe & Impl",
+                "address": "41 Sand Buckler Dr., Pullman, WA 99163",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.043925,
+                    46.733496
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "St. John Hdwe & Impl",
+                "address": "405 Pine St., Nezperce, ID 83543",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.2415284,
+                    46.2344128
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Jordan Implement Co",
+                "address": "44-901 Golf Center Parkway Suite 7, Indio, CA 92201",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.2062923,
+                    33.7237307
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Jordan Implement Co",
+                "address": "1280 E Main St, Brawley, CA 92227",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -115.6212056,
+                    33.0373482
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Jordan Implement Co",
+                "address": "950 S. Dogwood Road, El Centro, CA 92243",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -115.5366509,
+                    32.7840041
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Jordan Implement Co",
+                "address": "212 N Carlton Ave, Blythe, CA 92225",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -114.6093489,
+                    33.6121491
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Pioneer West, Inc.",
+                "address": "64118 Mcdonald Lane, La Grande, OR 97850",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.99395,
+                    45.3981763
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Adams Tractor",
+                "address": "635 Hwy 395 South, Colville, WA 99114",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.982104,
+                    48.5874157
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Coeur D'Alene Trac",
+                "address": "1112 W Appleway Avenue, Coeur D Alene, ID 83814",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.8012231,
+                    47.7005109
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Boundary Tractor",
+                "address": "6632 Main Street, Bonners Ferry, ID 83805",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -116.324935,
+                    48.6820836
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Tractor Sales & Auto",
+                "address": "3117 N. Holmes Avenue, Idaho Falls, ID 83405",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -112.0242565,
+                    43.52433
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Hoven Equipment Co",
+                "address": "4181 North Park Trail, Great Falls, MT 59405",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.2330835,
+                    47.5211157
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Big Sky Equipment Co",
+                "address": "301 N. Front Street, Conrad, MT 59425",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -111.9366956,
+                    48.1773224
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Beeler Tractor Co",
+                "address": "2025 Barney Road, Anderson, CA 96007",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.2893211,
+                    40.4397575
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Chico Farm & Orchard",
+                "address": "9 Three Sevens Lane, Chico, CA 95973",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.8877952,
+                    39.7856237
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Beeler Tractor Co",
+                "address": "1954 State Hwy 20, Colusa, CA 95932",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -122.0327649,
+                    39.1987015
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Beeler Tractor Co",
+                "address": "887 Onstott Road, Yuba City, CA 95991",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -121.633337,
+                    39.1379147
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Scott Equipment Inc",
+                "address": "11318 Norwalk Blvd, Santa Fe Springs, CA 90670",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.0719756,
+                    33.9281771
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Scott Equipment Inc",
+                "address": "14635 Valley Blvd, Fontana, CA 92335",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.4856263,
+                    34.0693838
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Scott Equipment Inc",
+                "address": "43136 Rancho Way - Suite G, Temecula, CA 92590",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -117.1599528,
+                    33.5033321
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Bingham Equipment Co",
+                "address": "695 West Main, Brawley, CA 92227",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -115.5547162,
+                    32.9802147
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Bingham Equipment Co",
+                "address": "190 E Hwy 86, Heber, CA 92249",
+                "type": "New Holland Dealer",
+                "phone": ""
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -115.5263765,
+                    32.7306862
+                ]
+            }
         }
     ]
 }
