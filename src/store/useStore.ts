@@ -57,7 +57,13 @@ interface DashboardState {
   toggleCaseIHLocations: () => void;
   toggleKubotaLocations: () => void;
   toggleKiotiLocations: () => void;
+
   setRegionMode: (enabled: boolean) => void;
+
+  // Authentication
+  isAuthenticated: boolean;
+  login: (password: string) => Promise<boolean>;
+  logout: () => void;
 
   resetFilters: () => void;
 }
@@ -127,6 +133,38 @@ export const useStore = create<DashboardState>((set) => ({
   toggleCaseIHLocations: () => set((state) => ({ showCaseIHLocations: !state.showCaseIHLocations })),
   toggleKubotaLocations: () => set((state) => ({ showKubotaLocations: !state.showKubotaLocations })),
   toggleKiotiLocations: () => set((state) => ({ showKiotiLocations: !state.showKiotiLocations })),
+
+  // Authentication
+  isAuthenticated: !!sessionStorage.getItem('ag_auth'),
+
+  login: async (password: string) => {
+    try {
+      const res = await fetch('/api/verify-admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        sessionStorage.setItem('ag_auth', 'true');
+        sessionStorage.setItem('ag_password', password);
+        set({ isAuthenticated: true });
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('Login error:', err);
+      return false;
+    }
+  },
+
+  logout: () => {
+    sessionStorage.removeItem('ag_auth');
+    sessionStorage.removeItem('ag_password');
+    set({ isAuthenticated: false });
+  },
 
   resetFilters: () =>
     set({

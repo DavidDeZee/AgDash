@@ -20,14 +20,28 @@ export interface MarketDataRow {
 
 export async function fetchMarketData(): Promise<{ data: MarketDataRow[], lastModified: string | null }> {
     try {
-        // Using the user-provided Blob URL
-        // Using the user-provided Blob URL with cache-busting timestamp and no-store
-        const response = await fetch(`https://pcbbs7db0jxhf6ac.public.blob.vercel-storage.com/market-data-v2.xlsx?t=${Date.now()}`, {
-            cache: 'no-store'
+        // Get password from sessionStorage for authenticated access
+        const password = sessionStorage.getItem('ag_password');
+
+        if (!password) {
+            console.log('No authentication - market data requires login');
+            return { data: [], lastModified: null };
+        }
+
+        // Fetch from protected API endpoint instead of public blob
+        const response = await fetch('/api/market-data', {
+            cache: 'no-store',
+            headers: {
+                'x-admin-password': password
+            }
         });
 
         if (!response.ok) {
-            console.log('No data file found in blob storage yet');
+            if (response.status === 401) {
+                console.log('Unauthorized - please log in again');
+            } else {
+                console.log('No data file found in blob storage yet');
+            }
             return { data: [], lastModified: null };
         }
 

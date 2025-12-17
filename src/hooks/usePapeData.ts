@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchMarketData } from '../lib/fetchBlobData';
+import { useStore } from '../store/useStore';
 
 export interface PapeData {
     category: string;
@@ -16,6 +17,7 @@ export interface PapeData {
 export type PapeDataMap = Record<string, PapeData[]>;
 
 export function usePapeData() {
+    const { isAuthenticated } = useStore();
     const [data, setData] = useState<PapeDataMap>({});
     const [lastUpdated, setLastUpdated] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
@@ -110,7 +112,7 @@ export function usePapeData() {
         }
 
         loadAllData();
-    }, []);
+    }, [isAuthenticated]);
 
     return { papeData: data, loading, error, lastUpdated };
 }

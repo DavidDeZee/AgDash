@@ -24,10 +24,22 @@ export function DataUpload() {
         formData.append('file', file);
 
         try {
+            // Get password from sessionStorage for authentication
+            const password = sessionStorage.getItem('ag_password');
+
+            if (!password) {
+                setMessage('✗ Authentication required - please log in again');
+                setUploading(false);
+                return;
+            }
+
             // NOTE: In local Vite dev, /api/upload-data might not exist unless proxied or using vercel dev.
             // If this fails 404 locally, it's expected without Vercel Dev.
             const response = await fetch('/api/upload-data', {
                 method: 'POST',
+                headers: {
+                    'x-admin-password': password
+                },
                 body: formData,
             });
 

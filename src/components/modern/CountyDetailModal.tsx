@@ -5,6 +5,7 @@ import type { PapeDataMap } from '../../hooks/usePapeData';
 import { formatNumber, formatAcres, formatCurrency, formatCurrencyMillions } from '../../lib/format';
 import { useStore } from '../../store/useStore';
 import { Button } from '../ui/Button';
+import { LoginForm } from '../ui/LoginForm';
 
 interface CountyDetailModalProps {
     county: EnhancedCountyData | null;
@@ -15,7 +16,7 @@ interface CountyDetailModalProps {
 }
 
 export function CountyDetailModal({ county, allCounties, papeData, lastUpdated, onClose }: CountyDetailModalProps) {
-    const { comparisonCounties, addToComparison, removeFromComparison } = useStore();
+    const { comparisonCounties, addToComparison, removeFromComparison, isAuthenticated } = useStore();
     const [activeTab, setActiveTab] = useState<'public' | 'pape'>('public');
     const [isDemographicsOpen, setIsDemographicsOpen] = useState(false);
 
@@ -60,7 +61,7 @@ export function CountyDetailModal({ county, allCounties, papeData, lastUpdated, 
         if (index === -1) return null; // Current county doesn't have this metric or not found
         return index + 1;
     };
-    //test
+
     const rankings = {
         farms: getRank('farms'),
         marketValue: getRank('marketValueTotalDollars'),
@@ -461,38 +462,47 @@ export function CountyDetailModal({ county, allCounties, papeData, lastUpdated, 
                         </>
                     ) : (
                         <div className="space-y-8 animate-in fade-in duration-300">
-                            {papeData[county.id] && papeData[county.id].length > 0 ? (
-                                <div className="space-y-8">
-                                    <div className="flex items-center gap-2 pb-2 border-b border-border">
-                                        <Table className="h-5 w-5 text-primary" />
-                                        <h3 className="text-lg font-semibold">Papé Internal Data</h3>
-                                    </div>
+                            {!isAuthenticated ? (
+                                <div className="max-w-md mx-auto py-12">
+                                    <LoginForm
+                                        title="Data Protected"
+                                        description="Please log in to access market data and metrics."
+                                    />
+                                </div>
+                            ) : (
+                                <>
+                                    {papeData[county.id] && papeData[county.id].length > 0 ? (
+                                        <div className="space-y-8">
+                                            <div className="flex items-center gap-2 pb-2 border-b border-border">
+                                                <Table className="h-5 w-5 text-primary" />
+                                                <h3 className="text-lg font-semibold">Papé Internal Data</h3>
+                                            </div>
 
-                                    <div className="grid gap-8">
-                                        {papeData[county.id].map((item, i) => (
-                                            <div key={i} className="space-y-3">
-                                                {/* Category Header */}
-                                                <h4 className="text-md font-bold text-foreground flex items-center gap-2">
-                                                    <div className="h-1.5 w-1.5 rounded-full bg-primary/70"></div>
-                                                    {item.category}
-                                                </h4>
+                                            <div className="grid gap-8">
+                                                {papeData[county.id].map((item, i) => (
+                                                    <div key={i} className="space-y-3">
+                                                        {/* Category Header */}
+                                                        <h4 className="text-md font-bold text-foreground flex items-center gap-2">
+                                                            <div className="h-1.5 w-1.5 rounded-full bg-primary/70"></div>
+                                                            {item.category}
+                                                        </h4>
 
-                                                {/* KPI List */}
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 pl-4">
-                                                    {/* IND Value */}
-                                                    {item.indDollars && item.indDollars !== 'N/A' && (
-                                                        <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
-                                                            <span className="text-sm text-muted-foreground">IND Value</span>
-                                                            <span className="font-medium text-foreground">${item.indDollars}</span>
-                                                        </div>
-                                                    )}
-                                                    {item.dlrDollars && item.dlrDollars !== 'N/A' && (
-                                                        <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
-                                                            <span className="text-sm text-muted-foreground">DLR Value</span>
-                                                            <span className="font-medium text-foreground">${item.dlrDollars}</span>
-                                                        </div>
-                                                    )}
-                                                    {/* Market Share (Prioritize explicit marketShare column if valid, but we stored it in sharePercentage fallback? No, let's use the explicit fields if we want, but sharePercentage covers it. Actually, wait. The valid columns for this category in CSV should strictly be used. 
+                                                        {/* KPI List */}
+                                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 pl-4">
+                                                            {/* IND Value */}
+                                                            {item.indDollars && item.indDollars !== 'N/A' && (
+                                                                <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
+                                                                    <span className="text-sm text-muted-foreground">IND Value</span>
+                                                                    <span className="font-medium text-foreground">${item.indDollars}</span>
+                                                                </div>
+                                                            )}
+                                                            {item.dlrDollars && item.dlrDollars !== 'N/A' && (
+                                                                <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
+                                                                    <span className="text-sm text-muted-foreground">DLR Value</span>
+                                                                    <span className="font-medium text-foreground">${item.dlrDollars}</span>
+                                                                </div>
+                                                            )}
+                                                            {/* Market Share (Prioritize explicit marketShare column if valid, but we stored it in sharePercentage fallback? No, let's use the explicit fields if we want, but sharePercentage covers it. Actually, wait. The valid columns for this category in CSV should strictly be used. 
                                                     In our parser:
                                                         indDollars = value from col 3
                                                         sharePercentage = fallback main share
@@ -500,56 +510,58 @@ export function CountyDetailModal({ county, allCounties, papeData, lastUpdated, 
                                                     Actually, let's use the specific fields if they exist.
                                                     If `item.sharePercentage` exists and it is NOT already covered by paesPercent, it's Market Share.
                                                      */}
-                                                    {/* Market Share: show if it's generic market share */}
-                                                    {item.sharePercentage && item.sharePercentage !== 'N/A' && (item.paesPercent === 'N/A' || !item.paesPercent) && (
-                                                        <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
-                                                            <span className="text-sm text-muted-foreground">Market Share</span>
-                                                            <span className="font-bold text-primary">{item.sharePercentage}%</span>
-                                                        </div>
-                                                    )}
+                                                            {/* Market Share: show if it's generic market share */}
+                                                            {item.sharePercentage && item.sharePercentage !== 'N/A' && (item.paesPercent === 'N/A' || !item.paesPercent) && (
+                                                                <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
+                                                                    <span className="text-sm text-muted-foreground">Market Share</span>
+                                                                    <span className="font-bold text-primary">{item.sharePercentage}%</span>
+                                                                </div>
+                                                            )}
 
-                                                    {/* PAES Specifics */}
-                                                    {item.paesPercent && item.paesPercent !== 'N/A' && (
-                                                        <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
-                                                            <span className="text-sm text-muted-foreground">PAES %</span>
-                                                            <span className="font-bold text-primary">{item.paesPercent}%</span>
+                                                            {/* PAES Specifics */}
+                                                            {item.paesPercent && item.paesPercent !== 'N/A' && (
+                                                                <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
+                                                                    <span className="text-sm text-muted-foreground">PAES %</span>
+                                                                    <span className="font-bold text-primary">{item.paesPercent}%</span>
+                                                                </div>
+                                                            )}
+                                                            {item.eaBreadth && item.eaBreadth !== 'N/A' && (
+                                                                <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
+                                                                    <span className="text-sm text-muted-foreground">EA Breadth</span>
+                                                                    <span className="font-medium text-foreground">{item.eaBreadth}%</span>
+                                                                </div>
+                                                            )}
+                                                            {item.heaDepth && item.heaDepth !== 'N/A' && (
+                                                                <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
+                                                                    <span className="text-sm text-muted-foreground">HEA Depth</span>
+                                                                    <span className="font-medium text-foreground">{item.heaDepth}%</span>
+                                                                </div>
+                                                            )}
+                                                            {item.techAdoption && item.techAdoption !== 'N/A' && (
+                                                                <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
+                                                                    <span className="text-sm text-muted-foreground">Tech Adoption</span>
+                                                                    <span className="font-medium text-foreground">{item.techAdoption}%</span>
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                    )}
-                                                    {item.eaBreadth && item.eaBreadth !== 'N/A' && (
-                                                        <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
-                                                            <span className="text-sm text-muted-foreground">EA Breadth</span>
-                                                            <span className="font-medium text-foreground">{item.eaBreadth}%</span>
-                                                        </div>
-                                                    )}
-                                                    {item.heaDepth && item.heaDepth !== 'N/A' && (
-                                                        <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
-                                                            <span className="text-sm text-muted-foreground">HEA Depth</span>
-                                                            <span className="font-medium text-foreground">{item.heaDepth}%</span>
-                                                        </div>
-                                                    )}
-                                                    {item.techAdoption && item.techAdoption !== 'N/A' && (
-                                                        <div className="flex justify-between items-center py-1 border-b border-border/40 hover:bg-secondary/20 px-2 rounded-sm transition-colors">
-                                                            <span className="text-sm text-muted-foreground">Tech Adoption</span>
-                                                            <span className="font-medium text-foreground">{item.techAdoption}%</span>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
-                                    </div>
 
-                                    <div className="p-4 bg-muted/30 rounded-lg text-xs text-muted-foreground mt-8 flex justify-between items-center">
-                                        <p>Internal data sourced from Papé Group reports.</p>
-                                        {lastUpdated && <p>Last updated: {lastUpdated}</p>}
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col items-center justify-center py-12 text-center space-y-3">
-                                    <div className="p-3 bg-secondary rounded-full">
-                                        <Table className="h-6 w-6 text-muted-foreground" />
-                                    </div>
-                                    <p className="text-muted-foreground">No internal data available for {county.countyName} County.</p>
-                                </div>
+                                            <div className="p-4 bg-muted/30 rounded-lg text-xs text-muted-foreground mt-8 flex justify-between items-center">
+                                                <p>Internal data sourced from Papé Group reports.</p>
+                                                {lastUpdated && <p>Last updated: {lastUpdated}</p>}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center py-12 text-center space-y-3">
+                                            <div className="p-3 bg-secondary rounded-full">
+                                                <Table className="h-6 w-6 text-muted-foreground" />
+                                            </div>
+                                            <p className="text-muted-foreground">No internal data available for {county.countyName} County.</p>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     )}
