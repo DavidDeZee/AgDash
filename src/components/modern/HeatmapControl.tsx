@@ -111,7 +111,29 @@ export function HeatmapControl({ onOpenRankingModal }: HeatmapControlProps) {
                                 <Info className="h-4 w-4 flex-shrink-0 mt-0.5 text-primary/60" />
                                 <div className="space-y-1.5 flex-1">
                                     <p className="leading-relaxed">
-                                        Visualizing <span className="font-semibold text-foreground">{getMetricLabel(sortField)}</span> density across
+                                        Visualizing <span className="font-semibold text-foreground">
+                                            {sortField.startsWith('internal|')
+                                                ? (() => {
+                                                    const parts = sortField.split('|');
+                                                    if (parts.length >= 3) {
+                                                        const cat = parts[1];
+                                                        const key = parts[2];
+                                                        let label = key;
+                                                        if (key === 'indDollars') label = 'IND';
+                                                        else if (key === 'dlrDollars') label = 'DLR';
+                                                        else if (key === 'sharePercentage') label = 'Market Share';
+                                                        else if (key === 'paesPercent') label = 'PAES %';
+                                                        else if (key === 'eaBreadth') label = 'EA Breadth';
+                                                        else if (key === 'heaDepth') label = 'HEA Depth';
+                                                        else if (key === 'techAdoption') label = 'Tech Adoption';
+
+                                                        return `${cat} - ${label}`;
+                                                    }
+                                                    return sortField;
+                                                })()
+                                                : getMetricLabel(sortField)
+                                            }
+                                        </span> density across
                                         <span className="font-semibold text-foreground">
                                             {selectedStates.length > 0
                                                 ? ` ${selectedStates.length === 1 ? selectedStates[0] : `${selectedStates.length} states`}`

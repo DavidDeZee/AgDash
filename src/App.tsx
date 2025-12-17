@@ -81,9 +81,9 @@ export default function App() {
       searchQuery,
     };
 
-    const filtered = filterCounties(allCounties, filters);
-    return sortCounties(filtered, { field: sortField, direction: sortDirection });
-  }, [allCounties, selectedStates, selectedLocations, metricRanges, searchQuery, sortField, sortDirection, isNaturalLanguageQuery]);
+    const filtered = filterCounties(allCounties, filters, papeData);
+    return sortCounties(filtered, { field: sortField, direction: sortDirection }, papeData);
+  }, [allCounties, selectedStates, selectedLocations, metricRanges, searchQuery, sortField, sortDirection, isNaturalLanguageQuery, papeData]);
 
   // Calculate KPIs
   const kpis = useMemo(() => {
@@ -165,6 +165,7 @@ export default function App() {
         onClose={() => setIsRankingModalOpen(false)}
         availableStates={availableStates}
         allCounties={allCounties}
+        papeData={papeData}
       />
 
       {/* Admin Panel */}
@@ -229,6 +230,7 @@ export default function App() {
                   setSelectedCounty(county);
                   setDetailCounty(county);
                 }}
+                papeData={papeData}
               />
             </div>
           </main>
@@ -256,6 +258,7 @@ export default function App() {
                   }}
                   onConfigure={() => setIsRankingModalOpen(true)}
                   sortField={sortField}
+                  papeData={papeData}
                 />
               </div>
             )}
