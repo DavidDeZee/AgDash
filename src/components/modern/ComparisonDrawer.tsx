@@ -242,7 +242,7 @@ export function ComparisonDrawer({
                         <h4 className="text-sm font-semibold">{group.category}</h4>
                       </div>
 
-                      <div className="space-y-6 pl-2 border-l-2 border-border/50">
+                      <div className="space-y-6">
                         {group.metrics.map((metric) => (
                           <div key={metric.key} className="space-y-2">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
