@@ -27,6 +27,13 @@ export default async function handler(req: any, res: any) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
+    // Check authentication before processing upload
+    const password = req.headers['x-admin-password'];
+
+    if (password !== process.env.ADMIN_PASSWORD) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     try {
         // Run multer middleware
         await runMiddleware(req, res, upload.single('file'));
@@ -35,9 +42,9 @@ export default async function handler(req: any, res: any) {
             return res.status(400).json({ error: 'No file provided' });
         }
 
-        // Upload to Blob storage
+        // Upload to Blob storage with private access
         const blob = await put('market-data-v2.xlsx', req.file.buffer, {
-            access: 'public',
+            access: 'private',
             token: process.env.BLOB_READ_WRITE_TOKEN,
             addRandomSuffix: false,
             allowOverwrite: true,
