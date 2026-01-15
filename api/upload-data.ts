@@ -44,7 +44,7 @@ export default async function handler(req: any, res: any) {
 
         // Upload to Blob storage with private access
         const blob = await put('market-data-v2.xlsx', req.file.buffer, {
-            access: 'private',
+            access: 'public',
             token: process.env.BLOB_READ_WRITE_TOKEN,
             addRandomSuffix: false,
             allowOverwrite: true,
